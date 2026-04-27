@@ -1,185 +1,288 @@
-# Sciikit-git
+# Fonda-scikit
 
-Notebook-first machine learning pipeline for deforestation/disturbance modeling with yearly training, multi-family evaluation, and concept drift analysis.
+Notebook-first machine learning workflow for disturbance/deforestation modeling with yearly training, unified evaluation, and concept drift analysis.
 
-## What This Repository Covers
+## Overview
 
-- Data preparation from private zarr datasets
-- Training multiple model families (SGD variants and XGBoost) by year
-- Unified evaluation across model-year and eval-year combinations
-- Concept drift detection using discriminator and distribution-based methods
+This repository contains four connected workflows:
 
-## Repository Map
+1. Data preparation from private zarr datasets
+2. Year-wise model training (main path: SGD with incremental scaler and monthly features)
+3. Unified evaluation across model years and evaluation years
+4. Concept drift detection (discriminator, distribution-distance, and synthetic drift validation)
 
-- `Data-prep.ipynb`, `Data-prep_monthly.ipynb`: prepare feature datasets and splits
-- `XGBoost.ipynb`: train yearly XGBoost models
-- `Evaluations.ipynb`: unified evaluation for all model families
-- `concept_drift_detection*.ipynb`: drift analysis workflows
-- `NOTEBOOKS/`: additional SGD variants and historical experiment notebooks
-- `src/`: shared modules for preparation, dataset loading, modeling, and visualization
-- `models_*/`: trained model artifacts and scalers
-- `eval_outputs/unified_eval/`: final evaluation CSV outputs
+The project is primarily notebook-driven. Historical and experimental variants are also present, but this README focuses on a reproducible canonical path.
 
-## Data Access Assumption (Private Dataset)
+## Repository Structure
 
-This project expects private local zarr data and does not include a public download link.
+- `Data-prep.ipynb`: canonical base data preparation
+- `Data-prep_monthly.ipynb`: preparation variant with monthly-oriented features
+- `merge monthly features.ipynb`: merges monthly indices into prepared data
+- `SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`: primary training path
+- `Experience Replay-SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`: replay variant
+- `XGBoost.ipynb`: yearly independent XGBoost training
+- `Evaluations.ipynb`: unified evaluation across model families
+- `concept_drift_detection.ipynb`: discriminator drift baseline
+- `concept_drift_detection-discriminator.ipynb`: year vs all previous years drift analysis
+- `concept_drift_detection-distribution.ipynb`: MMD and Energy Distance drift analysis
+- `data drift testing on syntetic data.ipynb`: synthetic drift dataset generation
+- `src/`: shared code for preparation, loading, and utilities
+- `models_*/`: trained model artifacts
+- `eval_outputs/unified_eval/`: evaluation outputs
+- `synthetic_drift_data/`: generated synthetic drift datasets
 
-Expected input datasets used by notebooks include:
+## Data Requirements
+
+This repository expects local private datasets and does not include raw data downloads.
+
+Typical inputs used by notebooks include:
 
 - `full_dataset_resizedv2.zarr`
+- `full_dataset_20m_monthly_with_indices.zarr`
+
+Common generated artifacts consumed by downstream notebooks:
+
+- `data_split.npz`
+- `training_data.zarr`
+- `training_data_enriched.zarr`
 - `training_data_with_features.zarr`
 - `training_data_with_features_plus_monthly_indices.zarr`
+- `training_data_with_neighbourhood_features.zarr` (variant-specific)
 
-If your local file names differ, update the dataset path cells in the notebooks.
+If local paths differ, update path cells in the notebooks before running.
 
-## Environment Setup (pip)
+## Environment Setup
 
-This repository currently has no pinned dependency file. The commands below provide a practical setup baseline.
+No pinned environment file is currently included, so start with a practical baseline:
 
 ```powershell
 python -m venv venv
 venv\Scripts\activate
 python -m pip install --upgrade pip
-pip install numpy pandas xarray scikit-learn xgboost torch torchvision matplotlib zarr jupyter tqdm
+pip install numpy pandas xarray scikit-learn scipy xgboost torch torchvision matplotlib zarr jupyter tqdm
 ```
 
-## Pipeline At A Glance
-
-Run notebooks in this order:
-
-1. Data preparation
-2. Model training (one or more families)
-3. Unified evaluation
-4. Concept drift detection (optional but recommended)
+## Canonical Pipeline
 
 ## 1) Data Preparation
 
-Primary notebooks:
+Primary sequence:
 
-- `Data-prep.ipynb`
+1. Run `Data-prep.ipynb`
+2. Run `merge monthly features.ipynb` (if you want monthly indices merged)
+
+Optional variants:
+
 - `Data-prep_monthly.ipynb`
+- `NOTEBOOKS/Data-prep-all.ipynb`
+- `NOTEBOOKS/Data-prep-neigbours.ipynb`
 
-Typical preparation flow:
+What this stage does:
 
-1. Load source zarr dataset
-2. Filter/select valid pixels/cubes
-3. Build feature-ready datasets
-4. Create train/validation/test pixel index splits
+1. Loads source zarr data
+2. Filters/selects valid disturbance-relevant samples
+3. Builds feature-ready arrays
+4. Produces train/validation/test split indices
+5. Writes zarr artifacts used by training and drift notebooks
 
-Expected artifacts:
+Key outputs:
 
-- `data_split.npz` (pixel indices for train/val/test)
-- prepared zarr datasets used by training/evaluation notebooks
+- `data_split.npz`
+- `training_data_with_features.zarr`
+- `training_data_with_features_plus_monthly_indices.zarr` (if monthly merge is run)
 
-Related reusable code:
+Referenced helper modules:
 
-- `src/cube/prepare.py` (split and prep helpers)
-- `src/dataset/cubeloader.py` (dataset loader logic)
+- `src/cube/prepare.py`
+- `src/dataset/cubeloader.py`
 
 ## 2) Model Training
 
-### XGBoost
+### Main Recommended Path: SGD Incremental Scaler + Monthly Features
 
-- Notebook: `XGBoost.ipynb`
-- Output pattern: `models_xgb/model_year_<YEAR>.json`
+Notebook:
 
-### SGD Family Variants
+- `SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
 
-Key notebooks are in root and `NOTEBOOKS/`, including variants for:
+Typical behavior:
 
-- baseline SGD
-- huber loss
-- lagged features
-- neighbourhood features
-- previous-years + monthly features
-- incremental scaler
-- experience replay
-- RBF variants
+1. Trains incrementally by year (2017-2022 style workflow)
+2. Uses per-year feature extraction from prepared zarr data
+3. Fits and updates scaler/model over yearly batches
+4. Saves yearly model and scaler artifacts
 
-Typical output pattern across families:
+Expected output directory pattern:
 
-- `models_<family>/model_year_<YEAR>.pkl`
-- `models_<family>/scaler_year_<YEAR>.pkl`
+- `models_prevyears_monthly_features/`
 
-Practical recommendation:
+Typical file naming:
 
-- Start with one family first (for example, XGBoost or one SGD notebook)
-- Expand to additional families after confirming outputs and paths
+- `model_year_<YEAR>.pkl`
+- `scaler_year_<YEAR>.pkl`
+
+### Replay Variant (Optional)
+
+Notebook:
+
+- `Experience Replay-SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
+
+Expected output directory pattern:
+
+- `models_prevyears_monthly_features_experience_replay/`
+
+### Secondary Baseline: XGBoost
+
+Notebook:
+
+- `XGBoost.ipynb`
+
+Expected output directory pattern:
+
+- `models_xgb/`
+
+Typical file naming:
+
+- `model_year_<YEAR>.json`
 
 ## 3) Unified Evaluation
 
-Primary notebook:
+Notebook:
 
 - `Evaluations.ipynb`
 
-Evaluation behavior:
+What it does:
 
-1. Loads trained models and scalers by family and year
-2. Prepares family-specific features for each eval year
-3. Computes metrics for each model-year vs eval-year combination
-4. Writes comparable CSV outputs
+1. Loads trained model/scaler artifacts by family and year
+2. Reconstructs family-specific features per evaluation year
+3. Computes metrics such as F1, precision, recall, ROC-AUC, and PR-AUC
+4. Writes consolidated outputs to evaluation folders
 
-Expected outputs:
+Output location:
 
-- `eval_outputs/unified_eval/<family>_results.csv`
+- `eval_outputs/unified_eval/`
 
-Note: if some families were not trained yet, either skip those sections in the notebook or train those families first.
+Common outputs:
+
+- `all_families_combined.csv`
+- `all_families_status.csv`
+- per-family and per-scheme CSV files
+
+If some model families are not trained, skip corresponding blocks or run those training notebooks first.
 
 ## 4) Concept Drift Detection
 
-Main notebooks:
+The repository includes three drift analysis styles.
 
-- `concept_drift_detection.ipynb`
-- `concept_drift_detection-discriminator.ipynb`
+### A) Discriminator-Based Drift
+
+Notebooks:
+
+- `concept_drift_detection.ipynb` (adjacent-year comparisons)
+- `concept_drift_detection-discriminator.ipynb` (year vs all prior years)
+
+Method:
+
+1. Build binary classification tasks where label indicates source period
+2. Train classifier to separate year distributions
+3. Use separability metrics (for example ROC-AUC/F1) as drift indicators
+
+Interpretation:
+
+- Higher separability usually indicates stronger shift between compared periods
+- Compare drift scores with model performance trends to identify operational risk
+
+### B) Distribution-Distance Drift
+
+Notebook:
+
 - `concept_drift_detection-distribution.ipynb`
-- `concept_drift_detection_with_syntetic_data-disc.ipynb`
+
+Method:
+
+1. Computes distribution distances/statistics between year slices
+2. Uses methods such as MMD (RBF/Laplacian variants) and Energy Distance
+3. Applies permutation tests to estimate statistical significance
+
+Interpretation:
+
+- Significant distance suggests measurable covariate shift
+- Use alongside classifier-based drift and performance curves for stronger conclusions
+
+### C) Synthetic Drift Validation
+
+Notebook:
+
 - `data drift testing on syntetic data.ipynb`
 
-Drift approaches implemented:
+Method:
 
-- Discriminator-based drift: train a classifier to separate years; stronger separability can indicate drift
-- Distribution-based drift: statistical comparison (for example, MMD-style analysis)
-- Synthetic drift validation: controlled perturbation experiments
+1. Creates controlled perturbations (for example mean/covariance/noise shifts)
+2. Writes synthetic zarr datasets into `synthetic_drift_data/`
+3. Enables stress-testing drift detection methods against known injected drift
 
-Expected outputs for discriminator workflow:
+## How To Run The Pipeline
 
-- `concept_drift_discriminator_all_prev/results.csv`
-- `concept_drift_discriminator_all_prev/results.json`
-- `concept_drift_discriminator_all_prev/checkpoint.json`
-- `concept_drift_discriminator_all_prev/models/`
-- `concept_drift_discriminator_all_prev/scalers/`
+Use this sequence for a practical end-to-end run.
 
-## Minimal End-To-End Run (Recommended First Pass)
+### Quick Start (Minimal)
 
-1. Activate your virtual environment
-2. Run `Data-prep.ipynb` to produce dataset splits and prepared features
-3. Run one training notebook (`XGBoost.ipynb` is a straightforward start)
-4. Run `Evaluations.ipynb` for that trained family
-5. Run one concept drift notebook (`concept_drift_detection-discriminator.ipynb`)
+1. Activate environment and install dependencies
+2. Run `Data-prep.ipynb`
+3. Run `merge monthly features.ipynb`
+4. Run `SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
+5. Run `Evaluations.ipynb`
+6. Run `concept_drift_detection-discriminator.ipynb`
 
-After this first pass succeeds, scale up to additional model families and full cross-family evaluation.
+### Script-Style Checklist
 
-## Common Issues
+```powershell
+# 1) Environment
+python -m venv venv
+venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install numpy pandas xarray scikit-learn scipy xgboost torch torchvision matplotlib zarr jupyter tqdm
 
-- Missing zarr files
-  - Ensure private dataset files exist at the paths used inside notebooks.
+# 2) Open notebooks
+jupyter notebook
 
-- Notebook path mismatches
-  - Update dataset/model/output path cells for your local environment.
+# 3) Execute in order (inside Jupyter)
+#    Data-prep.ipynb
+#    merge monthly features.ipynb
+#    SGD Classifier_prevyears and monthly features-incremental scaler.ipynb
+#    Evaluations.ipynb
+#    concept_drift_detection-discriminator.ipynb
+```
 
-- Missing model/scaler files during evaluation
-  - Train that model family first, or disable the corresponding evaluation block.
+## Troubleshooting
 
-- Package import errors
-  - Re-check your virtual environment activation and install commands.
+### Missing data files
 
-## Current Gaps And Suggested Follow-Ups
+- Ensure private zarr datasets exist at paths referenced in notebook cells.
 
-- No pinned `requirements.txt` or `environment.yml`
-- No single script/CLI entrypoint for full orchestration
+### Evaluation cannot find model files
 
-Suggested follow-up improvements:
+- Confirm the expected model family directory contains `model_year_*` and `scaler_year_*` artifacts.
 
-1. Add pinned dependency file for reproducibility.
-2. Add a lightweight orchestration script to run the pipeline stages in order.
-3. Add a quick smoke-test profile (single family, short run) for onboarding.
+### Path errors between machines
+
+- Update notebook path cells to your local directory layout.
+
+### Import errors in notebooks
+
+- Confirm the active Jupyter kernel is the same environment where dependencies were installed.
+
+## Methodological Caveats
+
+Current project notes indicate active work around:
+
+- Threshold selection strategy in evaluation (retrospective vs production-realistic thresholding)
+- Temporal leakage risks in some preprocessing/evaluation choices
+- Ongoing MLP artifact refresh and replay experiments
+
+Treat reported metrics according to the notebook configuration used in each run.
+
+## Suggested Next Improvements
+
+1. Add a pinned `requirements.txt` or `environment.yml`
+2. Move feature-preparation logic into shared reusable modules used by both training and evaluation
+3. Add a lightweight orchestration script for reproducible stage-by-stage execution
