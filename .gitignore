@@ -23,7 +23,18 @@ Thumbs.db
 *.npz
 *.npy
 *.csv
+*.zarr
 
+synthetic_drift_data/
+NOTEBOOKS/
+*.zarr
+
+synthetic_drift_data/
+
+
+NOTEBOOKS/
+
+to do.md
 # Model files (potentially large)
 # Uncomment if you want to exclude model files:
 # models/
