@@ -1,0 +1,38 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (large)
+*.npz
+*.npy
+*.csv
+
+# Model files (potentially large)
+# Uncomment if you want to exclude model files:
+# models/
+# models_*/
+# *.json
+
+# Prediction visualizations (images, large folders)
+# Uncomment if desired:
+# prediction visualizations/
+# prediction visualizations huber/
+# prediction visualizations prevyears monthly features/
+# prediction visualizations with neighbourhoods/

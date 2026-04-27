@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-04-08T15:12:35.943059+00:00",
+    "row_count": 5,
+    "columns": [
+      "family_id",
+      "table_name",
+      "skipped_existing",
+      "row_count",
+      "csv_path"
+    ]
+  },
+  "rows": [
+    {
+      "family_id": "lagged_features",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\lagged_features\\lagged_features_own_year.csv"
+    },
+    {
+      "family_id": "lagged_features",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\lagged_features\\lagged_features_prior_years.csv"
+    },
+    {
+      "family_id": "lagged_features",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\lagged_features\\lagged_features_next_year.csv"
+    },
+    {
+      "family_id": "lagged_features",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\lagged_features\\lagged_features_cumulative.csv"
+    },
+    {
+      "family_id": "lagged_features",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "eval_outputs\\unified_eval\\lagged_features\\lagged_features_final_model_each_year.csv"
+    }
+  ]
+}

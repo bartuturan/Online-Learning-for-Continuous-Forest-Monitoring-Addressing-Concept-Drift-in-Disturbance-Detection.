@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-04-08T17:08:02.408455+00:00",
+    "row_count": 5,
+    "columns": [
+      "family_id",
+      "table_name",
+      "skipped_existing",
+      "row_count",
+      "csv_path"
+    ]
+  },
+  "rows": [
+    {
+      "family_id": "prevyears_monthly_features",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_own_year.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_prior_years.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_next_year.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_cumulative.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_final_model_each_year.csv"
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-04-21T20:10:08.035911+00:00",
+    "row_count": 31,
+    "columns": [
+      "family_id",
+      "table_name",
+      "skipped_existing",
+      "row_count",
+      "csv_path",
+      "error"
+    ]
+  },
+  "rows": [
+    {
+      "family_id": "baseline",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "No columns to parse from file"
+    },
+    {
+      "family_id": "huber",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "X has 22 features, but StandardScaler is expecting 14 features as input."
+    },
+    {
+      "family_id": "lagged_features",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "No columns to parse from file"
+    },
+    {
+      "family_id": "lagged_features_incremental_scaler",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "No columns to parse from file"
+    },
+    {
+      "family_id": "neighbours",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "No columns to parse from file"
+    },
+    {
+      "family_id": "prevyears_monthly_features",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "No columns to parse from file"
+    },
+    {
+      "family_id": "prevyears_monthly_features_experience_replay",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_experience_replay\\prevyears_monthly_features_experience_replay_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_experience_replay",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_experience_replay\\prevyears_monthly_features_experience_replay_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_experience_replay",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_experience_replay\\prevyears_monthly_features_experience_replay_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_experience_replay",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_experience_replay\\prevyears_monthly_features_experience_replay_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_experience_replay",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_experience_replay\\prevyears_monthly_features_experience_replay_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler",
+      "table_name": "own_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler\\prevyears_monthly_features_incremental_scaler_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler",
+      "table_name": "prior_years",
+      "skipped_existing": true,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler\\prevyears_monthly_features_incremental_scaler_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler",
+      "table_name": "next_year",
+      "skipped_existing": true,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler\\prevyears_monthly_features_incremental_scaler_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler",
+      "table_name": "cumulative",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler\\prevyears_monthly_features_incremental_scaler_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler",
+      "table_name": "final_model_each_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler\\prevyears_monthly_features_incremental_scaler_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "own_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "prior_years",
+      "skipped_existing": true,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "next_year",
+      "skipped_existing": true,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "cumulative",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "final_model_each_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_rbf",
+      "table_name": "own_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_rbf\\prevyears_monthly_features_rbf_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_rbf",
+      "table_name": "prior_years",
+      "skipped_existing": true,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_rbf\\prevyears_monthly_features_rbf_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_rbf",
+      "table_name": "next_year",
+      "skipped_existing": true,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_rbf\\prevyears_monthly_features_rbf_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_rbf",
+      "table_name": "cumulative",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_rbf\\prevyears_monthly_features_rbf_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "prevyears_monthly_features_rbf",
+      "table_name": "final_model_each_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_rbf\\prevyears_monthly_features_rbf_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler\\mlp_prevyears_monthly_features_incremental_scaler_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler\\mlp_prevyears_monthly_features_incremental_scaler_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler\\mlp_prevyears_monthly_features_incremental_scaler_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler\\mlp_prevyears_monthly_features_incremental_scaler_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler\\mlp_prevyears_monthly_features_incremental_scaler_final_model_each_year.csv",
+      "error": NaN
+    }
+  ]
+}

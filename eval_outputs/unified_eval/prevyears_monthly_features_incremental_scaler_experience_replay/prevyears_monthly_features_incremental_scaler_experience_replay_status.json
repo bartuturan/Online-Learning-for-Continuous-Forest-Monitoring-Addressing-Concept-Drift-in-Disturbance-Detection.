@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-04-21T18:59:09.338019+00:00",
+    "row_count": 5,
+    "columns": [
+      "family_id",
+      "table_name",
+      "skipped_existing",
+      "row_count",
+      "csv_path"
+    ]
+  },
+  "rows": [
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "own_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_own_year.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "prior_years",
+      "skipped_existing": true,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_prior_years.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "next_year",
+      "skipped_existing": true,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_next_year.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "cumulative",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_cumulative.csv"
+    },
+    {
+      "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay",
+      "table_name": "final_model_each_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay\\prevyears_monthly_features_incremental_scaler_experience_replay_final_model_each_year.csv"
+    }
+  ]
+}
