@@ -42,8 +42,7 @@ to do.md
 # *.json
 
 # Prediction visualizations (images, large folders)
-# Uncomment if desired:
-# prediction visualizations/
-# prediction visualizations huber/
-# prediction visualizations prevyears monthly features/
-# prediction visualizations with neighbourhoods/
+prediction visualizations/
+prediction visualizations huber/
+prediction visualizations prevyears monthly features/
+prediction visualizations with neighbourhoods/
