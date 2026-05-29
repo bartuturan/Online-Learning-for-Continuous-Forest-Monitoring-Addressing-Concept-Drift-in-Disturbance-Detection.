@@ -1,0 +1,249 @@
+{
+  "metadata": {
+    "saved_at_utc": "2026-05-26T14:18:12.960014+00:00",
+    "completed_pair_count": 15,
+    "skipped_pair_count": 6
+  },
+  "config": {
+    "sample_fraction": 1.0,
+    "random_state": 42,
+    "year_min": 2016,
+    "year_max": 2022,
+    "n_years": 7
+  },
+  "rows": [
+    {
+      "pair": "2017 vs 2018",
+      "year_prev": 2017,
+      "year_target": 2018,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7607023987277938,
+      "test_auc": 0.758830473860883,
+      "val_f1": 0.7010244541736712,
+      "test_f1": 0.7024473978244771,
+      "time_sec": 6078.154202699661
+    },
+    {
+      "pair": "2017 vs 2019",
+      "year_prev": 2017,
+      "year_target": 2019,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7781315915643929,
+      "test_auc": 0.7655401652193656,
+      "val_f1": 0.7166434907405937,
+      "test_f1": 0.7112266133761076,
+      "time_sec": 5143.179362297058
+    },
+    {
+      "pair": "2018 vs 2019",
+      "year_prev": 2018,
+      "year_target": 2019,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7956363403541837,
+      "test_auc": 0.7981749513751148,
+      "val_f1": 0.7077116144417448,
+      "test_f1": 0.715893178006237,
+      "time_sec": 2238.218840122223
+    },
+    {
+      "pair": "2017 vs 2020",
+      "year_prev": 2017,
+      "year_target": 2020,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7250835209057246,
+      "test_auc": 0.7300483036486957,
+      "val_f1": 0.6783462333772505,
+      "test_f1": 0.687602292373461,
+      "time_sec": 2351.6218450069427
+    },
+    {
+      "pair": "2018 vs 2020",
+      "year_prev": 2018,
+      "year_target": 2020,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7588382471098978,
+      "test_auc": 0.781046870254016,
+      "val_f1": 0.6843290781130456,
+      "test_f1": 0.703913922723315,
+      "time_sec": 17474.920848846436
+    },
+    {
+      "pair": "2019 vs 2020",
+      "year_prev": 2019,
+      "year_target": 2020,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.6168550586013212,
+      "test_auc": 0.6095318652370799,
+      "val_f1": 0.5867095325262656,
+      "test_f1": 0.5732320124341983,
+      "time_sec": 2002.8636543750763
+    },
+    {
+      "pair": "2017 vs 2021",
+      "year_prev": 2017,
+      "year_target": 2021,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7702706193914316,
+      "test_auc": 0.7594714271245204,
+      "val_f1": 0.7128987093160039,
+      "test_f1": 0.7024889875198076,
+      "time_sec": 22777.162273406982
+    },
+    {
+      "pair": "2018 vs 2021",
+      "year_prev": 2018,
+      "year_target": 2021,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7871123588012113,
+      "test_auc": 0.7919105376146849,
+      "val_f1": 0.7055914052979589,
+      "test_f1": 0.7060841427302988,
+      "time_sec": 2341.9823141098022
+    },
+    {
+      "pair": "2019 vs 2021",
+      "year_prev": 2019,
+      "year_target": 2021,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.6363562569794234,
+      "test_auc": 0.6528256763461769,
+      "val_f1": 0.5831352711472333,
+      "test_f1": 0.58818061234914,
+      "time_sec": 2923.2016654014587
+    },
+    {
+      "pair": "2020 vs 2021",
+      "year_prev": 2020,
+      "year_target": 2021,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.6439194453709777,
+      "test_auc": 0.6401766165887263,
+      "val_f1": 0.6025241140751281,
+      "test_f1": 0.6024103918237484,
+      "time_sec": 1422.8045268058777
+    },
+    {
+      "pair": "2017 vs 2022",
+      "year_prev": 2017,
+      "year_target": 2022,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7138430344601382,
+      "test_auc": 0.6897432976718931,
+      "val_f1": 0.6659957989573894,
+      "test_f1": 0.6517348869948386,
+      "time_sec": 2277.9921629428864
+    },
+    {
+      "pair": "2018 vs 2022",
+      "year_prev": 2018,
+      "year_target": 2022,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7765252822909756,
+      "test_auc": 0.7825925761738032,
+      "val_f1": 0.6932885103173364,
+      "test_f1": 0.7010053636721663,
+      "time_sec": 81397.63046741486
+    },
+    {
+      "pair": "2019 vs 2022",
+      "year_prev": 2019,
+      "year_target": 2022,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.708969088907287,
+      "test_auc": 0.7042252610009947,
+      "val_f1": 0.6488856008700981,
+      "test_f1": 0.6477858351377032,
+      "time_sec": 2223.8055460453033
+    },
+    {
+      "pair": "2020 vs 2022",
+      "year_prev": 2020,
+      "year_target": 2022,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.6551972433177323,
+      "test_auc": 0.6674317143858101,
+      "val_f1": 0.6211414604829741,
+      "test_f1": 0.6291398428118002,
+      "time_sec": 152.56475591659546
+    },
+    {
+      "pair": "2021 vs 2022",
+      "year_prev": 2021,
+      "year_target": 2022,
+      "n_train": 11192640,
+      "n_val": 2546360,
+      "n_test": 2566882,
+      "val_auc": 0.7220553758783387,
+      "test_auc": 0.7249915026706069,
+      "val_f1": 0.6651631787750862,
+      "test_f1": 0.6673069516011275,
+      "time_sec": 877.1828179359436
+    }
+  ],
+  "skipped_pairs": [
+    {
+      "pair": "2016 vs 2017",
+      "year_prev": 2016,
+      "year_target": 2017,
+      "reason": "missing or invalid data after filtering"
+    },
+    {
+      "pair": "2016 vs 2018",
+      "year_prev": 2016,
+      "year_target": 2018,
+      "reason": "missing or invalid data after filtering"
+    },
+    {
+      "pair": "2016 vs 2019",
+      "year_prev": 2016,
+      "year_target": 2019,
+      "reason": "missing or invalid data after filtering"
+    },
+    {
+      "pair": "2016 vs 2020",
+      "year_prev": 2016,
+      "year_target": 2020,
+      "reason": "missing or invalid data after filtering"
+    },
+    {
+      "pair": "2016 vs 2021",
+      "year_prev": 2016,
+      "year_target": 2021,
+      "reason": "missing or invalid data after filtering"
+    },
+    {
+      "pair": "2016 vs 2022",
+      "year_prev": 2016,
+      "year_target": 2022,
+      "reason": "missing or invalid data after filtering"
+    }
+  ]
+}
