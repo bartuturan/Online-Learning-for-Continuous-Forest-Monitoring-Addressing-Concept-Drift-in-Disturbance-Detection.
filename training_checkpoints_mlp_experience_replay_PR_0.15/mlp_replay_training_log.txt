@@ -1,0 +1,11 @@
+[2026-06-12 12:45:50] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-06-12 13:09:27] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-06-12 13:09:27] [RR_0.2] resumed from year 2017.
+[2026-06-12 13:16:37] [RR_0.2] completed year 2018 with replay_used=1117361/5575648, replay_pos_rate=0.0921, year_pos_rate=0.0205, replay_pool_pos_rate=0.0185, current_w0=0.5105, current_w1=24.3417, replay_w0=0.5507, replay_w1=5.4267, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
+[2026-06-12 13:19:43] [RR_0.2] completed year 2019 with replay_used=1117354/11162455, replay_pos_rate=0.1500, year_pos_rate=0.0203, replay_pool_pos_rate=0.0195, current_w0=0.5103, current_w1=24.6881, replay_w0=0.5882, replay_w1=3.3333, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
+[2026-06-12 13:32:01] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-06-12 13:32:01] [RR_0.2] resumed from year 2019.
+[2026-06-12 13:35:19] [RR_0.2] completed year 2020 with replay_used=1117478/16749226, replay_pos_rate=0.1500, year_pos_rate=0.0186, replay_pool_pos_rate=0.0198, current_w0=0.5095, current_w1=26.8405, replay_w0=0.5882, replay_w1=3.3333, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
+[2026-06-12 13:39:01] [RR_0.2] completed year 2021 with replay_used=1117371/22336618, replay_pos_rate=0.1500, year_pos_rate=0.0152, replay_pool_pos_rate=0.0195, current_w0=0.5077, current_w1=32.8476, replay_w0=0.5882, replay_w1=3.3333, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
+[2026-06-12 13:47:10] [RR_0.2] completed year 2022 with replay_used=1118416/27923473, replay_pos_rate=0.1500, year_pos_rate=0.0306, replay_pool_pos_rate=0.0186, current_w0=0.5158, current_w1=16.3139, replay_w0=0.5882, replay_w1=3.3333, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
+[2026-06-12 13:47:10] [RR_0.2] marked as fully completed.
