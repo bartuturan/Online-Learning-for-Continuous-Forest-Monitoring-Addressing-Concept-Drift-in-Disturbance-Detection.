@@ -1,0 +1,69 @@
+{
+  "notebook_name": "feature_prep_lagged_monthly",
+  "created_at": "2026-06-16T13:03:36Z",
+  "source_base_dataset": "training_data_with_features.zarr",
+  "source_monthly_dataset": "full_dataset_20m_monthly_with_indices.zarr",
+  "split_file": "data_split.npz",
+  "output_dataset": "feature_cache_lagged_monthly.zarr",
+  "dimensions": {
+    "pixel": 8155205,
+    "year": 7,
+    "s2_band": 7
+  },
+  "variables": [
+    "cube_idx",
+    "cube_name",
+    "dem",
+    "disturbances",
+    "ever_disturbed",
+    "log_years_since_last_disturbance",
+    "nbr",
+    "nbr_delta",
+    "ndvi",
+    "ndvi_delta",
+    "ndwi",
+    "ndwi_delta",
+    "s2_bands",
+    "x",
+    "y",
+    "year_disturbance",
+    "years_since_last_disturbance"
+  ],
+  "monthly_features_expected": [
+    "ndvi_cv_year",
+    "ndvi_max_m2m_drop_year",
+    "ndvi_max_year",
+    "ndvi_min_year",
+    "ndvi_std_year",
+    "ndwi_cv_year",
+    "ndwi_max_m2m_drop_year",
+    "ndwi_max_year",
+    "ndwi_min_year",
+    "ndwi_std_year"
+  ],
+  "monthly_features_present": [],
+  "feature_order_used_by_training": [
+    "s2_bands",
+    "dem",
+    "ndvi",
+    "ndwi",
+    "prev_year_ndvi",
+    "prev_year_ndwi",
+    "prev_year_B04",
+    "prev_year_B03",
+    "prev_year_B06",
+    "nbr_if_available",
+    "ndvi_delta_prev_year",
+    "ndwi_delta_prev_year",
+    "nbr_delta_prev_year_if_available",
+    "years_since_last_disturbance_if_available",
+    "log_years_since_last_disturbance_if_available",
+    "ever_disturbed_if_available",
+    "yearly_monthly_index_features_if_available"
+  ],
+  "split_sizes": {
+    "train": 5597776,
+    "val": 1273437,
+    "test": 1283992
+  }
+}

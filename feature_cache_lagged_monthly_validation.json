@@ -1,0 +1,31 @@
+{
+  "created_at": "2026-06-16T13:03:36Z",
+  "output_dataset": "feature_cache_lagged_monthly.zarr",
+  "n_pixels": 8155205,
+  "n_years": 7,
+  "years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022
+  ],
+  "n_variables": 17,
+  "monthly_features_present": [],
+  "nan_counts_key_vars": {
+    "s2_bands": 57432403,
+    "dem": 19320,
+    "disturbances": 0,
+    "ndvi": 8204629,
+    "ndwi": 8204629,
+    "ndvi_delta": 0,
+    "ndwi_delta": 0,
+    "years_since_last_disturbance": 0,
+    "log_years_since_last_disturbance": 0,
+    "ever_disturbed": 0,
+    "nbr": 8204630,
+    "nbr_delta": 0
+  }
+}

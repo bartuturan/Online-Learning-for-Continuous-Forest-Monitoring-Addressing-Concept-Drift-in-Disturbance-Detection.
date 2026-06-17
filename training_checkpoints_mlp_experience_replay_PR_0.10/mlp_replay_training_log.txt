@@ -1,30 +1,3 @@
-[2026-05-26 16:22:50] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
-[2026-05-26 16:32:14] [RR_0.2] completed year 2017 with replay_used=0/0, replay_pos_rate=nan.
-[2026-05-26 16:39:00] [RR_0.2] completed year 2018 with replay_used=1117361/5575648, replay_pos_rate=0.0921.
-[2026-05-26 16:49:56] [RR_0.2] completed year 2019 with replay_used=1117354/11162455, replay_pos_rate=0.1000.
-[2026-05-26 17:06:16] [RR_0.2] completed year 2020 with replay_used=1117478/16749226, replay_pos_rate=0.1000.
-[2026-05-26 22:58:19] [RR_0.2] completed year 2021 with replay_used=1117371/22336618, replay_pos_rate=0.1000.
-[2026-05-26 23:09:12] [RR_0.2] completed year 2022 with replay_used=1118416/27923473, replay_pos_rate=0.1000.
-[2026-05-26 23:09:13] [RR_0.2] marked as fully completed.
-[2026-05-26 23:14:01] [RR_0.3] completed year 2017 with replay_used=0/0, replay_pos_rate=nan.
-[2026-05-26 23:21:18] [RR_0.3] completed year 2018 with replay_used=1676042/5575648, replay_pos_rate=0.0614.
-[2026-05-26 23:26:08] [RR_0.3] completed year 2019 with replay_used=1676031/11162455, replay_pos_rate=0.1000.
-[2026-05-26 23:31:06] [RR_0.3] completed year 2020 with replay_used=1676217/16749226, replay_pos_rate=0.1000.
-[2026-05-26 23:39:10] [RR_0.3] completed year 2021 with replay_used=1676056/22336618, replay_pos_rate=0.1000.
-[2026-05-26 23:58:08] [RR_0.3] completed year 2022 with replay_used=1677624/27923473, replay_pos_rate=0.1000.
-[2026-05-26 23:58:08] [RR_0.3] marked as fully completed.
-[2026-05-27 00:06:45] [RR_0.4] completed year 2017 with replay_used=0/0, replay_pos_rate=nan.
-[2026-05-27 00:20:07] [RR_0.4] completed year 2018 with replay_used=2234722/5575648, replay_pos_rate=0.0461.
-[2026-05-27 00:28:52] [RR_0.4] completed year 2019 with replay_used=2234708/11162455, replay_pos_rate=0.0974.
-[2026-05-27 00:36:50] [RR_0.4] completed year 2020 with replay_used=2234956/16749226, replay_pos_rate=0.1000.
-[2026-05-27 00:46:06] [RR_0.4] completed year 2021 with replay_used=2234742/22336618, replay_pos_rate=0.1000.
-[2026-05-27 00:53:48] [RR_0.4] completed year 2022 with replay_used=2236832/27923473, replay_pos_rate=0.1000.
-[2026-05-27 00:53:48] [RR_0.4] marked as fully completed.
-[2026-05-27 01:02:00] [RR_0.5] completed year 2017 with replay_used=0/0, replay_pos_rate=nan.
-[2026-05-27 01:11:05] [RR_0.5] completed year 2018 with replay_used=2793403/5575648, replay_pos_rate=0.0369.
-[2026-05-27 01:19:11] [RR_0.5] completed year 2019 with replay_used=2793385/11162455, replay_pos_rate=0.0779.
-[2026-05-27 01:25:18] [RR_0.5] completed year 2020 with replay_used=2793696/16749226, replay_pos_rate=0.1000.
-[2026-05-27 01:31:48] [RR_0.5] completed year 2021 with replay_used=2793427/22336618, replay_pos_rate=0.1000.
-[2026-05-27 01:38:36] [RR_0.5] completed year 2022 with replay_used=2796040/27923473, replay_pos_rate=0.1000.
-[2026-05-27 01:38:36] [RR_0.5] marked as fully completed.
-[2026-05-27 01:38:36] Training run completed.
+[2026-06-17 17:26:36] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-06-17 17:42:58] [RR_0.2] completed year 2017 with replay_used=0/0, replay_pos_rate=nan, year_pos_rate=0.0185, replay_pool_pos_rate=nan, current_w0=0.5094, current_w1=27.0794, replay_w0=nan, replay_w1=nan, replay_weight_fallback=no_replay, current_effective_mean_weight=1.0000, replay_effective_mean_weight=nan.
+[2026-06-17 17:47:42] [RR_0.2] completed year 2018 with replay_used=1117361/5575648, replay_pos_rate=0.0921, year_pos_rate=0.0205, replay_pool_pos_rate=0.0185, current_w0=0.5105, current_w1=24.3417, replay_w0=0.5507, replay_w1=5.4267, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
