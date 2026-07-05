@@ -1,0 +1,30 @@
+[2026-06-30 15:53:56] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-06-30 15:53:56] [RR_0.2] completed year 2017 with replay_used=0/0, hard=0, random=0, replay_pos_rate=nan, year_pos_rate=1.0000, replay_pool_pos_rate=nan, current_w0=6.0000, current_w1=0.5455, replay_w0=nan, replay_w1=nan, replay_weight_fallback=no_replay, current_effective_mean_weight=0.5455, replay_effective_mean_weight=nan.
+[2026-06-30 15:53:56] [RR_0.2] year 2018 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.2] year 2019 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.2] year 2020 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.2] year 2021 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.2] year 2022 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.2] marked as fully completed.
+[2026-06-30 15:53:56] [RR_0.3] completed year 2017 with replay_used=0/0, hard=0, random=0, replay_pos_rate=nan, year_pos_rate=1.0000, replay_pool_pos_rate=nan, current_w0=6.0000, current_w1=0.5455, replay_w0=nan, replay_w1=nan, replay_weight_fallback=no_replay, current_effective_mean_weight=0.5455, replay_effective_mean_weight=nan.
+[2026-06-30 15:53:56] [RR_0.3] year 2018 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.3] year 2019 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.3] year 2020 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.3] year 2021 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.3] year 2022 skipped (empty after filtering).
+[2026-06-30 15:53:56] [RR_0.3] marked as fully completed.
+[2026-06-30 15:53:57] [RR_0.4] completed year 2017 with replay_used=0/0, hard=0, random=0, replay_pos_rate=nan, year_pos_rate=1.0000, replay_pool_pos_rate=nan, current_w0=6.0000, current_w1=0.5455, replay_w0=nan, replay_w1=nan, replay_weight_fallback=no_replay, current_effective_mean_weight=0.5455, replay_effective_mean_weight=nan.
+[2026-06-30 15:53:57] [RR_0.4] year 2018 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.4] year 2019 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.4] year 2020 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.4] year 2021 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.4] year 2022 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.4] marked as fully completed.
+[2026-06-30 15:53:57] [RR_0.5] completed year 2017 with replay_used=0/0, hard=0, random=0, replay_pos_rate=nan, year_pos_rate=1.0000, replay_pool_pos_rate=nan, current_w0=6.0000, current_w1=0.5455, replay_w0=nan, replay_w1=nan, replay_weight_fallback=no_replay, current_effective_mean_weight=0.5455, replay_effective_mean_weight=nan.
+[2026-06-30 15:53:57] [RR_0.5] year 2018 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.5] year 2019 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.5] year 2020 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.5] year 2021 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.5] year 2022 skipped (empty after filtering).
+[2026-06-30 15:53:57] [RR_0.5] marked as fully completed.
+[2026-06-30 15:53:57] Training run completed.

@@ -1,0 +1,64 @@
+{
+  "completed_ratios": [
+    "RR_0.2",
+    "RR_0.3",
+    "RR_0.4",
+    "RR_0.5"
+  ],
+  "completed_years": {
+    "RR_0.3": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022
+    ],
+    "RR_0.2": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022
+    ],
+    "RR_0.4": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022
+    ],
+    "RR_0.5": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022
+    ]
+  },
+  "weight_policy_by_ratio": {
+    "RR_0.3": {
+      "weight_policy": "post_sampling_replay_class_weights_v1",
+      "replay_weight_fallback": "smoothed_single_class",
+      "weight_source": "current_year_and_post_sampling_replay"
+    },
+    "RR_0.2": {
+      "weight_policy": "post_sampling_replay_class_weights_v1",
+      "replay_weight_fallback": "smoothed_single_class",
+      "weight_source": "current_year_and_post_sampling_replay"
+    },
+    "RR_0.4": {
+      "weight_policy": "post_sampling_replay_class_weights_v1",
+      "replay_weight_fallback": "smoothed_single_class",
+      "weight_source": "current_year_and_post_sampling_replay"
+    },
+    "RR_0.5": {
+      "weight_policy": "post_sampling_replay_class_weights_v1",
+      "replay_weight_fallback": "smoothed_single_class",
+      "weight_source": "current_year_and_post_sampling_replay"
+    }
+  }
+}

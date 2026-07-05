@@ -1,0 +1,16 @@
+[2026-07-02 23:46:28] Started training run for ratios: [0.3, 0.4]
+[2026-07-02 23:50:24] [RR_0.3] completed year 2017 with replay_used=0/0, uncertain=0, random=0, gaussian_std=0.03.
+[2026-07-02 23:55:00] [RR_0.3] completed year 2018 with replay_used=1676042/5575648, uncertain=670416, random=1005626, gaussian_std=0.03.
+[2026-07-02 23:58:40] [RR_0.3] completed year 2019 with replay_used=1676031/11162455, uncertain=670412, random=1005619, gaussian_std=0.03.
+[2026-07-03 00:03:38] [RR_0.3] completed year 2020 with replay_used=1676217/16749226, uncertain=670486, random=1005731, gaussian_std=0.03.
+[2026-07-03 00:11:19] [RR_0.3] completed year 2021 with replay_used=1676056/22336618, uncertain=670422, random=1005634, gaussian_std=0.03.
+[2026-07-03 00:18:21] [RR_0.3] completed year 2022 with replay_used=1677624/27923473, uncertain=671049, random=1006575, gaussian_std=0.03.
+[2026-07-03 00:18:21] [RR_0.3] marked as fully completed.
+[2026-07-03 00:20:51] [RR_0.4] completed year 2017 with replay_used=0/0, uncertain=0, random=0, gaussian_std=0.03.
+[2026-07-03 00:25:28] [RR_0.4] completed year 2018 with replay_used=2234722/5575648, uncertain=893888, random=1340834, gaussian_std=0.03.
+[2026-07-03 00:32:33] [RR_0.4] completed year 2019 with replay_used=2234708/11162455, uncertain=893883, random=1340825, gaussian_std=0.03.
+[2026-07-03 00:41:03] [RR_0.4] completed year 2020 with replay_used=2234956/16749226, uncertain=893982, random=1340974, gaussian_std=0.03.
+[2026-07-03 00:49:23] [RR_0.4] completed year 2021 with replay_used=2234742/22336618, uncertain=893896, random=1340846, gaussian_std=0.03.
+[2026-07-03 00:54:59] [RR_0.4] completed year 2022 with replay_used=2236832/27923473, uncertain=894732, random=1342100, gaussian_std=0.03.
+[2026-07-03 00:54:59] [RR_0.4] marked as fully completed.
+[2026-07-03 00:55:00] Training run completed.
