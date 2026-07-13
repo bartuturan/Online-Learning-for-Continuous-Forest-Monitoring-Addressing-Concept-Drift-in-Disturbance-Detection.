@@ -1,0 +1,15 @@
+{
+  "completed_ratios": [
+    "RR_0.5_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5"
+  ],
+  "completed_years": {
+    "RR_0.5_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022
+    ]
+  }
+}

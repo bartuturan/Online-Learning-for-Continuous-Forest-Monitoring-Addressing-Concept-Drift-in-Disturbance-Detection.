@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at_utc": "2026-07-03T11:52:13.432142+00:00",
-    "row_count": 145,
+    "generated_at_utc": "2026-07-04T12:57:18.477111+00:00",
+    "row_count": 156,
     "columns": [
       "family_id",
       "table_name",
@@ -757,6 +757,94 @@
       "error": NaN
     },
     {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.2",
+      "table_name": "__family_failure__",
+      "skipped_existing": false,
+      "row_count": 0,
+      "csv_path": "",
+      "error": "Model directory missing: C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\models_mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.2"
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3",
+      "table_name": "own_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3",
+      "table_name": "prior_years",
+      "skipped_existing": true,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3",
+      "table_name": "next_year",
+      "skipped_existing": true,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3",
+      "table_name": "cumulative",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3",
+      "table_name": "final_model_each_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.3_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4",
+      "table_name": "own_year",
+      "skipped_existing": true,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4",
+      "table_name": "prior_years",
+      "skipped_existing": true,
+      "row_count": 21,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4",
+      "table_name": "next_year",
+      "skipped_existing": true,
+      "row_count": 5,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "eval_outputs\\unified_eval\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4\\mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.4_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.2",
       "table_name": "__family_failure__",
       "skipped_existing": false,
@@ -767,7 +855,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3_own_year.csv",
       "error": NaN
@@ -775,7 +863,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3_prior_years.csv",
       "error": NaN
@@ -783,7 +871,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3_next_year.csv",
       "error": NaN
@@ -791,7 +879,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3_cumulative.csv",
       "error": NaN
@@ -799,7 +887,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3_final_model_each_year.csv",
       "error": NaN
@@ -807,7 +895,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4_own_year.csv",
       "error": NaN
@@ -815,7 +903,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4_prior_years.csv",
       "error": NaN
@@ -823,7 +911,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4_next_year.csv",
       "error": NaN
@@ -831,7 +919,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4_cumulative.csv",
       "error": NaN
@@ -839,7 +927,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4_final_model_each_year.csv",
       "error": NaN

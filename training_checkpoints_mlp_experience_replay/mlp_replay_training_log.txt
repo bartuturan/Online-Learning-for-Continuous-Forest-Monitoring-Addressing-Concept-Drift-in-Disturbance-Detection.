@@ -30,3 +30,8 @@
 [2026-05-05 17:06:30] [RR_0.5] completed year 2022 with replay_used=2796040/27923473.
 [2026-05-05 17:06:30] [RR_0.5] marked as fully completed.
 [2026-05-05 17:06:30] Training run completed.
+[2026-07-05 15:33:40] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-07-05 15:33:40] [RR_0.2] skipped (already completed).
+[2026-07-05 15:33:40] [RR_0.3] skipped (already completed).
+[2026-07-05 15:33:40] [RR_0.4] skipped (already completed).
+[2026-07-05 15:33:40] [RR_0.5] skipped (already completed).

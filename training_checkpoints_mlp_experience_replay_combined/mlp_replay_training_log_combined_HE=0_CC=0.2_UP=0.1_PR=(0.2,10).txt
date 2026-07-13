@@ -1,0 +1,9 @@
+[2026-07-05 14:16:00] Started training run with config HE=0, CC=0.2, UP=0.1, PR=(0.2, 10), ratios=[0.5]
+[2026-07-05 14:38:57] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] year 2017 done: replay_used=0/0, HE=0, CC=0, UP=0, PR=0 (target=10.0%, achieved=nan), RND=0.
+[2026-07-05 14:46:04] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] year 2018 done: replay_used=2793403/5575648, HE=0, CC=1117361, UP=543084, PR=1117361 (target=10.0%, achieved=3.2360177239048076), RND=15597.
+[2026-07-05 14:55:53] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] year 2019 done: replay_used=2793385/11162455, HE=0, CC=1117354, UP=543550, PR=1117354 (target=10.0%, achieved=9.746060782885282), RND=15127.
+[2026-07-05 15:02:37] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] year 2020 done: replay_used=2793696/16749226, HE=0, CC=1117478, UP=548711, PR=1117478 (target=10.0%, achieved=10.000017897444065), RND=10029.
+[2026-07-05 15:06:36] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] year 2021 done: replay_used=2793427/22336618, HE=0, CC=1117371, UP=551618, PR=1117371 (target=10.0%, achieved=9.999991050421032), RND=7067.
+[2026-07-05 15:10:47] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] year 2022 done: replay_used=2796040/27923473, HE=0, CC=1118416, UP=553484, PR=1118416 (target=10.0%, achieved=10.000035764867455), RND=5724.
+[2026-07-05 15:10:47] [RR_0.5_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5] marked as fully completed.
+[2026-07-05 15:10:47] Training run completed.

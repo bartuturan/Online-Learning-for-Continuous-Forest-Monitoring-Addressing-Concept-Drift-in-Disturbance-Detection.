@@ -1,0 +1,32 @@
+[2026-07-05 15:43:28] Started training run for ratios: [0.4]
+[2026-07-05 15:49:08] [RR_0.4] completed year 2017 with replay_used=0/0.
+[2026-07-05 15:59:41] [RR_0.4] completed year 2018 with replay_used=2234722/5575648.
+[2026-07-05 16:09:46] [RR_0.4] completed year 2019 with replay_used=2234708/11162455.
+[2026-07-05 16:26:18] [RR_0.4] completed year 2020 with replay_used=2234956/16749226.
+[2026-07-05 16:38:35] [RR_0.4] completed year 2021 with replay_used=2234742/22336618.
+[2026-07-05 16:45:17] [RR_0.4] completed year 2022 with replay_used=2236832/27923473.
+[2026-07-05 16:45:17] [RR_0.4] marked as fully completed.
+[2026-07-05 16:51:54] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-07-05 16:55:55] [RR_0.2] completed year 2017 with replay_used=0/0.
+[2026-07-05 16:58:08] [RR_0.2] completed year 2018 with replay_used=1117361/5575648.
+[2026-07-05 17:00:42] [RR_0.2] completed year 2019 with replay_used=1117354/11162455.
+[2026-07-05 17:06:07] [RR_0.2] completed year 2020 with replay_used=1117478/16749226.
+[2026-07-05 17:11:29] [RR_0.2] completed year 2021 with replay_used=1117371/22336618.
+[2026-07-05 17:15:45] [RR_0.2] completed year 2022 with replay_used=1118416/27923473.
+[2026-07-05 17:15:45] [RR_0.2] marked as fully completed.
+[2026-07-05 17:18:05] [RR_0.3] completed year 2017 with replay_used=0/0.
+[2026-07-05 17:23:25] [RR_0.3] completed year 2018 with replay_used=1676042/5575648.
+[2026-07-05 17:25:59] [RR_0.3] completed year 2019 with replay_used=1676031/11162455.
+[2026-07-05 17:31:03] [RR_0.3] completed year 2020 with replay_used=1676217/16749226.
+[2026-07-05 17:35:19] [RR_0.3] completed year 2021 with replay_used=1676056/22336618.
+[2026-07-05 17:39:15] [RR_0.3] completed year 2022 with replay_used=1677624/27923473.
+[2026-07-05 17:39:15] [RR_0.3] marked as fully completed.
+[2026-07-05 17:39:15] [RR_0.4] skipped (already completed).
+[2026-07-05 17:43:21] [RR_0.5] completed year 2017 with replay_used=0/0.
+[2026-07-05 17:47:51] [RR_0.5] completed year 2018 with replay_used=2793403/5575648.
+[2026-07-05 17:53:59] [RR_0.5] completed year 2019 with replay_used=2793385/11162455.
+[2026-07-05 17:59:10] [RR_0.5] completed year 2020 with replay_used=2793696/16749226.
+[2026-07-05 18:02:54] [RR_0.5] completed year 2021 with replay_used=2793427/22336618.
+[2026-07-05 18:06:52] [RR_0.5] completed year 2022 with replay_used=2796040/27923473.
+[2026-07-05 18:06:52] [RR_0.5] marked as fully completed.
+[2026-07-05 18:06:52] Training run completed.
