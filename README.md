@@ -1,4 +1,4 @@
-# Fonda-scikit
+# Fonda
 
 Notebook-first machine learning workflow for disturbance/deforestation modeling with yearly training, unified evaluation, and concept drift analysis.
 
