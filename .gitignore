@@ -26,13 +26,7 @@ Thumbs.db
 *.zarr
 
 synthetic_drift_data/
-NOTEBOOKS/
-*.zarr
-
-synthetic_drift_data/
-
-
-NOTEBOOKS/
+old_notebooks/
 
 to do.md
 # Model files (potentially large)
