@@ -15,21 +15,35 @@ The project is primarily notebook-driven. Historical and experimental variants a
 
 ## Repository Structure
 
-- `Data-prep.ipynb`: canonical base data preparation
-- `Data-prep_monthly.ipynb`: preparation variant with monthly-oriented features
-- `merge monthly features.ipynb`: merges monthly indices into prepared data
-- `SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`: primary training path
-- `Experience Replay-SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`: replay variant
-- `XGBoost.ipynb`: yearly independent XGBoost training
-- `Evaluations.ipynb`: unified evaluation across model families
-- `concept_drift_detection.ipynb`: discriminator drift baseline
-- `concept_drift_detection-discriminator.ipynb`: year vs all previous years drift analysis
-- `concept_drift_detection-distribution.ipynb`: MMD and Energy Distance drift analysis
-- `data drift testing on syntetic data.ipynb`: synthetic drift dataset generation
-- `src/`: shared code for preparation, loading, and utilities
-- `models_*/`: trained model artifacts
-- `eval_outputs/unified_eval/`: evaluation outputs
-- `synthetic_drift_data/`: generated synthetic drift datasets
+```
+notebooks/
+  data_prep/          Data-prep.ipynb (canonical), merge monthly features.ipynb, feature_prep_lagged_monthly.ipynb
+  training/
+    sgd/               SGD Classifier_prevyears and monthly features-incremental scaler.ipynb (canonical) + variants
+    xgboost/           XGBoost.ipynb
+    mlp/               MLP_prevyears_and_monthly_features.ipynb (baseline) + experience_replay/ (14 replay-strategy notebooks)
+  evaluation/          Evaluations.ipynb, prediction_distribution_visualization.ipynb, Visualization-*.ipynb
+  drift_detection/     concept_drift_detection-*.ipynb, synthetic-drift generation & validation notebooks
+  archive/             superseded/duplicate notebooks kept for reference (not part of the active pipeline)
+
+experiments/
+  sgd/                 SGD model/scaler artifacts (models/, models_huber/, models_prevyears_monthly_features*/, ...)
+  xgboost/             models_xgb/
+  mlp/
+    baseline/           MLP baseline model + combined results
+    experience_replay/  all experience-replay strategy sweeps (checkpoints, models, result CSVs/PNGs)
+    combined/            multi-strategy combined replay sweeps
+  concept_drift/        discriminator models/checkpoints for drift analysis
+  evaluation/            eval_outputs/, prediction visualizations */
+
+src/                  shared code for preparation, loading, and utilities
+old_notebooks/        pre-existing archive of abandoned/exploratory notebooks (predates this reorg)
+
+# left in place at repo root (large, regenerable/private, not moved by the reorg):
+*.zarr, data_split.npz, synthetic_drift_data/, venv/
+```
+
+Every notebook's first code cell resolves `PROJECT_ROOT` (by walking up from its own location to find `.git`) and `EXPERIMENTS_DIR` (its `experiments/<family>` subfolder), so notebooks can be run directly from wherever they live in the tree above — data inputs are read from the repo root and outputs are written under `experiments/`.
 
 ## Data Requirements
 
@@ -68,14 +82,15 @@ pip install numpy pandas xarray scikit-learn scipy xgboost torch torchvision mat
 
 Primary sequence:
 
-1. Run `Data-prep.ipynb`
-2. Run `merge monthly features.ipynb` (if you want monthly indices merged)
+1. Run `notebooks/data_prep/Data-prep.ipynb`
+2. Run `notebooks/data_prep/merge monthly features.ipynb` (if you want monthly indices merged)
 
 Optional variants:
 
-- `Data-prep_monthly.ipynb`
-- `NOTEBOOKS/Data-prep-all.ipynb`
-- `NOTEBOOKS/Data-prep-neigbours.ipynb`
+- `old_notebooks/Data-prep-all.ipynb`
+- `old_notebooks/Data-prep-neigbours.ipynb`
+
+(`Data-prep_monthly.ipynb` was byte-identical to `Data-prep.ipynb` and lives in `notebooks/archive/` for reference.)
 
 What this stage does:
 
@@ -102,7 +117,7 @@ Referenced helper modules:
 
 Notebook:
 
-- `SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
+- `notebooks/training/sgd/SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
 
 Typical behavior:
 
@@ -113,7 +128,7 @@ Typical behavior:
 
 Expected output directory pattern:
 
-- `models_prevyears_monthly_features/`
+- `experiments/sgd/models_prevyears_monthly_features_incremental_scaler/`
 
 Typical file naming:
 
@@ -124,21 +139,21 @@ Typical file naming:
 
 Notebook:
 
-- `Experience Replay-SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
+- `notebooks/training/sgd/Experience Replay-SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
 
 Expected output directory pattern:
 
-- `models_prevyears_monthly_features_experience_replay/`
+- `experiments/sgd/models_prevyears_monthly_features_incremental_scaler_experience_replay/`
 
 ### Secondary Baseline: XGBoost
 
 Notebook:
 
-- `XGBoost.ipynb`
+- `notebooks/training/xgboost/XGBoost.ipynb`
 
 Expected output directory pattern:
 
-- `models_xgb/`
+- `experiments/xgboost/models_xgb/`
 
 Typical file naming:
 
@@ -148,7 +163,7 @@ Typical file naming:
 
 Notebook:
 
-- `Evaluations.ipynb`
+- `notebooks/evaluation/Evaluations.ipynb`
 
 What it does:
 
@@ -159,7 +174,7 @@ What it does:
 
 Output location:
 
-- `eval_outputs/unified_eval/`
+- `experiments/evaluation/eval_outputs/unified_eval/`
 
 Common outputs:
 
@@ -177,8 +192,8 @@ The repository includes three drift analysis styles.
 
 Notebooks:
 
-- `concept_drift_detection.ipynb` (adjacent-year comparisons)
-- `concept_drift_detection-discriminator.ipynb` (year vs all prior years)
+- `notebooks/archive/concept_drift_detection.ipynb` (adjacent-year comparisons; superseded by the two dedicated notebooks below, kept for reference)
+- `notebooks/drift_detection/concept_drift_detection-discriminator.ipynb` (year vs all prior years)
 
 Method:
 
@@ -195,7 +210,7 @@ Interpretation:
 
 Notebook:
 
-- `concept_drift_detection-distribution.ipynb`
+- `notebooks/drift_detection/concept_drift_detection-distribution.ipynb`
 
 Method:
 
@@ -212,7 +227,7 @@ Interpretation:
 
 Notebook:
 
-- `data drift testing on syntetic data.ipynb`
+- `notebooks/drift_detection/data drift testing on syntetic data.ipynb`
 
 Method:
 
@@ -227,11 +242,11 @@ Use this sequence for a practical end-to-end run.
 ### Quick Start (Minimal)
 
 1. Activate environment and install dependencies
-2. Run `Data-prep.ipynb`
-3. Run `merge monthly features.ipynb`
-4. Run `SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
-5. Run `Evaluations.ipynb`
-6. Run `concept_drift_detection-discriminator.ipynb`
+2. Run `notebooks/data_prep/Data-prep.ipynb`
+3. Run `notebooks/data_prep/merge monthly features.ipynb`
+4. Run `notebooks/training/sgd/SGD Classifier_prevyears and monthly features-incremental scaler.ipynb`
+5. Run `notebooks/evaluation/Evaluations.ipynb`
+6. Run `notebooks/drift_detection/concept_drift_detection-discriminator.ipynb`
 
 ### Script-Style Checklist
 
@@ -246,11 +261,11 @@ pip install numpy pandas xarray scikit-learn scipy xgboost torch torchvision mat
 jupyter notebook
 
 # 3) Execute in order (inside Jupyter)
-#    Data-prep.ipynb
-#    merge monthly features.ipynb
-#    SGD Classifier_prevyears and monthly features-incremental scaler.ipynb
-#    Evaluations.ipynb
-#    concept_drift_detection-discriminator.ipynb
+#    notebooks/data_prep/Data-prep.ipynb
+#    notebooks/data_prep/merge monthly features.ipynb
+#    notebooks/training/sgd/SGD Classifier_prevyears and monthly features-incremental scaler.ipynb
+#    notebooks/evaluation/Evaluations.ipynb
+#    notebooks/drift_detection/concept_drift_detection-discriminator.ipynb
 ```
 
 ## Troubleshooting
