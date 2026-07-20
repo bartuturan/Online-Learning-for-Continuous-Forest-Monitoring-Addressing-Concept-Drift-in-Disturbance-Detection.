@@ -37,6 +37,10 @@ experiments/
   evaluation/            eval_outputs/, prediction visualizations */
 
 src/                  shared code for preparation, loading, and utilities
+  mlp_replay/          shared modules backing notebooks/training/mlp/experience_replay/
+                       (data.py, checkpointing.py, model.py, replay_strategies.py, training_loop.py)
+tests/
+  mlp_replay/          pytest suite for src/mlp_replay/ (see "Running Tests" below)
 old_notebooks/        pre-existing archive of abandoned/exploratory notebooks (predates this reorg)
 
 # left in place at repo root (large, regenerable/private, not moved by the reorg):
@@ -74,6 +78,15 @@ python -m venv venv
 venv\Scripts\activate
 python -m pip install --upgrade pip
 pip install numpy pandas xarray scikit-learn scipy xgboost torch torchvision matplotlib zarr jupyter tqdm
+```
+
+### Running Tests
+
+`src/mlp_replay/` (the shared MLP experience-replay modules) has a pytest suite under `tests/mlp_replay/`, run against a small synthetic dataset (no real data files required):
+
+```powershell
+pip install pytest
+python -m pytest tests/
 ```
 
 ## Canonical Pipeline
