@@ -19,11 +19,11 @@ def build_mlp_model():
     )
 
 
-def compute_year_positive_rate(y_batch):
+def compute_year_positive_rate(y_batch, positive_label=1):
     y_batch = np.asarray(y_batch)
     if len(y_batch) == 0:
         return np.nan
-    return float(np.mean(y_batch == 1))
+    return float(np.mean(y_batch == positive_label))
 
 
 def compute_binary_class_weights(y_batch, classes=np.array([0, 1]), fallback_mode='smoothed_single_class'):
