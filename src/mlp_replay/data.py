@@ -36,7 +36,9 @@ def prepare_raw_features_for_year(ds, pixel_indices, year_idx, s2_mean_per_pixel
         return np.empty((0, 0), dtype=dtype), np.empty((0,), dtype=np.int64)
 
     if s2_mean_per_pixel is None:
-        s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices).values
+        # Only years up to and including year_idx are used, so imputation never
+        # leaks future-year spectral values into past-year feature rows.
+        s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices, year=slice(0, year_idx + 1)).values
         s2_mean_per_pixel = np.nanmean(s2_all_years, axis=1)
 
     ds_subset = ds.isel(pixel=pixel_indices, year=year_idx)
@@ -168,12 +170,14 @@ def prepare_features_for_year(ds, pixel_indices, year_idx, scaler=None, scaler_m
 
 
 def precompute_yearly_raw_cache(ds, pixel_indices, n_years, split_name):
-    s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices).values
-    s2_mean_per_pixel = np.nanmean(s2_all_years, axis=1)
-
     cache = {}
     empty_years = 0
     for year_idx in tqdm(range(1, n_years), desc=f'Precompute {split_name}'):
+        # Recomputed per year_idx (expanding window) so no year's imputation
+        # uses S2 data from years that haven't happened yet.
+        s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices, year=slice(0, year_idx + 1)).values
+        s2_mean_per_pixel = np.nanmean(s2_all_years, axis=1)
+
         X_raw, y_raw = prepare_raw_features_for_year(
             ds,
             pixel_indices,
