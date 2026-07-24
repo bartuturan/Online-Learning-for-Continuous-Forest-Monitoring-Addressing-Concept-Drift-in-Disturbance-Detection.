@@ -1,7 +1,8 @@
 import numpy as np
-from sklearn.metrics import precision_recall_curve
 from sklearn.neural_network import MLPClassifier
 from sklearn.utils.class_weight import compute_class_weight
+
+from src.thresholds import compute_best_f1_threshold
 
 
 def build_mlp_model():
@@ -56,15 +57,13 @@ def compute_binary_class_weights(y_batch, classes=np.array([0, 1]), fallback_mod
 
 
 def compute_optimal_f1_threshold(y_true, y_proba, threshold_grid=None, default_threshold=0.5):
-    if len(y_true) == 0 or len(np.unique(y_true)) < 2:
-        return float(default_threshold)
+    """Threshold-only view of src.thresholds.compute_best_f1_threshold.
 
-    precisions, recalls, thresholds = precision_recall_curve(y_true, y_proba)
-    f1_scores = 2 * (precisions * recalls) / (precisions + recalls + 1e-12)
-    best_idx = int(np.argmax(f1_scores))
-    if best_idx < len(thresholds):
-        return float(thresholds[best_idx])
-    return float(default_threshold)
+    Same PR-curve search and same fallbacks; this wrapper drops the metadata for
+    callers that only want the number.
+    """
+    threshold, _meta = compute_best_f1_threshold(y_true, y_proba, default_threshold=default_threshold)
+    return threshold
 
 
 def capture_model_state(model):
