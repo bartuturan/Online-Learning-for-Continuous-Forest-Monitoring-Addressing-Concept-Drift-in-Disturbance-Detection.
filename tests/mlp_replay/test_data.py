@@ -216,3 +216,57 @@ def test_prepare_features_for_year_forwards_new_options(synthetic_dataset, synth
     X_nolag, _, _ = prepare_features_for_year(
         synthetic_dataset, train_idx, year_idx=2, scaler_mode="none", include_last_year=False)
     assert X_nolag.shape[1] == X_full.shape[1] - 5
+
+
+def _with_monthly_indices(ds):
+    """Add the yearly NDVI/NDWI index vars that the monthly-enriched dataset carries."""
+    ds = ds.copy(deep=True)
+    rng = np.random.default_rng(3)
+    shape = (ds.sizes["pixel"], ds.sizes["year"])
+    for name in ["ndvi_cv_year", "ndvi_max_m2m_drop_year", "ndvi_max_year", "ndvi_min_year",
+                 "ndvi_std_year", "ndwi_cv_year", "ndwi_max_m2m_drop_year", "ndwi_max_year",
+                 "ndwi_min_year", "ndwi_std_year"]:
+        ds[name] = (("pixel", "year"), rng.normal(size=shape).astype(np.float32))
+    return ds
+
+
+def test_include_monthly_none_follows_the_dataset(synthetic_dataset, synthetic_pixel_indices):
+    """Default stays dataset-driven, which is what the replay notebooks rely on."""
+    train_idx, _ = synthetic_pixel_indices
+    X_without, _ = prepare_raw_features_for_year(synthetic_dataset, train_idx, year_idx=1)
+    X_with, _ = prepare_raw_features_for_year(_with_monthly_indices(synthetic_dataset), train_idx, year_idx=1)
+    assert X_with.shape[1] == X_without.shape[1] + 10
+
+
+def test_include_monthly_false_excludes_them_even_when_present(synthetic_dataset, synthetic_pixel_indices):
+    """Needed to score a model trained without monthly features on the enriched dataset."""
+    train_idx, _ = synthetic_pixel_indices
+    ds = _with_monthly_indices(synthetic_dataset)
+    X_default, _, names_default = prepare_raw_features_for_year(
+        ds, train_idx, year_idx=1, return_feature_names=True)
+    X_off, _, names_off = prepare_raw_features_for_year(
+        ds, train_idx, year_idx=1, include_monthly=False, return_feature_names=True)
+
+    assert [n for n in names_default if n not in names_off] == [
+        "ndvi_cv_year", "ndvi_max_m2m_drop_year", "ndvi_max_year", "ndvi_min_year", "ndvi_std_year",
+        "ndwi_cv_year", "ndwi_max_m2m_drop_year", "ndwi_max_year", "ndwi_min_year", "ndwi_std_year"]
+    assert X_off.shape[1] == X_default.shape[1] - 10
+
+
+def test_include_monthly_true_raises_when_absent(synthetic_dataset, synthetic_pixel_indices):
+    """Fail loudly rather than silently produce a narrower matrix than the model expects."""
+    train_idx, _ = synthetic_pixel_indices
+    with pytest.raises(ValueError, match="include_monthly=True but the dataset is missing"):
+        prepare_raw_features_for_year(synthetic_dataset, train_idx, year_idx=1, include_monthly=True)
+
+
+def test_baseline_family_flag_combination(synthetic_dataset, synthetic_pixel_indices):
+    """last=False + monthly=False is what 'SGD Classifier.ipynb' (the eval baseline) needs."""
+    train_idx, _ = synthetic_pixel_indices
+    ds = _with_monthly_indices(synthetic_dataset)
+    X, _, names = prepare_raw_features_for_year(
+        ds, train_idx, year_idx=1, include_last_year=False, include_monthly=False,
+        return_feature_names=True)
+    assert not any(n.endswith("_last_year") or n.startswith("s2_last_year_") for n in names)
+    assert not any(n.endswith("_year") for n in names)
+    assert X.shape[1] == len(names)

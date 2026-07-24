@@ -40,6 +40,7 @@ def prepare_raw_features_for_year(
     s2_mean_per_pixel=None,
     dtype=np.float32,
     include_last_year=True,
+    include_monthly=None,
     impute_window='expanding',
     return_feature_names=False,
 ):
@@ -47,6 +48,10 @@ def prepare_raw_features_for_year(
 
     include_last_year: when False, drop the previous-year NDVI/NDWI and B04/B03/B06 block.
         Serves the evaluation baseline family, which trains without lag features.
+    include_monthly: None (default) includes the yearly NDVI/NDWI index features whenever the
+        dataset carries them, which is what the replay notebooks rely on. Pass False to exclude
+        them even on a dataset that has them — needed to score a model trained without them
+        against the monthly-enriched dataset. True demands they be present and raises if not.
     impute_window: 'expanding' fills S2 NaNs using only years <= year_idx, so no future-year
         spectral value ever reaches a past-year row. 'all_years' is the legacy full-window
         behavior still used by the evaluation and drift notebooks; it leaks and exists only so
@@ -139,10 +144,14 @@ def prepare_raw_features_for_year(
         'ndwi_min_year',
         'ndwi_std_year',
     ]
-    for feature_name in yearly_index_feature_names:
-        if feature_name in ds.data_vars:
-            features_list.append(ds_subset[feature_name].values.reshape(-1, 1))
-            feature_names.append(feature_name)
+    if include_monthly is not False:
+        missing_monthly = [n for n in yearly_index_feature_names if n not in ds.data_vars]
+        if include_monthly is True and missing_monthly:
+            raise ValueError(f'include_monthly=True but the dataset is missing: {missing_monthly}')
+        for feature_name in yearly_index_feature_names:
+            if feature_name in ds.data_vars:
+                features_list.append(ds_subset[feature_name].values.reshape(-1, 1))
+                feature_names.append(feature_name)
 
     X = np.concatenate(features_list, axis=1)
     y = ds_subset['disturbances'].values
@@ -177,11 +186,12 @@ def prepare_features_for_year(
     s2_mean_per_pixel=None,
     dtype=np.float32,
     include_last_year=True,
+    include_monthly=None,
     impute_window='expanding',
 ):
     """Extract, clean, and optionally scale features for one year. Year 0 is skipped by design.
 
-    See prepare_raw_features_for_year for include_last_year and impute_window.
+    See prepare_raw_features_for_year for include_last_year, include_monthly, and impute_window.
     """
     from sklearn.preprocessing import StandardScaler
 
@@ -196,6 +206,7 @@ def prepare_features_for_year(
         s2_mean_per_pixel=s2_mean_per_pixel,
         dtype=dtype,
         include_last_year=include_last_year,
+        include_monthly=include_monthly,
         impute_window=impute_window,
     )
 
@@ -226,7 +237,7 @@ def prepare_features_for_year(
     return X_clean, y_clean, scaler
 
 
-def precompute_yearly_raw_cache(ds, pixel_indices, n_years, split_name, include_last_year=True, impute_window='expanding'):
+def precompute_yearly_raw_cache(ds, pixel_indices, n_years, split_name, include_last_year=True, include_monthly=None, impute_window='expanding'):
     cache = {}
     empty_years = 0
     for year_idx in tqdm(range(1, n_years), desc=f'Precompute {split_name}'):
@@ -245,6 +256,7 @@ def precompute_yearly_raw_cache(ds, pixel_indices, n_years, split_name, include_
             s2_mean_per_pixel=s2_mean_per_pixel,
             dtype=np.float32,
             include_last_year=include_last_year,
+            include_monthly=include_monthly,
             impute_window=impute_window,
         )
         cache[year_idx] = (X_raw, y_raw)
