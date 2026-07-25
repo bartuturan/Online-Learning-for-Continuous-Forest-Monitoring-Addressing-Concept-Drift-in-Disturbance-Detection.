@@ -41,6 +41,7 @@ def prepare_raw_features_for_year(
     dtype=np.float32,
     include_last_year=True,
     include_monthly=None,
+    include_neighbourhood=False,
     impute_window='expanding',
     return_feature_names=False,
 ):
@@ -52,12 +53,16 @@ def prepare_raw_features_for_year(
         dataset carries them, which is what the replay notebooks rely on. Pass False to exclude
         them even on a dataset that has them — needed to score a model trained without them
         against the monthly-enriched dataset. True demands they be present and raises if not.
+    include_neighbourhood: opt in to the neighbour-aggregate columns, appended after `nbr` to
+        match the evaluation notebook's ordering. Only the neighbourhood dataset carries them.
     impute_window: 'expanding' fills S2 NaNs using only years <= year_idx, so no future-year
         spectral value ever reaches a past-year row. 'all_years' is the legacy full-window
         behavior still used by the evaluation and drift notebooks; it leaks and exists only so
         those notebooks can migrate without their numbers moving.
     return_feature_names: also return the column names, so callers can select or reorder by
         name instead of by position.
+    dtype: cast the feature matrix to this type (and labels to int64). Pass None to leave both
+        exactly as the dataset produced them, which is what the evaluation notebook expects.
     """
     if impute_window not in VALID_IMPUTE_WINDOWS:
         raise ValueError(f"Invalid impute_window '{impute_window}'. Valid options: {list(VALID_IMPUTE_WINDOWS)}")
@@ -117,6 +122,12 @@ def prepare_raw_features_for_year(
         features_list.append(ds_subset['nbr'].values.reshape(-1, 1))
         feature_names.append('nbr')
 
+    if include_neighbourhood:
+        for var_name in ['ndvi_neighbour', 'ndwi_neighbour', 's2_b03_neighbour', 's2_b04_neighbour']:
+            if var_name in ds.data_vars:
+                features_list.append(ds_subset[var_name].values.reshape(-1, 1))
+                feature_names.append(var_name)
+
     if year_idx > 0 and 'ndvi_delta' in ds.data_vars:
         delta_year_idx = year_idx - 1
         ds_delta = ds.isel(pixel=pixel_indices, year=delta_year_idx)
@@ -166,9 +177,9 @@ def prepare_raw_features_for_year(
 
     if len(X_clean) == 0:
         feature_dim = X.shape[1] if X.ndim == 2 and X.shape[0] > 0 else 0
-        X_clean = np.empty((0, feature_dim), dtype=dtype)
-        y_clean = np.empty((0,), dtype=np.int64)
-    else:
+        X_clean = np.empty((0, feature_dim), dtype=dtype or X.dtype)
+        y_clean = np.empty((0,), dtype=np.int64 if dtype is not None else y.dtype)
+    elif dtype is not None:
         X_clean = X_clean.astype(dtype, copy=False)
         y_clean = y_clean.astype(np.int64, copy=False)
 
@@ -187,11 +198,12 @@ def prepare_features_for_year(
     dtype=np.float32,
     include_last_year=True,
     include_monthly=None,
+    include_neighbourhood=False,
     impute_window='expanding',
 ):
     """Extract, clean, and optionally scale features for one year. Year 0 is skipped by design.
 
-    See prepare_raw_features_for_year for include_last_year, include_monthly, and impute_window.
+    See prepare_raw_features_for_year for the include_* flags and impute_window.
     """
     from sklearn.preprocessing import StandardScaler
 
@@ -207,6 +219,7 @@ def prepare_features_for_year(
         dtype=dtype,
         include_last_year=include_last_year,
         include_monthly=include_monthly,
+        include_neighbourhood=include_neighbourhood,
         impute_window=impute_window,
     )
 
