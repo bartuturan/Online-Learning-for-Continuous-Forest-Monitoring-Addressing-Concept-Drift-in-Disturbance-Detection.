@@ -37,10 +37,25 @@ def load_or_run_table(table_csv_path, fn_compute):
     Returns `(df, was_skipped)`. This is the resume guard that lets an interrupted
     evaluation pick up where it stopped: an existing CSV is trusted and `fn_compute`
     is never called.
+
+    A table that legitimately computed to zero rows is written as a headerless CSV
+    (`pd.DataFrame([]).to_csv()` emits a bare newline), which `pd.read_csv` then
+    rejects with EmptyDataError. That is a faithful record of an empty result, not a
+    corrupt file, so it is honoured as an empty table rather than raising. Without
+    this, every family whose `final_model_each_year` table is empty -- 8 of them --
+    crashes on its second run, and the caller's bare `except` turns that into a
+    `__family_failure__` row.
     """
     if table_csv_path.exists():
         print(f'SKIP existing table: {table_csv_path.name}')
-        return pd.read_csv(table_csv_path), True
+        try:
+            # float_precision='round_trip' matters: pandas' default parser is not
+            # correctly-rounded and loses ~1 ULP. The combined table is rebuilt from
+            # these reloaded frames, so without it a resumed run rewrites the archived
+            # JSON with last-digit-different floats -- noise that hides real diffs.
+            return pd.read_csv(table_csv_path, float_precision='round_trip'), True
+        except pd.errors.EmptyDataError:
+            return pd.DataFrame([]), True
 
     table_df = fn_compute()
     save_table(table_df, table_csv_path)
