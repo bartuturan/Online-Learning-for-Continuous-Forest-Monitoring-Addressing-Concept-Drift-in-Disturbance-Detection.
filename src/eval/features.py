@@ -31,22 +31,41 @@ class FeatureCache:
     Keyed on object identity of `ds`/`pixel_indices` plus the flags, matching the
     notebook: within one evaluation run those objects are reused, and hashing the
     arrays themselves would cost more than recomputing.
+
+    Caching is on by default for every family. It used to be gated by a family-id
+    substring match ("only the incremental-scaler monthly families reuse identical
+    inputs often enough to be worth caching"), which was never measured. Instrumented:
+    a family excluded by that heuristic ran prepare_raw_features_for_year 106 times to
+    cover 6 distinct eval years -- a 17.7x redundancy factor -- while an included
+    family with the same shape ran it 12 times for the same 6 years (2.0x: val + test
+    per year, which is correct). Every family that shares val/test features across
+    multiple model_years within evaluate_family's own_year/prior_years/next_year/
+    cumulative/final_model_each_year tables benefits identically; there was no
+    family for which the exclusion was actually earning its keep. `enabled_for`
+    stays overridable (e.g. to disable caching in a test) but no longer has a
+    family-shaped default.
     """
 
     def __init__(self, max_entries=FEATURE_CACHE_MAX_ENTRIES, enabled_for=None):
         self.entries = OrderedDict()
         self.max_entries = max_entries
         self.stats = {'hits': 0, 'misses': 0}
-        # Only the incremental-scaler monthly families reuse identical inputs often
-        # enough to be worth caching; everything else would just evict them.
-        self.enabled_for = enabled_for or (lambda family_id: isinstance(family_id, str)
-                                           and 'prevyears_monthly_features_incremental_scaler' in family_id)
+        self.enabled_for = enabled_for or (lambda family_id: True)
 
     def enabled(self, family_id):
         return bool(self.enabled_for(family_id))
 
     @staticmethod
-    def make_key(ds, pixel_indices, year_idx, include_last_year, include_monthly, include_neighbourhood):
+    def make_key(ds, pixel_indices, year_idx, include_last_year, include_monthly, include_neighbourhood,
+                 impute_window):
+        # impute_window matters here even though no two prep kinds currently collide
+        # without it (each prep_kind's (include_last_year, include_monthly,
+        # include_neighbourhood) tuple happens to be unique, and impute_window is
+        # determined by prep_kind). That's a coincidence of the current family
+        # configs, not a guarantee -- a future prep kind that reused an existing
+        # flag tuple with a different impute_window would silently get another
+        # kind's cached (and wrongly imputed) features. Including it makes the key
+        # correct by construction instead of correct by luck.
         return (
             id(ds),
             id(pixel_indices),
@@ -54,6 +73,7 @@ class FeatureCache:
             bool(include_last_year),
             bool(include_monthly),
             bool(include_neighbourhood),
+            str(impute_window),
         )
 
     def get(self, key):
@@ -138,7 +158,7 @@ def prepare_features_common(
 
     if use_cache:
         cache_key = cache.make_key(ds, pixel_indices, year_idx, include_last_year,
-                                   include_monthly, include_neighbourhood)
+                                   include_monthly, include_neighbourhood, impute_window)
         payload = cache.get(cache_key)
 
     if payload is not None:
