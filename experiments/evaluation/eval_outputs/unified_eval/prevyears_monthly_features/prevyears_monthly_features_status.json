@@ -13,37 +13,37 @@
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
-      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_own_year.csv"
+      "csv_path": "c:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_own_year.csv"
     },
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
-      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_prior_years.csv"
+      "csv_path": "c:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_prior_years.csv"
     },
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
-      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_next_year.csv"
+      "csv_path": "c:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_next_year.csv"
     },
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
-      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_cumulative.csv"
+      "csv_path": "c:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_cumulative.csv"
     },
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 0,
-      "csv_path": "eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_final_model_each_year.csv"
+      "csv_path": "c:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_final_model_each_year.csv"
     }
   ]
 }

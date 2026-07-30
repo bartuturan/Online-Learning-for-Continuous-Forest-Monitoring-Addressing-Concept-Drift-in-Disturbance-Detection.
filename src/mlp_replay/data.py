@@ -253,14 +253,31 @@ def prepare_features_for_year(
 def precompute_yearly_raw_cache(ds, pixel_indices, n_years, split_name, include_last_year=True, include_monthly=None, impute_window='expanding'):
     cache = {}
     empty_years = 0
+
+    if impute_window == 'expanding':
+        # Running sum/count of non-NaN S2 values, updated with only the newest
+        # year's data each iteration below. Equivalent to nanmean(years <= t) but
+        # without reloading and re-averaging the whole growing window from year 0
+        # on every iteration.
+        s2_year0 = ds['s2_bands'].isel(pixel=pixel_indices, year=0).values
+        valid0 = ~np.isnan(s2_year0)
+        s2_sum = np.where(valid0, s2_year0, 0.0)
+        s2_count = valid0.astype(np.int64)
+    else:
+        # Legacy full-window behavior: independent of year_idx, so compute once
+        # rather than reloading it fresh on every iteration below.
+        s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices).values
+        s2_mean_per_pixel = np.nanmean(s2_all_years, axis=1)
+
     for year_idx in tqdm(range(1, n_years), desc=f'Precompute {split_name}'):
         if impute_window == 'expanding':
-            # Recomputed per year_idx (expanding window) so no year's imputation
-            # uses S2 data from years that haven't happened yet.
-            s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices, year=slice(0, year_idx + 1)).values
-        else:
-            s2_all_years = ds['s2_bands'].isel(pixel=pixel_indices).values
-        s2_mean_per_pixel = np.nanmean(s2_all_years, axis=1)
+            s2_year = ds['s2_bands'].isel(pixel=pixel_indices, year=year_idx).values
+            valid = ~np.isnan(s2_year)
+            s2_sum = s2_sum + np.where(valid, s2_year, 0.0)
+            s2_count = s2_count + valid.astype(np.int64)
+            s2_mean_per_pixel = np.divide(
+                s2_sum, s2_count, out=np.full_like(s2_sum, np.nan, dtype=np.float64), where=s2_count > 0
+            )
 
         X_raw, y_raw = prepare_raw_features_for_year(
             ds,

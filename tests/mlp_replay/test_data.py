@@ -109,6 +109,41 @@ def test_precompute_yearly_raw_cache(monkeypatch, synthetic_dataset, synthetic_p
         assert X.shape[0] == y.shape[0]
 
 
+def test_precompute_yearly_raw_cache_matches_per_year_expanding_mean(
+    monkeypatch, synthetic_dataset, synthetic_pixel_indices
+):
+    """The cache's running sum/count must match nanmean(years <= t) recomputed from scratch.
+
+    Regression test for the incremental rewrite of the expanding-window branch in
+    precompute_yearly_raw_cache: it now updates a running sum/count with only the
+    newest year's data instead of reloading and re-averaging the whole window each
+    iteration, so this pins the two approaches to identical output, including NaN
+    handling (some pixels have no valid S2 observation before a given year).
+    """
+    import src.mlp_replay.data as data_mod
+
+    monkeypatch.setattr(data_mod, "tqdm", lambda it, **kw: it)
+    train_idx, _ = synthetic_pixel_indices
+    n_years = synthetic_dataset.sizes["year"]
+
+    ds = synthetic_dataset.copy(deep=True)
+    rng = np.random.default_rng(7)
+    nan_mask = rng.random(size=ds["s2_bands"].shape) < 0.25
+    ds["s2_bands"].values[nan_mask] = np.nan
+    # Guarantee at least one pixel with zero valid S2 observations before year 2,
+    # so the expanding mean legitimately produces NaN (and the row gets dropped)
+    # for an early year -- the case the running count must also get right.
+    ds["s2_bands"].values[train_idx[0], :2, :] = np.nan
+
+    cache = precompute_yearly_raw_cache(ds, train_idx, n_years, "train")
+
+    for year_idx in range(1, n_years):
+        X_expected, y_expected = prepare_raw_features_for_year(ds, train_idx, year_idx)
+        X_actual, y_actual = cache[year_idx]
+        assert np.array_equal(X_actual, X_expected)
+        assert np.array_equal(y_actual, y_expected)
+
+
 def test_load_dataset_and_splits(synthetic_zarr_and_split, capsys):
     zarr_path, split_path = synthetic_zarr_and_split
     ds, train_idx, val_idx, test_idx = load_dataset_and_splits(zarr_path, split_path)
