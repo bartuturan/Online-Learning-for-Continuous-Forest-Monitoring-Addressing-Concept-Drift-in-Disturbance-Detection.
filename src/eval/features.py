@@ -137,6 +137,7 @@ def prepare_features_common(
     family_id=None,
     impute_window='all_years',
     cache=None,
+    ds_path=None,
 ):
     """Build one evaluation year's features, cached per family.
 
@@ -144,6 +145,13 @@ def prepare_features_common(
     evaluation always states a family's feature set explicitly rather than inferring
     it from whatever dataset happens to be loaded -- a model must be scored on the
     columns it was trained with.
+
+    `ds_path`: when given, an in-memory FEATURE_CACHE miss falls through to the
+    disk-backed, cross-process cache in src/mlp_replay/disk_feature_cache.py instead
+    of recomputing from the zarr store -- see that module's docstring. FEATURE_CACHE
+    stays as a fast in-process L1 in front of it; the two solve different problems
+    (within-session reuse across families/tables/years vs. cross-session/notebook
+    reuse) and aren't redundant with each other.
     """
     if year_idx == 0:
         return np.empty((0, 0)), np.empty((0,)), scaler
@@ -164,16 +172,31 @@ def prepare_features_common(
     if payload is not None:
         X, y = payload
     else:
-        X, y = prepare_raw_features_for_year(
-            ds,
-            pixel_indices,
-            year_idx,
-            include_last_year=include_last_year,
-            include_monthly=include_monthly,
-            include_neighbourhood=include_neighbourhood,
-            impute_window=impute_window,
-            dtype=None,
-        )
+        if ds_path is not None:
+            from src.mlp_replay.disk_feature_cache import get_or_compute_year_features
+
+            X, y = get_or_compute_year_features(
+                ds,
+                ds_path,
+                pixel_indices,
+                year_idx,
+                dtype=None,
+                include_last_year=include_last_year,
+                include_monthly=include_monthly,
+                include_neighbourhood=include_neighbourhood,
+                impute_window=impute_window,
+            )
+        else:
+            X, y = prepare_raw_features_for_year(
+                ds,
+                pixel_indices,
+                year_idx,
+                include_last_year=include_last_year,
+                include_monthly=include_monthly,
+                include_neighbourhood=include_neighbourhood,
+                impute_window=impute_window,
+                dtype=None,
+            )
         if use_cache and cache_key is not None:
             cache.set(cache_key, X, y)
 

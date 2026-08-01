@@ -200,10 +200,21 @@ def prepare_features_for_year(
     include_monthly=None,
     include_neighbourhood=False,
     impute_window='expanding',
+    ds_path=None,
+    split_name=None,
+    cache_root=None,
 ):
     """Extract, clean, and optionally scale features for one year. Year 0 is skipped by design.
 
     See prepare_raw_features_for_year for the include_* flags and impute_window.
+
+    ds_path: when given, routes the raw-feature step through the disk-backed
+    cross-process cache in disk_feature_cache.py instead of recomputing from the
+    zarr store every time (see that module's docstring). s2_mean_per_pixel is
+    ignored on the cached path -- a miss recomputes prepare_raw_features_for_year's
+    own expanding mean, which is what happens on every call anyway when ds_path is
+    omitted. Omitting ds_path (the default) leaves this function's behavior
+    unchanged from before the cache existed.
     """
     from sklearn.preprocessing import StandardScaler
 
@@ -211,17 +222,34 @@ def prepare_features_for_year(
     if scaler_mode not in valid_scaler_modes:
         raise ValueError(f"Invalid scaler_mode '{scaler_mode}'. Valid options: {sorted(valid_scaler_modes)}")
 
-    X_clean, y_clean = prepare_raw_features_for_year(
-        ds,
-        pixel_indices,
-        year_idx,
-        s2_mean_per_pixel=s2_mean_per_pixel,
-        dtype=dtype,
-        include_last_year=include_last_year,
-        include_monthly=include_monthly,
-        include_neighbourhood=include_neighbourhood,
-        impute_window=impute_window,
-    )
+    if ds_path is not None:
+        from src.mlp_replay.disk_feature_cache import get_or_compute_year_features
+
+        X_clean, y_clean = get_or_compute_year_features(
+            ds,
+            ds_path,
+            pixel_indices,
+            year_idx,
+            split_name=split_name,
+            dtype=dtype,
+            include_last_year=include_last_year,
+            include_monthly=include_monthly,
+            include_neighbourhood=include_neighbourhood,
+            impute_window=impute_window,
+            cache_root=cache_root,
+        )
+    else:
+        X_clean, y_clean = prepare_raw_features_for_year(
+            ds,
+            pixel_indices,
+            year_idx,
+            s2_mean_per_pixel=s2_mean_per_pixel,
+            dtype=dtype,
+            include_last_year=include_last_year,
+            include_monthly=include_monthly,
+            include_neighbourhood=include_neighbourhood,
+            impute_window=impute_window,
+        )
 
     if len(X_clean) == 0:
         return X_clean, y_clean, scaler
@@ -250,9 +278,47 @@ def prepare_features_for_year(
     return X_clean, y_clean, scaler
 
 
-def precompute_yearly_raw_cache(ds, pixel_indices, n_years, split_name, include_last_year=True, include_monthly=None, impute_window='expanding'):
+def precompute_yearly_raw_cache(
+    ds, pixel_indices, n_years, split_name, include_last_year=True, include_monthly=None,
+    impute_window='expanding', ds_path=None, cache_root=None,
+):
+    """See disk_feature_cache.py's docstring for what ds_path enables.
+
+    When ds_path is given, each year is fetched through the disk cache instead of
+    the running-sum expanding-mean optimization below -- that optimization only
+    ever pays for itself on a cold miss, which becomes rare once the cache is warm,
+    so it's dropped on this path in favor of a much simpler cache-then-recompute
+    call. Omitting ds_path (the default) leaves this function byte-for-byte
+    unchanged.
+    """
     cache = {}
     empty_years = 0
+
+    if ds_path is not None:
+        from src.mlp_replay.disk_feature_cache import get_or_compute_year_features
+
+        for year_idx in tqdm(range(1, n_years), desc=f'Precompute {split_name}'):
+            X_raw, y_raw = get_or_compute_year_features(
+                ds,
+                ds_path,
+                pixel_indices,
+                year_idx,
+                split_name=split_name,
+                dtype=np.float32,
+                include_last_year=include_last_year,
+                include_monthly=include_monthly,
+                impute_window=impute_window,
+                cache_root=cache_root,
+            )
+            cache[year_idx] = (X_raw, y_raw)
+            if len(y_raw) == 0:
+                empty_years += 1
+
+        print(
+            f"{split_name}: cached {len(cache)} years (disk-cache-backed), empty years={empty_years}, "
+            f"sample feature dim={next((x.shape[1] for x, y in cache.values() if len(y) > 0), 0)}"
+        )
+        return cache
 
     if impute_window == 'expanding':
         # Running sum/count of non-NaN S2 values, updated with only the newest

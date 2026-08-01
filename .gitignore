@@ -29,6 +29,7 @@ Thumbs.db
 
 synthetic_drift_data/
 old_notebooks/
+feature_cache_disk/
 
 to do.md
 # Model files (potentially large)
