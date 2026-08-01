@@ -7,6 +7,7 @@ from src.mlp_replay.checkpointing import (
     get_cached_raw_year,
     load_all_training_histories,
     load_completion_status,
+    per_ratio_path,
     save_all_training_histories,
     save_completion_status,
 )
@@ -104,6 +105,25 @@ def test_load_completion_status_backfills_missing_keys_from_disk(tmp_path):
     assert status["completed_ratios"] == ["RR_0.2"]
     assert status["completed_years"] == {}
     assert status["weight_policy_by_ratio"] == {}
+
+
+def test_per_ratio_path_inserts_ratio_key_before_extension(tmp_path):
+    base = tmp_path / "mlp_replay_all_training_histories.pkl"
+    assert per_ratio_path(base, "RR_0.2") == tmp_path / "mlp_replay_all_training_histories_RR_0.2.pkl"
+
+
+def test_per_ratio_path_preserves_existing_suffix_tokens(tmp_path):
+    # Some notebooks already bake a token into the base filename (e.g. a strategy
+    # name); per_ratio_path must not clobber it, just append the ratio before the extension.
+    base = tmp_path / "mlp_replay_completion_status_confidently_correct_memory.json"
+    result = per_ratio_path(base, "RR_0.4")
+    assert result == tmp_path / "mlp_replay_completion_status_confidently_correct_memory_RR_0.4.json"
+
+
+def test_per_ratio_path_different_ratios_do_not_collide(tmp_path):
+    base = tmp_path / "log.txt"
+    paths = {per_ratio_path(base, f"RR_{r:.1f}") for r in (0.2, 0.3, 0.4, 0.5)}
+    assert len(paths) == 4
 
 
 def test_append_training_log_writes_real_newlines(tmp_path):

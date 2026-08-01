@@ -1,4 +1,5 @@
 import pickle
+from pathlib import Path
 
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
@@ -7,6 +8,7 @@ from .checkpointing import (
     append_training_log,
     create_empty_training_history,
     get_cached_raw_year,
+    load_all_training_histories,
     save_all_training_histories,
     save_completion_status,
 )
@@ -148,6 +150,23 @@ def finalize_ratio_and_save(
 
     all_training_histories[ratio_key] = training_history.copy()
     save_all_training_histories(all_histories_file, all_training_histories)
+
+
+def merge_all_ratio_histories(checkpoint_dir, base_stem):
+    """Merge per-ratio history files back into one dict, for write_combined_history_csv.
+
+    Each replay-ratio process now loads/saves its own `{base_stem}_RR_<ratio>.pkl` (see
+    per_ratio_path in checkpointing.py) instead of one shared file, so nothing in memory
+    ever accumulates all ratios at once. This reads every such file back off disk and
+    merges them -- safe to call whether the ratios ran sequentially in one process or
+    each in its own parallel process, since it only depends on what's on disk.
+    """
+    merged = {}
+    for path in sorted(Path(checkpoint_dir).glob(f'{base_stem}_RR_*.pkl')):
+        histories = load_all_training_histories(path)
+        for ratio_key, history_dict in histories.items():
+            merged[ratio_key] = history_dict
+    return merged
 
 
 def write_combined_history_csv(all_training_histories, combined_history_path):

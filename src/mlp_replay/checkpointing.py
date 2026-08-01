@@ -84,6 +84,17 @@ def format_ratio_key(replay_ratio):
     return f'RR_{replay_ratio:.1f}'
 
 
+def per_ratio_path(base_path, ratio_key):
+    """Derive a ratio-scoped file path from a shared base path.
+
+    Lets 4 replay-ratio processes run concurrently without racing on the same
+    checkpoint/history/log file -- each ratio gets its own, named by inserting
+    ratio_key before the extension, so whatever suffix/token a notebook already
+    bakes into its base filename is preserved untouched.
+    """
+    return base_path.with_name(f'{base_path.stem}_{ratio_key}{base_path.suffix}')
+
+
 def get_cached_raw_year(cache, year_idx):
     if year_idx not in cache:
         return np.empty((0, 0), dtype=np.float32), np.empty((0,), dtype=np.int64)

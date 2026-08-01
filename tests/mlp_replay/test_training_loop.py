@@ -5,11 +5,16 @@ import pandas as pd
 import pytest
 from sklearn.preprocessing import StandardScaler
 
-from src.mlp_replay.checkpointing import create_empty_training_history
+from src.mlp_replay.checkpointing import (
+    create_empty_training_history,
+    per_ratio_path,
+    save_all_training_histories,
+)
 from src.mlp_replay.model import build_mlp_model
 from src.mlp_replay.training_loop import (
     finalize_ratio_and_save,
     load_year_batch_or_none,
+    merge_all_ratio_histories,
     resume_or_init_ratio_state,
     write_combined_history_csv,
 )
@@ -223,3 +228,43 @@ def test_write_combined_history_csv_no_data(tmp_path, capsys):
     write_combined_history_csv({}, combined_path)
     assert not combined_path.exists()
     assert "No history data" in capsys.readouterr().out
+
+
+def test_merge_all_ratio_histories_reads_per_ratio_files(tmp_path):
+    base = tmp_path / "mlp_replay_all_training_histories.pkl"
+
+    history_02 = {"year": [2001, 2002], "val_f1": [0.5, 0.6]}
+    history_03 = {"year": [2001, 2002], "val_f1": [0.55, 0.65]}
+    save_all_training_histories(per_ratio_path(base, "RR_0.2"), {"RR_0.2": history_02})
+    save_all_training_histories(per_ratio_path(base, "RR_0.3"), {"RR_0.3": history_03})
+
+    merged = merge_all_ratio_histories(tmp_path, base.stem)
+    assert merged == {"RR_0.2": history_02, "RR_0.3": history_03}
+
+
+def test_merge_all_ratio_histories_matches_shared_file_equivalent(tmp_path):
+    # A parallel run (per-ratio files) must produce the same merged dict a sequential
+    # run (one shared all_training_histories dict) would have held in memory.
+    base = tmp_path / "mlp_replay_all_training_histories.pkl"
+    shared_equivalent = {
+        "RR_0.2": {"year": [2001], "val_f1": [0.5]},
+        "RR_0.3": {"year": [2001], "val_f1": [0.55]},
+        "RR_0.4": {"year": [2001], "val_f1": [0.6]},
+        "RR_0.5": {"year": [2001], "val_f1": [0.65]},
+    }
+    for ratio_key, history in shared_equivalent.items():
+        save_all_training_histories(per_ratio_path(base, ratio_key), {ratio_key: history})
+
+    merged = merge_all_ratio_histories(tmp_path, base.stem)
+    assert merged == shared_equivalent
+
+    combined_from_merge = tmp_path / "combined_merged.csv"
+    combined_from_shared = tmp_path / "combined_shared.csv"
+    write_combined_history_csv(merged, combined_from_merge)
+    write_combined_history_csv(shared_equivalent, combined_from_shared)
+    assert combined_from_merge.read_text(encoding="utf-8") == combined_from_shared.read_text(encoding="utf-8")
+
+
+def test_merge_all_ratio_histories_empty_when_no_files(tmp_path):
+    base = tmp_path / "mlp_replay_all_training_histories.pkl"
+    assert merge_all_ratio_histories(tmp_path, base.stem) == {}
