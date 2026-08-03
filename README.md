@@ -61,7 +61,7 @@ Typical inputs used by notebooks include:
 Common generated artifacts consumed by downstream notebooks:
 
 - `data_split.npz`
-- `training_data.zarr`
+- `training_data.zarr` (+ `training_data.manifest.json`, its provenance record)
 - `training_data_enriched.zarr`
 - `training_data_with_features.zarr`
 - `training_data_with_features_plus_monthly_indices.zarr`
@@ -116,13 +116,33 @@ What this stage does:
 Key outputs:
 
 - `data_split.npz`
+- `training_data.manifest.json`
 - `training_data_with_features.zarr`
 - `training_data_with_features_plus_monthly_indices.zarr` (if monthly merge is run)
 
 Referenced helper modules:
 
 - `src/cube/prepare.py`
+- `src/cube/manifest.py`
 - `src/dataset/cubeloader.py`
+
+### Reproducibility of the pixel sample
+
+`data_split.npz`, the disk feature cache, and every result under `experiments/` address pixels
+by *position* along the `pixel` dimension. That contract holds only while the sampler produces
+the same pixels in the same order, so `Data-prep.ipynb` pins both:
+
+- pixel sampling is driven by a seeded generator (`RANDOM_SEED`), and pixels are emitted in a
+  sorted order rather than Python set-iteration order
+- `training_data.manifest.json` records the sampler configuration and a `pixel_identity_sha256`
+  digest of `(cube name, cube index, y, x)` for the population that was produced
+- the split cell recomputes that digest from the feature dataset, refuses to write a split if it
+  disagrees with the manifest, and stamps it into `data_split.npz`
+
+`src/cube/manifest.py` exposes the same checks to any other consumer —
+`verify_dataset_matches_manifest(ds, path)` and `verify_split_matches_dataset(split_path, ds)`
+both raise on a mismatch. A split written before this existed has no recorded digest;
+`read_split_hash` returns `None` for it, and it can only be regenerated, not verified.
 
 ## 2) Model Training
 

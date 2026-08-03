@@ -1,0 +1,25 @@
+{
+  "manifest_version": 1,
+  "created_at": "2026-08-03T14:16:17Z",
+  "dataset": "training_data.zarr",
+  "source_dataset": "full_dataset_resizedv2.zarr",
+  "pixel_identity_hash_version": "fonda-pixel-identity-v1",
+  "pixel_identity_sha256": "38c8d32300cda396519c585c12120494fe85424e90135de6c3eec11f30f9eeda",
+  "config": {
+    "random_seed": 42,
+    "neighbourhood_radius": 3,
+    "negatives_per_disturbed_pixel": 5,
+    "s2_topk_index": 0,
+    "test_mode": false,
+    "cube_filter": "keep cubes with at least one disturbance pixel in any year",
+    "pixel_filter": "forest pixels disturbed in any year, plus their neighbourhood window, plus random not-yet-sampled forest pixels",
+    "pixel_order": "cube index ascending, then (y, x) ascending within each cube"
+  },
+  "stats": {
+    "n_cubes_before_filter": 2216,
+    "n_cubes_after_filter": 1975,
+    "n_pixels": 8155205,
+    "n_years": 7,
+    "n_s2_bands": 7
+  }
+}
