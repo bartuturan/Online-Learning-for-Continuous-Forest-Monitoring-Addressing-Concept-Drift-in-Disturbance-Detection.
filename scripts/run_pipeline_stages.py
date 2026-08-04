@@ -753,9 +753,19 @@ def main(argv=None):
 
     if args.dry_run:
         print("\nExecution plan:")
+        done_ids = {s.id for s in STAGES if statuses[s.id].state == "DONE"}
+        blocked_ids = {s.id for s in STAGES if statuses[s.id].state == "BLOCKED"}
+        cancelled = resolve_cancelled(STAGES, blocked_ids, done_ids=done_ids)
         for s in selected:
             st = statuses[s.id]
-            action = "skip (DONE)" if st.state == "DONE" and not args.force else f"run ({s.runner})"
+            if st.state == "BLOCKED":
+                action = "skip (BLOCKED -- see above)"
+            elif s.id in cancelled:
+                action = "skip (CANCELLED -- depends on a BLOCKED stage)"
+            elif st.state == "DONE" and not args.force:
+                action = "skip (DONE)"
+            else:
+                action = f"run ({s.runner})"
             print(f"  {s.id:<42} {action}")
         return 0
 
