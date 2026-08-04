@@ -514,6 +514,14 @@ STAGES_BY_ID = {s.id: s for s in STAGES}
 # ---------------------------------------------------------------------------
 
 def compute_status(stage, root):
+    # Check completion FIRST. A stage whose output already exists (e.g. because
+    # a pre-built artifact was uploaded/symlinked directly, as dataprep_merge_monthly's
+    # output is on Kaggle) is DONE regardless of whether its raw *inputs* are present --
+    # those inputs are only needed to RUN the stage, and a DONE stage will never run.
+    status = stage.check(root, stage)
+    if status.state == "DONE":
+        return status
+
     missing_inputs = [p for p in stage.inputs if not (root / p).exists()]
     if missing_inputs:
         joined = ", ".join(missing_inputs)
@@ -522,7 +530,7 @@ def compute_status(stage, root):
             detail=f"missing input(s): {joined}",
             remedy=f"Ensure these exist under {root} before running this stage: {joined}",
         )
-    return stage.check(root, stage)
+    return status
 
 
 def select_stages(stages, only=None, groups=None, from_id=None, skip=None):
@@ -561,17 +569,23 @@ def select_stages(stages, only=None, groups=None, from_id=None, skip=None):
     return sorted(selected, key=lambda s: order[s.id])
 
 
-def resolve_cancelled(stages, seed_ids):
+def resolve_cancelled(stages, seed_ids, done_ids=frozenset()):
     """Every stage whose transitive `requires` closure touches seed_ids, excluding
     the seeds themselves. seed_ids is either "stages currently BLOCKED" (at listing
-    time) or "stages BLOCKED or FAILED so far this run" (at execution time)."""
-    seed_ids = set(seed_ids)
+    time) or "stages BLOCKED or FAILED so far this run" (at execution time).
+
+    done_ids stops propagation dead: a stage that's already DONE satisfies its
+    dependents regardless of what's further upstream of it (e.g. a pre-built
+    artifact was uploaded directly, so the stage that would normally regenerate
+    it is DONE even though ITS OWN raw inputs, further upstream, are BLOCKED --
+    that must not cancel everything downstream of the already-DONE stage)."""
+    seed_ids = set(seed_ids) - set(done_ids)
     cancelled = set(seed_ids)
     changed = True
     while changed:
         changed = False
         for s in stages:
-            if s.id in cancelled:
+            if s.id in cancelled or s.id in done_ids:
                 continue
             if any(dep in cancelled for dep in s.requires):
                 cancelled.add(s.id)
@@ -666,7 +680,8 @@ def print_status_table(stages, statuses, selected_ids, root):
             if st.remedy:
                 for line in st.remedy.splitlines():
                     print(f"    {line}")
-        cancelled = resolve_cancelled(stages, blocked_ids)
+        done_ids = {s.id for s in stages if statuses[s.id].state == "DONE"}
+        cancelled = resolve_cancelled(stages, blocked_ids, done_ids=done_ids)
         cancelled_selected = cancelled & set(selected_ids)
         if cancelled_selected:
             print(f"\n  Stages cancelled by the above (depend on a BLOCKED stage): {sorted(cancelled_selected)}")
@@ -747,6 +762,10 @@ def main(argv=None):
     log_dir = Path(args.log_dir) if args.log_dir else root / "pipeline_logs" / time.strftime("%Y%m%dT%H%M%S")
     log_dir.mkdir(parents=True, exist_ok=True)
 
+    # A DONE stage's own dependencies no longer matter (it already succeeded whenever
+    # they were last satisfied) -- used to stop cancellation propagating past it.
+    done_ids = {s.id for s in STAGES if statuses[s.id].state == "DONE"}
+
     cancelled = set()   # stages whose upstream is BLOCKED or has FAILED this run
     not_run = set()     # selected stages never attempted (time budget, or run stopped early)
     results = []        # (stage_id, ok, log_ref, duration) for stages actually executed
@@ -759,13 +778,16 @@ def main(argv=None):
 
         if stage.id in cancelled:
             continue
-        if any(dep in cancelled or statuses[dep].state == "BLOCKED" for dep in stage.requires):
-            cancelled |= {stage.id} | resolve_cancelled(STAGES, {stage.id})
+        if st.state != "DONE" and any(
+            dep not in done_ids and (dep in cancelled or statuses[dep].state == "BLOCKED")
+            for dep in stage.requires
+        ):
+            cancelled |= {stage.id} | resolve_cancelled(STAGES, {stage.id}, done_ids=done_ids)
             print(f"\n[{i}/{len(selected)}] {stage.id}: CANCELLED (depends on a BLOCKED or failed stage)")
             continue
         if st.state == "BLOCKED":
             print(f"\n[{i}/{len(selected)}] {stage.id}: BLOCKED -- see status table above, skipping")
-            cancelled |= resolve_cancelled(STAGES, {stage.id})
+            cancelled |= resolve_cancelled(STAGES, {stage.id}, done_ids=done_ids)
             continue
         if st.state == "DONE" and not args.force:
             print(f"\n[{i}/{len(selected)}] {stage.id}: already DONE, skipping")
@@ -804,7 +826,7 @@ def main(argv=None):
         print(f"[{i}/{len(selected)}] {stage.id}  {'OK' if ok else 'FAILED'}  {duration/3600:.1f}h")
 
         if not ok:
-            cancelled |= resolve_cancelled(STAGES, {stage.id})
+            cancelled |= resolve_cancelled(STAGES, {stage.id}, done_ids=done_ids)
             if args.on_failure == "stop":
                 print("--on-failure stop: halting run.")
                 stopped_early = True
