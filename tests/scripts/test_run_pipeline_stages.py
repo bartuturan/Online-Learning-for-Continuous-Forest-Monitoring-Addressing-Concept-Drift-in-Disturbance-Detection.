@@ -1,4 +1,5 @@
 import json
+import subprocess
 
 import pytest
 
@@ -7,6 +8,7 @@ from scripts.run_pipeline_stages import (
     Stage,
     artifacts_exist,
     auto_max_parallel,
+    git_commit_and_push,
     ratios_complete_per_ratio,
     ratios_complete_shared,
     resolve_cancelled,
@@ -254,3 +256,90 @@ def test_stage_table_is_well_formed():
             if isinstance(cell.cell_contents, str) and cell.cell_contents.endswith(".json"):
                 completion_paths.append(cell.cell_contents)
     assert len(completion_paths) == len(set(completion_paths)), "two stages share a completion file path"
+
+
+# ---------------------------------------------------------------------------
+# git_commit_and_push -- real local git repos (bare "origin" + working clone),
+# no network involved, so push success/failure is genuinely exercised.
+# ---------------------------------------------------------------------------
+
+def _run_git(*args, cwd):
+    return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
+
+
+def _init_repo_with_remote(tmp_path):
+    bare = tmp_path / "origin.git"
+    work = tmp_path / "work"
+    _run_git("init", "--bare", str(bare), cwd=tmp_path)
+    _run_git("clone", str(bare), str(work), cwd=tmp_path)
+    _run_git("config", "user.email", "test@example.com", cwd=work)
+    _run_git("config", "user.name", "Test", cwd=work)
+    (work / "README.md").write_text("init\n", encoding="utf-8")
+    _run_git("add", "README.md", cwd=work)
+    _run_git("commit", "-m", "initial commit", cwd=work)
+    _run_git("push", cwd=work)
+    return work
+
+
+def test_git_commit_and_push_no_experiments_dir(tmp_path, capsys):
+    # experiments/ doesn't exist at all yet -- must not error on `git add`
+    # (pathspec-did-not-match), just report nothing to commit.
+    work = _init_repo_with_remote(tmp_path)
+    log_before = _run_git("log", "--oneline", cwd=work).stdout
+
+    git_commit_and_push(work, "should not create a commit")
+
+    assert _run_git("log", "--oneline", cwd=work).stdout == log_before
+    assert "nothing to commit" in capsys.readouterr().out
+
+
+def test_git_commit_and_push_no_changes_within_experiments(tmp_path, capsys):
+    work = _init_repo_with_remote(tmp_path)
+    (work / "experiments").mkdir()
+    (work / "experiments" / "model.pkl").write_bytes(b"already committed")
+    _run_git("add", "experiments/", cwd=work)
+    _run_git("commit", "-m", "pre-existing", cwd=work)
+    log_before = _run_git("log", "--oneline", cwd=work).stdout
+
+    git_commit_and_push(work, "should not create a commit")
+
+    assert _run_git("log", "--oneline", cwd=work).stdout == log_before
+    assert "nothing new" in capsys.readouterr().out
+
+
+def test_git_commit_and_push_commits_and_pushes(tmp_path):
+    work = _init_repo_with_remote(tmp_path)
+    (work / "experiments").mkdir()
+    (work / "experiments" / "model.pkl").write_bytes(b"fake model bytes")
+
+    git_commit_and_push(work, "Pipeline: fake_stage OK")
+
+    log = _run_git("log", "--oneline", "-1", cwd=work).stdout
+    assert "Pipeline: fake_stage OK" in log
+
+    # Confirm it actually reached the remote, not just the local clone -- clone
+    # the bare "origin" fresh and check the file is there.
+    fresh = tmp_path / "fresh_clone"
+    _run_git("clone", str(tmp_path / "origin.git"), str(fresh), cwd=tmp_path)
+    assert (fresh / "experiments" / "model.pkl").read_bytes() == b"fake model bytes"
+
+
+def test_git_commit_and_push_survives_broken_remote(tmp_path, capsys):
+    # No remote configured at all -- `git push` fails, but the function must not raise.
+    work = tmp_path / "standalone"
+    _run_git("init", str(work), cwd=tmp_path)
+    _run_git("config", "user.email", "test@example.com", cwd=work)
+    _run_git("config", "user.name", "Test", cwd=work)
+    (work / "README.md").write_text("init\n", encoding="utf-8")
+    _run_git("add", "README.md", cwd=work)
+    _run_git("commit", "-m", "initial commit", cwd=work)
+
+    (work / "experiments").mkdir()
+    (work / "experiments" / "model.pkl").write_bytes(b"x")
+
+    git_commit_and_push(work, "Pipeline: fake_stage OK")  # must not raise
+
+    # The commit itself should still have succeeded locally even though push failed.
+    log = _run_git("log", "--oneline", "-1", cwd=work).stdout
+    assert "Pipeline: fake_stage OK" in log
+    assert "push" in capsys.readouterr().out.lower()

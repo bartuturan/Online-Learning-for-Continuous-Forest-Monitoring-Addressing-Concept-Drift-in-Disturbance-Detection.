@@ -35,6 +35,16 @@ comfortable. The rule that keeps it that way: anything a stage WRITES must be a
 real copy into /kaggle/working; anything a stage only READS may be a symlink
 into the read-only /kaggle/input (symlinks don't consume the quota).
 
+IMPORTANT -- /kaggle/working is wiped when a session ends; nothing survives
+unless it's pushed somewhere durable before that happens. Pass --git-push so
+the orchestrator commits and pushes experiments/ to the git remote after EVERY
+stage (not just at the end) -- that way a session dying mid-run only loses
+whatever was still in-flight, not everything trained so far. This needs the
+git remote's URL to already carry push credentials (e.g. a token embedded in
+the remote URL, set up once per session since kernel restarts don't persist
+`git remote set-url`), and a `user.email`/`user.name` configured -- both
+belong in your session-setup cell alongside cloning, not in this script.
+
 Session 1:
     !git clone --depth 1 --branch pipeline-rerun <repo-url> /kaggle/working/repo
     %cd /kaggle/working/repo
@@ -43,14 +53,14 @@ Session 1:
     import os
     os.environ['MLP_FEATURE_CACHE_DIR'] = '/kaggle/working/feature_cache_disk'
     !python -u scripts/run_pipeline_stages.py --list
-    !python -u scripts/run_pipeline_stages.py --group sgd mlp_baseline er_parallel er_sequential --time-budget 8.0
+    !python -u scripts/run_pipeline_stages.py --group sgd mlp_baseline er_parallel er_sequential --time-budget 8.0 --git-push
 
-Session N: identical, plus one cell before the run that carries the previous
-session's *committed* output forward -- symlink the dataset again, and
-copytree() experiments/ (dirs_exist_ok=True, since the fresh clone already has
-tracked files there) and feature_cache_disk/ from the previous session's output
-dataset. Then the same run command resumes: DONE stages are skipped, PARTIAL
-ones pick up mid-sweep.
+Session N: identical -- if --git-push was used, the fresh clone already has
+the previous session's trained artifacts (they're on the git remote now), so
+there's no separate copytree-forward step needed for experiments/. Only
+feature_cache_disk/ (never committed -- it's a disk cache, not an artifact)
+would need carrying forward from a prior session's saved output if you want to
+avoid recomputing it, though it will simply rebuild itself if you don't.
 
 Usage:
     python -u scripts/run_pipeline_stages.py --list
@@ -638,6 +648,52 @@ def run_sweep_stage(stage, root, log_dir, max_parallel, remaining_ratios):
     return ok, stage_log_dir
 
 
+def git_commit_and_push(root, message):
+    """Best-effort persistence after a stage finishes (success OR failure --
+    a failed stage can still have made real progress on disk, e.g. 2 of 4
+    ratios in a sweep completing before the 3rd OOMs). This exists specifically
+    for Kaggle, where /kaggle/working is wiped when the session ends and
+    nothing survives unless it's pushed somewhere durable. Never raises --
+    losing the ability to persist is far less bad than losing the actual
+    training progress by aborting the run over a git/network hiccup."""
+    import subprocess
+
+    def run(*args):
+        return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
+
+    try:
+        if not (root / "experiments").exists():
+            print("  (git-push) experiments/ doesn't exist yet, nothing to commit")
+            return
+
+        add = run("add", "experiments/")
+        if add.returncode != 0:
+            print(f"  (git-push) 'git add' failed, skipping this checkpoint: {add.stderr.strip()}")
+            return
+
+        # Nothing staged -> `diff --cached --quiet` exits 0. Skip the commit
+        # entirely rather than creating empty "nothing changed" commits.
+        if run("diff", "--cached", "--quiet").returncode == 0:
+            print("  (git-push) nothing new under experiments/ to commit")
+            return
+
+        commit = run("commit", "-m", message)
+        if commit.returncode != 0:
+            print(f"  (git-push) 'git commit' failed, skipping push: {commit.stderr.strip()}")
+            return
+
+        push = run("push")
+        if push.returncode != 0:
+            print(f"  (git-push) 'git push' failed -- committed locally but NOT pushed: {push.stderr.strip()}")
+            print("  (git-push) this commit will still be picked up if the session survives long enough "
+                  "to retry, but won't survive a session ending before a successful push.")
+            return
+
+        print(f"  (git-push) committed and pushed: {message}")
+    except Exception as exc:  # noqa: BLE001 -- deliberately broad, see docstring
+        print(f"  (git-push) unexpected error, continuing anyway: {exc}")
+
+
 # ---------------------------------------------------------------------------
 # Reporting
 # ---------------------------------------------------------------------------
@@ -728,6 +784,12 @@ def build_arg_parser():
     parser.add_argument("--on-failure", choices=("continue", "stop"), default="continue")
     parser.add_argument("--no-auto-downgrade", action="store_true",
                          help="Don't drop --max-parallel to 1 after a sweep stage MemoryErrors")
+    parser.add_argument("--git-push", action="store_true",
+                         help="Commit and push experiments/ after each stage (success or failure). "
+                              "Off by default -- meant for Kaggle, where /kaggle/working is wiped when "
+                              "the session ends and this is the only way progress survives. Requires "
+                              "push credentials already configured on the git remote (a token, etc.) --"
+                              " a push failure is logged but never aborts the run.")
     return parser
 
 
@@ -834,6 +896,11 @@ def main(argv=None):
         duration = time.monotonic() - stage_start
         results.append((stage.id, ok, log_ref, duration))
         print(f"[{i}/{len(selected)}] {stage.id}  {'OK' if ok else 'FAILED'}  {duration/3600:.1f}h")
+
+        if args.git_push:
+            # Push regardless of ok/failed -- a failed sweep can still have real,
+            # already-completed ratios on disk worth keeping (see docstring).
+            git_commit_and_push(root, f"Pipeline: {stage.id} {'OK' if ok else 'FAILED'}")
 
         if not ok:
             cancelled |= resolve_cancelled(STAGES, {stage.id}, done_ids=done_ids)
