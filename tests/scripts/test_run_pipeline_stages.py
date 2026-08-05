@@ -4,17 +4,24 @@ import subprocess
 import pytest
 
 from scripts.run_pipeline_stages import (
+    EVAL_PREREQ_STAGE_IDS,
+    EVAL_SUMMARY_REL,
+    PROJECT_ROOT,
     STAGES,
+    STAGES_BY_ID,
     Stage,
     artifacts_exist,
     auto_max_parallel,
     compute_status,
+    eval_unified_check,
     git_commit_and_push,
     ratios_complete_per_ratio,
     ratios_complete_shared,
     resolve_cancelled,
     select_stages,
     shared_check,
+    training_signature,
+    write_eval_state,
     zarr_has_vars,
 )
 from src.mlp_replay.checkpointing import (
@@ -306,12 +313,22 @@ def test_stage_table_is_well_formed():
         for dep in s.requires:
             assert dep in by_id, f"{s.id} requires unknown stage {dep}"
             assert order[dep] < order[s.id], f"{s.id} requires {dep}, which is declared later (not topological)"
+        assert s.runner in {"nbconvert", "ratio_sweep", "eval"}, f"{s.id} has unknown runner {s.runner}"
         if s.runner == "ratio_sweep":
             assert s.group == "er_parallel", f"{s.id} uses ratio_sweep but is in group {s.group}"
             assert s.ratios, f"{s.id} uses ratio_sweep but declares no ratios"
         assert s.group != "er_sequential" or s.runner != "ratio_sweep", (
             f"{s.id} is er_sequential but would run through the parallel launcher"
         )
+        # A typo'd notebook path only surfaces hours into a Kaggle session otherwise.
+        assert (PROJECT_ROOT / s.notebook).exists(), f"{s.id} points at a missing notebook: {s.notebook}"
+
+    # Every stage the evaluation declares as a prerequisite must actually exist,
+    # and the evaluation must not depend on itself.
+    for dep in EVAL_PREREQ_STAGE_IDS:
+        assert dep in by_id, f"EVAL_PREREQ_STAGE_IDS names unknown stage {dep}"
+    assert "eval_unified" not in EVAL_PREREQ_STAGE_IDS
+    assert set(STAGES_BY_ID["eval_unified"].requires) == set(EVAL_PREREQ_STAGE_IDS)
 
     completion_paths = []
     for s in STAGES:
@@ -414,3 +431,99 @@ def test_git_commit_and_push_survives_broken_remote(tmp_path, capsys):
     log = _run_git("log", "--oneline", "-1", cwd=work).stdout
     assert "Pipeline: fake_stage OK" in log
     assert "push" in capsys.readouterr().out.lower()
+
+
+# ---------------------------------------------------------------------------
+# Reservoir-sampling stages are excluded from default runs
+# ---------------------------------------------------------------------------
+
+RESERVOIR_STAGE_IDS = {s.id for s in STAGES if s.id.endswith("_reservoir")}
+
+
+def test_reservoir_stages_exist_but_are_not_default_selected():
+    assert len(RESERVOIR_STAGE_IDS) == 6, "expected exactly 6 reservoir-sampling stages"
+    selected = {s.id for s in select_stages(STAGES)}
+    assert not (selected & RESERVOIR_STAGE_IDS)
+
+
+def test_reservoir_stage_still_reachable_explicitly():
+    selected = select_stages(STAGES, only=["er_plain_reservoir"])
+    assert [s.id for s in selected] == ["er_plain_reservoir"]
+
+
+def test_no_reservoir_stage_is_an_eval_prerequisite():
+    # src/eval/families.py defines no reservoir families, so excluding these
+    # stages must not affect what the evaluation can compute.
+    assert not (set(EVAL_PREREQ_STAGE_IDS) & RESERVOIR_STAGE_IDS)
+
+
+# ---------------------------------------------------------------------------
+# eval_unified_check -- distinguishes "resume an interrupted evaluation" from
+# "the models changed, cached tables are stale".
+# ---------------------------------------------------------------------------
+
+def _eval_stage():
+    return STAGES_BY_ID["eval_unified"]
+
+
+def test_eval_check_todo_when_never_run(tmp_path):
+    status = eval_unified_check(tmp_path, _eval_stage())
+    assert status.state == "TODO"
+    assert status.note == ""  # no cached tables -> nothing to warn about
+
+
+def test_eval_check_done_when_state_complete_and_signature_matches(tmp_path):
+    write_eval_state(tmp_path, training_signature(tmp_path), "complete")
+    status = eval_unified_check(tmp_path, _eval_stage())
+    assert status.state == "DONE"
+
+
+def test_eval_check_partial_when_interrupted_mid_run(tmp_path):
+    # Same training state, but the evaluation didn't finish -> resume it,
+    # keeping the cached tables it already computed.
+    write_eval_state(tmp_path, training_signature(tmp_path), "in_progress")
+    status = eval_unified_check(tmp_path, _eval_stage())
+    assert status.state == "PARTIAL"
+    assert "resume" in status.detail
+
+
+def test_eval_check_stale_when_signature_differs(tmp_path):
+    summary = tmp_path / EVAL_SUMMARY_REL
+    summary.parent.mkdir(parents=True, exist_ok=True)
+    summary.write_text("table_type,metric,row_count\n", encoding="utf-8")
+
+    stale_signature = {"er_plain": {"state": "DONE", "remaining": []}}
+    write_eval_state(tmp_path, stale_signature, "complete")
+
+    status = eval_unified_check(tmp_path, _eval_stage())
+    assert status.state == "TODO"
+    assert "different training state" in status.note
+
+
+def test_eval_check_warns_when_tables_predate_the_orchestrator(tmp_path):
+    # Cached tables with no state file at all -- exactly the situation in this
+    # repo, where evaluation outputs predate the orchestrator entirely.
+    summary = tmp_path / EVAL_SUMMARY_REL
+    summary.parent.mkdir(parents=True, exist_ok=True)
+    summary.write_text("table_type,metric,row_count\n", encoding="utf-8")
+
+    status = eval_unified_check(tmp_path, _eval_stage())
+    assert status.state == "TODO"
+    assert "no state file" in status.note
+
+
+def test_training_signature_changes_when_a_prerequisite_completes(tmp_path):
+    before = training_signature(tmp_path)
+
+    # Make one prerequisite stage look DONE by creating its completion artifact.
+    completion_path = (
+        tmp_path / "experiments/mlp/experience_replay"
+                   "/training_checkpoints_mlp_missclassification_buffer"
+                   "/mlp_missclassification_buffer_completion_status.json"
+    )
+    completion_path.parent.mkdir(parents=True, exist_ok=True)
+    save_completion_status(completion_path, {"completed_ratios": ["RR_0.3"], "completed_years": {}})
+    after = training_signature(tmp_path)
+
+    assert before != after, "signature must change when training progress changes"
+    assert after["er_misclassification_buffer"]["state"] == "DONE"

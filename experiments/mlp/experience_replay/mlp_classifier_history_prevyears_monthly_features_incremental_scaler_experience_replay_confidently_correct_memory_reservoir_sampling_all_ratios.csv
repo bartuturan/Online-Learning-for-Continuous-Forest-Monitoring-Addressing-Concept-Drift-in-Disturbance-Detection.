@@ -1,0 +1,5 @@
+year,train_accuracy,train_precision,train_recall,train_f1,val_accuracy,val_precision,val_recall,val_f1,val_roc_auc,val_pr_auc,replay_pool_size,replay_target_size,replay_used_size,confidently_correct_target_size,confidently_correct_used_size,random_target_size,random_used_size,threshold_mean,weight_policy,year_positive_rate,replay_actual_positive_rate,replay_pool_positive_rate,current_class_weight_0,current_class_weight_1,replay_class_weight_0,replay_class_weight_1,replay_weight_fallback,ratio_key,replay_ratio
+2017,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,2,0,0,0,0,0,,post_sampling_replay_class_weights_v1,1.0,,,5.999999999999997,0.5454545454545455,,,no_replay,RR_0.2,0.2
+2017,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,3,0,0,0,0,0,,post_sampling_replay_class_weights_v1,1.0,,,5.999999999999997,0.5454545454545455,,,no_replay,RR_0.3,0.3
+2017,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,4,0,0,0,0,0,,post_sampling_replay_class_weights_v1,1.0,,,5.999999999999997,0.5454545454545455,,,no_replay,RR_0.4,0.4
+2017,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,5,0,0,0,0,0,,post_sampling_replay_class_weights_v1,1.0,,,5.999999999999997,0.5454545454545455,,,no_replay,RR_0.5,0.5

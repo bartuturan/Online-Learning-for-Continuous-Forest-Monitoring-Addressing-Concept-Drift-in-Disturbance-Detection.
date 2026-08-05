@@ -27,6 +27,12 @@ Thumbs.db
 *.csv
 *.zarr
 
+# ...but pipeline outputs under experiments/ are small (<1MB total) and ARE the
+# deliverable, so they must survive --git-push. Without this the evaluation
+# stage could never resume across Kaggle sessions -- every table it writes is a
+# CSV, and /kaggle/working is wiped when a session ends.
+!experiments/**/*.csv
+
 synthetic_drift_data/
 old_notebooks/
 feature_cache_disk/

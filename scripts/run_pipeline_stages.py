@@ -1,9 +1,9 @@
 """Stage-chaining orchestrator for the training pipeline (see the "Stage-chaining
 orchestrator for the training pipeline on Kaggle" plan for the full design writeup).
 
-Problem this solves: Kaggle sessions cap out around 9-12h, but the training stage
-(data prep + 5 SGD notebooks + the MLP baseline + all 13 experience-replay
-notebooks) takes far longer. Re-running this script in every new session runs
+Problem this solves: Kaggle sessions cap out around 9-12h, but the full pipeline
+(data prep + 5 SGD notebooks + the MLP baseline + the experience-replay notebooks
++ evaluation) takes far longer. Re-running this script in every new session runs
 only whatever isn't finished yet -- completion is derived entirely from the
 artifacts each notebook already writes (final model files, completion_status.json
 files, zarr variable presence), the same way src/eval/tables.py's
@@ -11,14 +11,23 @@ load_or_run_table and src/mlp_replay/checkpointing.py's completion_status.json
 already work. There is no separate orchestrator state file to fall out of sync
 with reality.
 
-Scope: data prep (3 notebooks), 5 SGD notebooks, the MLP baseline, and all 13
-experience-replay notebooks under notebooks/training/mlp/experience_replay/.
-Explicitly NOT covered: XGBoost (removed from the active pipeline in commit
-48ec425; only exists at old_notebooks/XGBoost.ipynb, which is gitignored -- the
-README's references to notebooks/training/xgboost/XGBoost.ipynb are stale), the
-2 SGD experience-replay notebooks (blocking input() resume prompt that fires
-exactly in the chaining case -- run those by hand), evaluation, and drift
-detection (separate stages, not this script).
+Order: data prep -> SGD -> MLP baseline -> experience replay -> evaluation.
+
+Scope: data prep (3 notebooks), 5 SGD notebooks, the MLP baseline, the 13
+experience-replay notebooks under notebooks/training/mlp/experience_replay/,
+and the unified evaluation (notebooks/evaluation/Evaluations.ipynb).
+
+Not selected by default (still runnable via --only): the 6 *_reservoir_sampling
+experience-replay stages, excluded by user decision -- src/eval/families.py
+defines 50 evaluation families and none are reservoir, so skipping them costs
+the evaluation nothing; and dataprep_lagged_monthly, whose output nothing reads.
+
+Explicitly NOT covered at all: XGBoost (removed from the active pipeline in
+commit 48ec425; only exists at old_notebooks/XGBoost.ipynb, which is gitignored
+-- the README's references to notebooks/training/xgboost/XGBoost.ipynb are
+stale), the 2 SGD experience-replay notebooks (blocking input() resume prompt
+that fires exactly in the chaining case -- run those by hand), the visualization
+notebooks, and drift detection.
 
 === Kaggle runbook ===
 
@@ -45,33 +54,40 @@ the remote URL, set up once per session since kernel restarts don't persist
 `git remote set-url`), and a `user.email`/`user.name` configured -- both
 belong in your session-setup cell alongside cloning, not in this script.
 
+kaggle/fonda_pipeline_runner.ipynb is the ready-made version of all of this --
+upload it once and Run All each session. The equivalent by hand:
+
 Session 1:
     !git clone --depth 1 --branch pipeline-rerun <repo-url> /kaggle/working/repo
     %cd /kaggle/working/repo
+    !pip install -q "zarr>=3" "scikit-learn>=1.7"   # Kaggle's images lag both
     # symlink the attached dataset in as the two files training_data_with_features_plus_monthly_indices.zarr
     # and data_split.npz (read-only source -- symlink, don't copy)
     import os
     os.environ['MLP_FEATURE_CACHE_DIR'] = '/kaggle/working/feature_cache_disk'
     !python -u scripts/run_pipeline_stages.py --list
-    !python -u scripts/run_pipeline_stages.py --group sgd mlp_baseline er_parallel er_sequential --time-budget 8.0 --git-push
+    !python -u scripts/run_pipeline_stages.py --time-budget 8.0 --git-push
 
-Session N: identical -- if --git-push was used, the fresh clone already has
-the previous session's trained artifacts (they're on the git remote now), so
-there's no separate copytree-forward step needed for experiments/. Only
-feature_cache_disk/ (never committed -- it's a disk cache, not an artifact)
-would need carrying forward from a prior session's saved output if you want to
-avoid recomputing it, though it will simply rebuild itself if you don't.
+Session N: identical, same command. --git-push means the fresh clone already
+has the previous session's trained artifacts (they're on the git remote), so
+nothing needs copying forward: DONE stages skip, PARTIAL ones resume mid-sweep,
+and an interrupted evaluation picks up from its cached tables. Only
+feature_cache_disk/ (never committed -- a disk cache, not an artifact) is lost
+between sessions, and it simply rebuilds itself.
 
 Usage:
     python -u scripts/run_pipeline_stages.py --list
     python -u scripts/run_pipeline_stages.py --dry-run
     python -u scripts/run_pipeline_stages.py --group sgd mlp_baseline
     python -u scripts/run_pipeline_stages.py --only er_hard_example_mining --max-parallel 4
+    python -u scripts/run_pipeline_stages.py --only eval_unified   # evaluation on its own
 """
 
 import argparse
 import difflib
 import json
+import os
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, replace
@@ -99,6 +115,28 @@ MONTHLY_INDEX_VARS = (
 
 BYTES_PER_REPLAY_PROCESS = int(5.5 * 1024 ** 3)
 DEFAULT_MAX_PARALLEL_FALLBACK = 2
+
+# Evaluation. src/eval/tables.py's load_or_run_table trusts ANY existing table
+# CSV and never recomputes it -- that's what makes an interrupted evaluation
+# resumable across sessions, but it also means retrained models are silently
+# ignored if stale tables are lying around. So the orchestrator records which
+# training state an evaluation was computed from, and clears the cached tables
+# when that state has changed. See eval_unified_check / run_eval_stage.
+EVAL_DIR_REL = "experiments/evaluation/eval_outputs/unified_eval"
+EVAL_SUMMARY_REL = f"{EVAL_DIR_REL}/summary_matrices/metric_matrix_overview.csv"
+EVAL_STATE_REL = f"{EVAL_DIR_REL}/orchestrator_eval_state.json"
+
+# Training stages whose models the evaluation reads. Deliberately excludes the
+# reservoir-sampling stages: src/eval/families.py defines 50 families and none
+# of them are reservoir, so those stages cannot affect evaluation output.
+EVAL_PREREQ_STAGE_IDS = (
+    "sgd_baseline", "sgd_prevyears", "sgd_prevyears_incr",
+    "sgd_prevyears_monthly", "sgd_prevyears_monthly_incr",
+    "mlp_baseline",
+    "er_plain", "er_target_positive_rate", "er_confidently_correct",
+    "er_hard_example_mining", "er_uncertainty_prioritization",
+    "er_misclassification_buffer", "er_combined",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -315,6 +353,70 @@ def er_combined_check(root, stage):
     return status
 
 
+def training_signature(root):
+    """Which training results an evaluation would be computed from: every
+    prerequisite stage's completion state, including exactly which ratios are
+    still outstanding. Comparing this against the signature stored beside the
+    eval outputs is what distinguishes 'resume an interrupted evaluation'
+    (same signature -> keep the cached tables) from 'the models changed under
+    us' (different signature -> the cached tables are stale)."""
+    signature = {}
+    for stage_id in EVAL_PREREQ_STAGE_IDS:
+        stage = STAGES_BY_ID[stage_id]
+        status = compute_status(stage, root)
+        signature[stage_id] = {
+            "state": status.state,
+            "remaining": [float(r) for r in status.remaining],
+        }
+    return signature
+
+
+def read_eval_state(root):
+    path = root / EVAL_STATE_REL
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError, UnicodeDecodeError):
+        return None  # unreadable state == no state; worst case we recompute
+
+
+def write_eval_state(root, signature, status):
+    path = root / EVAL_STATE_REL
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.parent / (path.name + ".tmp")
+    tmp.write_text(json.dumps({"status": status, "signature": signature}, indent=2, sort_keys=True),
+                    encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def eval_unified_check(root, stage):
+    current = training_signature(root)
+    state = read_eval_state(root)
+    stored = state.get("signature") if state else None
+    matches = stored == current
+
+    if state and state.get("status") == "complete" and matches:
+        return StageStatus("DONE", detail="evaluation complete for the current training state")
+
+    if state and state.get("status") == "in_progress" and matches:
+        return StageStatus(
+            "PARTIAL",
+            detail="evaluation was interrupted; will resume from its cached tables",
+        )
+
+    note = ""
+    if (root / EVAL_SUMMARY_REL).exists():
+        why = ("was not produced by this orchestrator (no state file)" if state is None
+               else "was computed from a different training state")
+        note = (
+            f"cached evaluation tables exist but the evaluation {why} -- they will be cleared "
+            f"and recomputed. src/eval/tables.py's load_or_run_table trusts any existing CSV, so "
+            f"reusing them would silently report results from the wrong models."
+        )
+    return StageStatus("TODO", detail="evaluation not yet run for the current training state", note=note)
+
+
 # ---------------------------------------------------------------------------
 # Stage table
 # ---------------------------------------------------------------------------
@@ -362,10 +464,17 @@ STAGES = (
     ),
 
     # --- SGD ---------------------------------------------------------------
+    #     Each declares the zarr it actually opens, so if one is ever re-run
+    #     (--force) somewhere that dataset isn't present it reports
+    #     BLOCKED-missing-input up front instead of dying mid-notebook. This is
+    #     live on Kaggle: only the _plus_monthly_indices store gets uploaded, so
+    #     the first three below could not actually retrain there. It never comes
+    #     up while they're DONE, since compute_status checks completion first.
     Stage(
         id="sgd_baseline", group="sgd",
         notebook="notebooks/training/sgd/SGD Classifier.ipynb",
         requires=("dataprep_base",),
+        inputs=("training_data_with_features.zarr", "data_split.npz"),
         check=artifacts_check("experiments/sgd/models/model_year_2022.pkl"),
         runner="nbconvert",
         notes="No resume logic -- a rerun retrains all 6 years (2017-2022) from scratch.",
@@ -374,6 +483,7 @@ STAGES = (
         id="sgd_prevyears", group="sgd",
         notebook="notebooks/training/sgd/SGD Classifier_prevyears.ipynb",
         requires=("dataprep_base",),
+        inputs=("training_data_with_features.zarr", "data_split.npz"),
         check=artifacts_check("experiments/sgd/models_lagged_features/model_year_2022_lagged_features.pkl"),
         runner="nbconvert",
         notes="No resume logic.",
@@ -382,6 +492,7 @@ STAGES = (
         id="sgd_prevyears_incr", group="sgd",
         notebook="notebooks/training/sgd/SGD Classifier_prevyears-incremental scaler.ipynb",
         requires=("dataprep_base",),
+        inputs=("training_data_with_features.zarr", "data_split.npz"),
         check=artifacts_check(
             "experiments/sgd/models_lagged_features_incremental_scaler/"
             "scaler_final_lagged_features_incremental_scaler.pkl"
@@ -393,6 +504,7 @@ STAGES = (
         id="sgd_prevyears_monthly", group="sgd",
         notebook="notebooks/training/sgd/SGD Classifier_prevyears and monthly features.ipynb",
         requires=("dataprep_merge_monthly",),
+        inputs=("training_data_with_features_plus_monthly_indices.zarr", "data_split.npz"),
         check=artifacts_check(
             "experiments/sgd/models_prevyears_monthly_features/model_year_2022_prevyears_monthly_features.pkl"
         ),
@@ -403,6 +515,7 @@ STAGES = (
         id="sgd_prevyears_monthly_incr", group="sgd",
         notebook="notebooks/training/sgd/SGD Classifier_prevyears and monthly features-incremental scaler.ipynb",
         requires=("dataprep_merge_monthly",),
+        inputs=("training_data_with_features_plus_monthly_indices.zarr", "data_split.npz"),
         check=artifacts_check(
             "experiments/sgd/models_prevyears_monthly_features_incremental_scaler/"
             "scaler_final_prevyears_monthly_features_incremental_scaler.pkl"
@@ -472,12 +585,19 @@ STAGES = (
     # --- experience replay: NOT refactored, shared completion file across
     #     ratios -- must run as a single sequential process each, never through
     #     the parallel launcher (would clobber each other's progress) ---------
+    #
+    #     The 6 *_reservoir_sampling stages below are default_selected=False:
+    #     excluded from normal runs by user decision, and NOT evaluated either
+    #     (src/eval/families.py defines 50 families, none of them reservoir), so
+    #     skipping them costs the evaluation stage nothing. Run one explicitly
+    #     with --only <id> if you ever want it back.
     Stage(
         id="er_plain_reservoir", group="er_sequential",
         notebook=f"{ER}/MLP-experience replay_reservoir_sampling.ipynb",
         requires=("dataprep_merge_monthly",), ratios=(0.2, 0.3, 0.4, 0.5),
         check=shared_check(f"{ERC}/training_checkpoints_mlp_experience_replay_reservoir_sampling/mlp_replay_completion_status.json"),
         runner="nbconvert",
+        default_selected=False,
     ),
     Stage(
         id="er_target_positive_rate_reservoir", group="er_sequential",
@@ -488,6 +608,7 @@ STAGES = (
             "mlp_replay_completion_status.json"
         ),
         runner="nbconvert",
+        default_selected=False,
         notes="Note the token order: _reservoir_sampling_PR_0.10 (token after, unlike its non-reservoir twin).",
     ),
     Stage(
@@ -499,6 +620,7 @@ STAGES = (
             "mlp_replay_completion_status_confidently_correct_memory.json"
         ),
         runner="nbconvert",
+        default_selected=False,
     ),
     Stage(
         id="er_hard_example_mining_reservoir", group="er_sequential",
@@ -509,6 +631,7 @@ STAGES = (
             "mlp_replay_completion_status_hard_example_mining.json"
         ),
         runner="nbconvert",
+        default_selected=False,
     ),
     Stage(
         id="er_uncertainty_prioritization_reservoir", group="er_sequential",
@@ -519,6 +642,7 @@ STAGES = (
             "mlp_replay_completion_status_uncertainity_prioritization.json"
         ),
         runner="nbconvert",
+        default_selected=False,
     ),
     Stage(
         id="er_misclassification_buffer", group="er_sequential",
@@ -540,6 +664,7 @@ STAGES = (
             "mlp_missclassification_buffer_completion_status.json"
         ),
         runner="nbconvert",
+        default_selected=False,
         notes="Single fixed ratio (0.3).",
     ),
     Stage(
@@ -552,6 +677,21 @@ STAGES = (
               "its completion filename encodes those fractions (HE/CC/UP/PR/MC/RWS), hardcoded "
               "here for the notebook's current default values. Writes to experiments/mlp/combined, "
               "not experiments/mlp/experience_replay.",
+    ),
+
+    # --- evaluation: runs last, over everything trained above ---------------
+    Stage(
+        id="eval_unified", group="evaluation",
+        notebook="notebooks/evaluation/Evaluations.ipynb",
+        requires=EVAL_PREREQ_STAGE_IDS,
+        inputs=("training_data_with_features_plus_monthly_indices.zarr", "data_split.npz"),
+        check=eval_unified_check,
+        runner="eval",
+        notes="Evaluates all 50 families in src/eval/families.py. Declares every training stage "
+              "it reads as `requires`, so a training failure cancels it rather than letting it "
+              "evaluate half-trained models. Internally resumable per table (load_or_run_table), "
+              "and run_eval_stage clears those cached tables when the training state they were "
+              "computed from has changed.",
     ),
 )
 
@@ -670,8 +810,6 @@ def run_nbconvert_stage(stage, root, log_dir):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     log_path = log_dir / f"{stage.id}.log"
 
-    import os
-    import subprocess
     env = {**os.environ, **SINGLE_THREAD_BLAS_ENV}
     with open(log_path, "w", encoding="utf-8") as log_file:
         result = subprocess.run(
@@ -687,6 +825,34 @@ def run_sweep_stage(stage, root, log_dir, max_parallel, remaining_ratios):
     return ok, stage_log_dir
 
 
+def run_eval_stage(stage, root, log_dir):
+    """Wraps run_nbconvert_stage with the cached-table lifecycle the evaluation
+    notebook can't manage itself: load_or_run_table never recomputes an existing
+    CSV, so tables left over from a DIFFERENT training state must be cleared
+    first or the run silently reports results for the wrong models. Tables from
+    the SAME training state are kept -- that's what makes an evaluation
+    interrupted by a session boundary resumable."""
+    current = training_signature(root)
+    state = read_eval_state(root)
+    resuming = bool(state and state.get("signature") == current)
+
+    eval_dir = root / EVAL_DIR_REL
+    if resuming:
+        print("  resuming evaluation -- keeping cached tables from the same training state")
+    elif eval_dir.exists():
+        stale = sorted(eval_dir.rglob("*.csv"))
+        for path in stale:
+            path.unlink()
+        print(f"  cleared {len(stale)} stale evaluation table(s) computed from a different "
+              f"training state (recoverable from git history if needed)")
+
+    write_eval_state(root, current, "in_progress")
+    ok, log_path = run_nbconvert_stage(stage, root, log_dir)
+    if ok:
+        write_eval_state(root, current, "complete")
+    return ok, log_path
+
+
 def git_commit_and_push(root, message):
     """Best-effort persistence after a stage finishes (success OR failure --
     a failed stage can still have made real progress on disk, e.g. 2 of 4
@@ -695,7 +861,6 @@ def git_commit_and_push(root, message):
     nothing survives unless it's pushed somewhere durable. Never raises --
     losing the ability to persist is far less bad than losing the actual
     training progress by aborting the run over a git/network hiccup."""
-    import subprocess
 
     def run(*args):
         return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
@@ -929,6 +1094,8 @@ def main(argv=None):
                 if any("MemoryError" in "\n".join(_tail(p, 200)) for p in logs):
                     downgraded = True
                     print("  (!) MemoryError detected -- downgrading max-parallel to 1 for remaining sweep stages")
+        elif stage.runner == "eval":
+            ok, log_ref = run_eval_stage(stage, root, log_dir)
         else:
             ok, log_ref = run_nbconvert_stage(stage, root, log_dir)
 
