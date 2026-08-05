@@ -195,8 +195,42 @@ def zarr_has_vars(root, rel_store, required_vars):
     )
 
 
+def _corrupt_status(path, exc):
+    """A checkpoint file exists but can't be parsed -- most likely a crash
+    mid-write from before checkpointing.py's saves were made atomic (see
+    save_completion_status/save_all_training_histories). BLOCKED, not a crash:
+    a single unreadable file must never take down status-checking for every
+    other stage (previously it would have, since compute_status is called in
+    one unguarded dict comprehension over all STAGES)."""
+    return StageStatus(
+        "BLOCKED",
+        detail=f"checkpoint file exists but is corrupted/unreadable: {path} "
+               f"({exc.__class__.__name__}: {exc})",
+        remedy=(
+            f"This file can't be parsed as JSON -- likely a crash mid-write. Check git history "
+            f"for a clean version:\n"
+            f'  git log --oneline -- "{path}"\n'
+            f"Restore a good commit if one exists:\n"
+            f'  git show <commit>:"{path}" > "{path}"\n'
+            f"Or delete it and let this ratio retrain from scratch:\n"
+            f'  rm "{path}"'
+        ),
+    )
+
+
+def _load_completion_status_safe(path, **kwargs):
+    """load_completion_status, but a decode failure becomes a (None, StageStatus)
+    pair instead of propagating -- see _corrupt_status for why."""
+    try:
+        return load_completion_status(path, **kwargs), None
+    except (json.JSONDecodeError, OSError, UnicodeDecodeError) as exc:
+        return None, _corrupt_status(path, exc)
+
+
 def ratios_complete_shared(root, rel_json, ratios):
-    status = load_completion_status(root / rel_json)
+    status, corrupt = _load_completion_status_safe(root / rel_json)
+    if corrupt is not None:
+        return corrupt
     completed = set(status.get("completed_ratios", []))
     keys = [format_ratio_key(r) for r in ratios]
     missing = [r for r, k in zip(ratios, keys) if k not in completed]
@@ -213,7 +247,9 @@ def ratios_complete_per_ratio(root, rel_json_base, ratios):
     missing, done = [], []
     for r in ratios:
         key = format_ratio_key(r)
-        status = load_completion_status(per_ratio_path(base, key))
+        status, corrupt = _load_completion_status_safe(per_ratio_path(base, key))
+        if corrupt is not None:
+            return corrupt
         (done if key in status.get("completed_ratios", []) else missing).append(r)
 
     note = ""
@@ -222,7 +258,10 @@ def ratios_complete_per_ratio(root, rel_json_base, ratios):
         # the refactored notebook only ever reads its own per-ratio files, so a
         # legacy shared file claiming completion is silently ignored by the
         # notebook itself -- surface that here so a TODO doesn't look like a bug.
-        legacy_completed = set(load_completion_status(base).get("completed_ratios", []))
+        # Purely advisory: if THIS file is unreadable, just skip the note rather
+        # than blocking the stage over a file nothing actually depends on.
+        legacy_status, legacy_corrupt = _load_completion_status_safe(base)
+        legacy_completed = set(legacy_status.get("completed_ratios", [])) if legacy_corrupt is None else set()
         if legacy_completed:
             note = (
                 f"legacy shared completion file lists {sorted(legacy_completed)} as done, but the "

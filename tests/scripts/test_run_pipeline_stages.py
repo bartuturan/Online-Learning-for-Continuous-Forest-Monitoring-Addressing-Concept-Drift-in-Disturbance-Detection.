@@ -8,11 +8,13 @@ from scripts.run_pipeline_stages import (
     Stage,
     artifacts_exist,
     auto_max_parallel,
+    compute_status,
     git_commit_and_push,
     ratios_complete_per_ratio,
     ratios_complete_shared,
     resolve_cancelled,
     select_stages,
+    shared_check,
     zarr_has_vars,
 )
 from src.mlp_replay.checkpointing import (
@@ -141,6 +143,75 @@ def test_ratios_complete_per_ratio_ignores_legacy_shared_file(tmp_path):
     assert status.remaining == (0.2, 0.3)
     assert "legacy" in status.note
     assert "RR_0.2" in status.note
+
+
+# ---------------------------------------------------------------------------
+# Corrupted checkpoint files -- a single unreadable file must report a clear,
+# actionable status rather than crashing the whole status check (previously
+# it would have: main() computes every stage's status in one unguarded dict
+# comprehension, so an uncaught exception from any one stage killed --list
+# entirely, telling you nothing about the other 21 stages).
+# ---------------------------------------------------------------------------
+
+def test_ratios_complete_shared_corrupted_file_is_blocked_not_raised(tmp_path):
+    rel = "status.json"
+    (tmp_path / rel).write_text("{not valid json", encoding="utf-8")
+
+    status = ratios_complete_shared(tmp_path, rel, (0.2, 0.3))
+
+    assert status.state == "BLOCKED"
+    assert "corrupted" in status.detail
+    assert str(tmp_path / rel) in status.detail
+    assert "git log" in status.remedy
+
+
+def test_ratios_complete_per_ratio_corrupted_file_is_blocked_not_raised(tmp_path):
+    base = tmp_path / "mlp_replay_completion_status.json"
+    good_path = per_ratio_path(base, format_ratio_key(0.2))
+    bad_path = per_ratio_path(base, format_ratio_key(0.3))
+    save_completion_status(good_path, {"completed_ratios": ["RR_0.2"], "completed_years": {}})
+    bad_path.write_text("{not valid json", encoding="utf-8")
+
+    status = ratios_complete_per_ratio(tmp_path, "mlp_replay_completion_status.json", (0.2, 0.3))
+
+    assert status.state == "BLOCKED"
+    assert str(bad_path) in status.detail
+
+
+def test_ratios_complete_per_ratio_corrupted_legacy_file_is_advisory_only(tmp_path):
+    # The legacy-file check is purely informational (a "note"); a corrupted
+    # legacy file must not block a stage whose real (per-ratio) files are fine.
+    base = tmp_path / "mlp_replay_completion_status.json"
+    base.write_text("{not valid json", encoding="utf-8")
+    save_completion_status(per_ratio_path(base, format_ratio_key(0.2)),
+                            {"completed_ratios": ["RR_0.2"], "completed_years": {}})
+
+    status = ratios_complete_per_ratio(tmp_path, "mlp_replay_completion_status.json", (0.2,))
+
+    assert status.state == "DONE"
+    assert status.note == ""
+
+
+def test_one_corrupted_stage_does_not_block_computing_others(tmp_path):
+    # Mirrors main()'s `{s.id: compute_status(s, root) for s in STAGES}` --
+    # a corrupted file for one stage must not raise and take the whole
+    # comprehension down with it.
+    healthy_rel = "healthy_status.json"
+    save_completion_status(tmp_path / healthy_rel, {"completed_ratios": ["RR_0.5"], "completed_years": {}})
+    corrupt_rel = "corrupt_status.json"
+    (tmp_path / corrupt_rel).write_text("{not valid json", encoding="utf-8")
+
+    stages = [
+        Stage(id="healthy", group="g", notebook="a.ipynb", runner="nbconvert",
+              ratios=(0.5,), check=shared_check(healthy_rel)),
+        Stage(id="corrupt", group="g", notebook="b.ipynb", runner="nbconvert",
+              ratios=(0.5,), check=shared_check(corrupt_rel)),
+    ]
+
+    statuses = {s.id: compute_status(s, tmp_path) for s in stages}  # must not raise
+
+    assert statuses["healthy"].state == "DONE"
+    assert statuses["corrupt"].state == "BLOCKED"
 
 
 # ---------------------------------------------------------------------------

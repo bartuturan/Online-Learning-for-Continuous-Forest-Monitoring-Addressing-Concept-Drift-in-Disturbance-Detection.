@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from src.mlp_replay.checkpointing import (
     append_training_log,
@@ -136,3 +137,60 @@ def test_append_training_log_writes_real_newlines(tmp_path):
     assert content.count(chr(10)) == 2  # two real newlines
     assert "first entry" in content
     assert "second entry" in content
+
+
+# ---------------------------------------------------------------------------
+# Atomic writes -- save_completion_status / save_all_training_histories must
+# never leave the real path half-written if interrupted mid-save.
+# ---------------------------------------------------------------------------
+
+def test_save_completion_status_leaves_no_tmp_file_on_success(tmp_path):
+    path = tmp_path / "status.json"
+    save_completion_status(path, {"completed_ratios": ["RR_0.2"], "completed_years": {"RR_0.2": [2017]}})
+
+    assert path.exists()
+    assert not (tmp_path / "status.json.tmp").exists()
+    assert load_completion_status(path)["completed_ratios"] == ["RR_0.2"]
+
+
+def test_save_all_training_histories_leaves_no_tmp_file_on_success(tmp_path):
+    path = tmp_path / "histories.pkl"
+    save_all_training_histories(path, {"RR_0.2": create_empty_training_history()})
+
+    assert path.exists()
+    assert not (tmp_path / "histories.pkl.tmp").exists()
+    assert "RR_0.2" in load_all_training_histories(path)
+
+
+def test_save_completion_status_failed_write_does_not_touch_existing_good_file(tmp_path, monkeypatch):
+    path = tmp_path / "status.json"
+    save_completion_status(path, {"completed_ratios": ["RR_0.2"], "completed_years": {}})
+    good_content = path.read_bytes()
+
+    def _boom(*args, **kwargs):
+        raise RuntimeError("simulated crash mid-write")
+
+    monkeypatch.setattr("json.dump", _boom)
+    with pytest.raises(RuntimeError):
+        save_completion_status(path, {"completed_ratios": ["RR_0.2", "RR_0.3"], "completed_years": {}})
+
+    # The real file must be untouched -- only the .tmp file (if anything) can
+    # have been affected by the interrupted write.
+    assert path.read_bytes() == good_content
+    assert load_completion_status(path)["completed_ratios"] == ["RR_0.2"]
+
+
+def test_save_all_training_histories_failed_write_does_not_touch_existing_good_file(tmp_path, monkeypatch):
+    path = tmp_path / "histories.pkl"
+    save_all_training_histories(path, {"RR_0.2": create_empty_training_history()})
+    good_content = path.read_bytes()
+
+    def _boom(*args, **kwargs):
+        raise RuntimeError("simulated crash mid-write")
+
+    monkeypatch.setattr("pickle.dump", _boom)
+    with pytest.raises(RuntimeError):
+        save_all_training_histories(path, {"RR_0.2": create_empty_training_history(), "RR_0.3": create_empty_training_history()})
+
+    assert path.read_bytes() == good_content
+    assert set(load_all_training_histories(path).keys()) == {"RR_0.2"}

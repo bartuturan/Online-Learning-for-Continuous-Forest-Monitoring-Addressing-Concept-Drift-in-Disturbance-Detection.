@@ -1,4 +1,5 @@
 import json
+import os
 import pickle
 from datetime import datetime
 
@@ -39,8 +40,13 @@ def load_all_training_histories(path):
 
 
 def save_all_training_histories(path, all_histories):
-    with open(path, 'wb') as f:
+    # Write to a temp file and rename into place -- os.replace is atomic, so a
+    # crash mid-write (e.g. the MemoryErrors this pipeline has actually hit)
+    # can only ever leave the .tmp file half-written, never the real path.
+    tmp_path = path.parent / (path.name + '.tmp')
+    with open(tmp_path, 'wb') as f:
         pickle.dump(all_histories, f)
+    os.replace(tmp_path, path)
 
 
 def load_completion_status(path, extra_default_keys=None):
@@ -70,8 +76,10 @@ def save_completion_status(path, status):
         cleaned_completed_years[key] = sorted(list(set(int(y) for y in years)))
     status['completed_years'] = cleaned_completed_years
 
-    with open(path, 'w', encoding='utf-8') as f:
+    tmp_path = path.parent / (path.name + '.tmp')
+    with open(tmp_path, 'w', encoding='utf-8') as f:
         json.dump(status, f, indent=2)
+    os.replace(tmp_path, path)
 
 
 def append_training_log(path, message):

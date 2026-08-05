@@ -39,6 +39,12 @@ notebooks/**/*__merge_verify.ipynb
 pipeline_logs/
 replay_sweep_logs/
 
+# Transient files from checkpointing.py's atomic-write pattern (write-then-
+# os.replace). Under normal operation these never outlive a single save call,
+# but this guards the vanishingly small crash window between finishing the
+# write and the rename, so a leftover .tmp can never get committed.
+experiments/**/*.tmp
+
 to do.md
 # Model files (potentially large)
 # Uncomment if you want to exclude model files:
