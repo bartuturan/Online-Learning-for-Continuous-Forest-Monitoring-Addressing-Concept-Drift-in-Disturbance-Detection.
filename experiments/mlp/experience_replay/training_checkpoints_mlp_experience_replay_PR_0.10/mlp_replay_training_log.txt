@@ -20,3 +20,13 @@
 [2026-06-17 21:48:34] [RR_0.4] completed year 2021 with replay_used=2234742/22336618, replay_pos_rate=0.1000, year_pos_rate=0.0152, replay_pool_pos_rate=0.0195, current_w0=0.5077, current_w1=32.8476, replay_w0=0.5556, replay_w1=5.0000, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
 [2026-06-17 21:55:58] [RR_0.4] completed year 2022 with replay_used=2236832/27923473, replay_pos_rate=0.1000, year_pos_rate=0.0306, replay_pool_pos_rate=0.0186, current_w0=0.5158, current_w1=16.3139, replay_w0=0.5556, replay_w1=5.0000, replay_weight_fallback=balanced, current_effective_mean_weight=1.0000, replay_effective_mean_weight=1.0000.
 [2026-06-17 21:55:58] [RR_0.4] marked as fully completed.
+[2026-08-06 13:43:01] Started training run for ratios: [0.2]
+[2026-08-06 13:43:01] Started training run for ratios: [0.3]
+[2026-08-06 13:57:07] Training run completed.
+[2026-08-06 14:00:12] Training run completed.
+[2026-08-06 14:00:39] Started training run for ratios: [0.4]
+[2026-08-06 14:00:39] Started training run for ratios: [0.5]
+[2026-08-06 14:19:38] Training run completed.
+[2026-08-06 14:20:30] Training run completed.
+[2026-08-06 14:21:07] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-08-06 14:21:07] Training run completed.

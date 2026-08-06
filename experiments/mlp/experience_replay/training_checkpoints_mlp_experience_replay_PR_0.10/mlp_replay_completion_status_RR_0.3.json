@@ -1,0 +1,23 @@
+{
+  "completed_ratios": [
+    "RR_0.3"
+  ],
+  "completed_years": {
+    "RR_0.3": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022
+    ]
+  },
+  "weight_policy_by_ratio": {
+    "RR_0.3": {
+      "weight_policy": "post_sampling_replay_class_weights_v1",
+      "replay_weight_fallback": "smoothed_single_class",
+      "target_positive_rate": 0.1,
+      "weight_source": "current_year_and_post_sampling_replay"
+    }
+  }
+}
