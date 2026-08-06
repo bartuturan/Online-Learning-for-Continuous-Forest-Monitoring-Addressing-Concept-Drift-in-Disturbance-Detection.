@@ -1,0 +1,8 @@
+[2026-08-06 15:57:57] [RR_0.5] completed year 2017 with replay_used=0/0, uncertain=0, random=0, gaussian_std=0.03.
+[2026-08-06 16:01:46] [RR_0.5] completed year 2018 with replay_used=2793381/5575527, uncertain=1117352, random=1676029, gaussian_std=0.03.
+[2026-08-06 16:04:25] [RR_0.5] completed year 2019 with replay_used=2793350/11162289, uncertain=1117340, random=1676010, gaussian_std=0.03.
+[2026-08-06 16:07:07] [RR_0.5] completed year 2020 with replay_used=2793681/16748990, uncertain=1117472, random=1676209, gaussian_std=0.03.
+[2026-08-06 16:09:04] [RR_0.5] completed year 2021 with replay_used=2793415/22336353, uncertain=1117366, random=1676049, gaussian_std=0.03.
+[2026-08-06 16:13:07] [RR_0.5] completed year 2022 with replay_used=2796058/27923184, uncertain=1118423, random=1677635, gaussian_std=0.03.
+[2026-08-06 16:13:07] [RR_0.5] marked as fully completed.
+[2026-08-06 16:15:26] [RR_0.5] skipped (already completed).
