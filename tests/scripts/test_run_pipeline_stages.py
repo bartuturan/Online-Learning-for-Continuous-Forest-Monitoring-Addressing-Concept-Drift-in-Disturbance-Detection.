@@ -4,8 +4,12 @@ import subprocess
 import pytest
 
 from scripts.run_pipeline_stages import (
+    COMBINED_STRATEGY_CONFIGS,
+    COMBINED_STRATEGY_STAGES,
+    DEFAULT_COMBINED_STRATEGY_PARAMS,
     EVAL_PREREQ_STAGE_IDS,
     EVAL_SUMMARY_REL,
+    KNOWN_COMBINED_STRATEGY_FILES,
     PROJECT_ROOT,
     STAGES,
     STAGES_BY_ID,
@@ -13,6 +17,7 @@ from scripts.run_pipeline_stages import (
     artifacts_exist,
     BYTES_PER_REPLAY_PROCESS,
     auto_max_parallel,
+    combined_strategy_check,
     compute_status,
     eval_unified_check,
     git_commit_and_push,
@@ -28,6 +33,7 @@ from scripts.run_pipeline_stages import (
     zarr_has_vars,
 )
 from src.mlp_replay.checkpointing import (
+    format_combined_run_key,
     format_ratio_key,
     per_ratio_path,
     save_completion_status,
@@ -225,6 +231,108 @@ def test_one_corrupted_stage_does_not_block_computing_others(tmp_path):
 
 
 # ---------------------------------------------------------------------------
+# combined_strategy_check / COMBINED_STRATEGY_STAGES
+#
+# er_combined's notebook writes a COMPOSITE key into completed_ratios (ratio +
+# the 6-hyperparameter suffix + '_RR=<ratio>'), unlike every other replay stage's
+# bare ratio key -- shared_check/ratios_complete_shared assume the bare key and
+# so could never detect a genuinely completed run. combined_strategy_check exists
+# to compute the exact key the notebook actually writes instead.
+# ---------------------------------------------------------------------------
+
+def test_combined_strategy_check_done_only_with_the_exact_composite_key(tmp_path):
+    rel_json = "combo.json"
+    check = combined_strategy_check(
+        rel_json, 0.5, 0.0, 0.2, 0.1, (0.2, 10), 0.0, 1.0, known_files=(),
+    )
+
+    # Never run: file doesn't exist at all.
+    assert check(tmp_path, None).state == "TODO"
+
+    # The bug this exists to fix: a file containing only the BARE ratio key
+    # (what every other notebook writes, and what the broken check tested for)
+    # must NOT be mistaken for done.
+    save_completion_status(tmp_path / rel_json, {"completed_ratios": [format_ratio_key(0.5)]})
+    assert check(tmp_path, None).state == "TODO"
+
+    # The actual composite key the notebook writes -- this is what DONE requires.
+    expected_key = format_combined_run_key(0.5, 0.0, 0.2, 0.1, (0.2, 10), 0.0, 1.0)
+    save_completion_status(tmp_path / rel_json, {"completed_ratios": [expected_key]})
+    status = check(tmp_path, None)
+    assert status.state == "DONE"
+    assert rel_json in status.detail
+
+
+def test_combined_strategy_check_corrupted_file_is_blocked_not_raised(tmp_path):
+    rel_json = "combo.json"
+    (tmp_path / rel_json).write_text("{not json", encoding="utf-8")
+    check = combined_strategy_check(rel_json, 0.5, 0.0, 0.2, 0.1, (0.2, 10), 0.0, 1.0, known_files=())
+    assert check(tmp_path, None).state == "BLOCKED"
+
+
+def test_combined_strategy_check_notes_untracked_sibling_files(tmp_path):
+    combined_dir = tmp_path / "experiments/mlp/combined/training_checkpoints_mlp_experience_replay_combined"
+    combined_dir.mkdir(parents=True)
+    tracked = combined_dir / "mlp_replay_completion_status_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_MC=0_RWS=1.json"
+    stray = combined_dir / "mlp_replay_completion_status_combined_HE=0.9_CC=0_UP=0_PR=(0,10)_MC=0_RWS=1.json"
+    tracked.write_text("{}", encoding="utf-8")
+    stray.write_text("{}", encoding="utf-8")
+
+    rel_json = str(tracked.relative_to(tmp_path)).replace("\\", "/")
+    check = combined_strategy_check(
+        rel_json, 0.5, 0.0, 0.2, 0.1, (0.2, 10), 0.0, 1.0, known_files=(rel_json,),
+    )
+    status = check(tmp_path, None)
+    assert stray.name in status.note
+    assert tracked.name not in status.note
+
+
+def test_combined_strategy_stages_are_unique_and_distinct_from_the_default():
+    ids = [s.id for s in COMBINED_STRATEGY_STAGES]
+    assert len(ids) == len(COMBINED_STRATEGY_CONFIGS)
+    assert len(ids) == len(set(ids))
+    assert "er_combined" not in ids  # the default stage stays hand-written, not generated
+
+    for stage in COMBINED_STRATEGY_STAGES:
+        assert stage.group == "combined_strategies"
+        assert stage.default_selected is False
+        assert stage.runner == "nbconvert"
+        assert len(stage.ratios) == 1
+
+
+def test_combined_strategy_config_sums_satisfy_the_notebook_validation_guard():
+    """MLP_experience_replay_combined.ipynb raises ValueError if HARD_EXAMPLE +
+    CONFIDENTLY_CORRECT + UNCERTAINITY_PRIORITIZATION + PR_buffer_fraction +
+    MISCLASSIFICATION_BUFFER > ratio. A future edit to COMBINED_STRATEGY_CONFIGS
+    that violates this would crash the notebook hours into a Kaggle run instead
+    of failing here in milliseconds."""
+    for cfg in (DEFAULT_COMBINED_STRATEGY_PARAMS, *COMBINED_STRATEGY_CONFIGS):
+        pr_buffer_fraction = cfg["positive_rate"][0]
+        total = (
+            cfg["hard_example"] + cfg["confidently_correct"] + cfg["uncertainty_prioritization"]
+            + pr_buffer_fraction + cfg["misclassification_buffer"]
+        )
+        assert total <= cfg["ratio"] + 1e-12, cfg
+
+
+def test_combined_strategy_env_override_round_trips_through_json():
+    for stage in COMBINED_STRATEGY_STAGES:
+        cfg = json.loads(stage.env_override["MLP_COMBINED_CONFIG_OVERRIDE"])
+        assert cfg["POSITIVE_RATE"] == list(next(
+            c["positive_rate"] for c in COMBINED_STRATEGY_CONFIGS
+            if f"er_combined_{c['combo_id']}" == stage.id
+        ))
+        assert isinstance(cfg["REPLAY_RATIO"], float)
+
+
+def test_known_combined_strategy_files_has_one_entry_per_tracked_combo():
+    # Default config + the 5 regenerated ones -- these are what
+    # _other_combined_configs_note excludes from its "untracked stray" warning.
+    assert len(KNOWN_COMBINED_STRATEGY_FILES) == 1 + len(COMBINED_STRATEGY_CONFIGS)
+    assert len(KNOWN_COMBINED_STRATEGY_FILES) == len(set(KNOWN_COMBINED_STRATEGY_FILES))
+
+
+# ---------------------------------------------------------------------------
 # select_stages
 # ---------------------------------------------------------------------------
 
@@ -391,15 +499,23 @@ def test_reset_stages_stage_without_artifacts_raises(tmp_path):
 
 
 def test_reset_stage_artifacts_declared_on_real_stages_are_exact_and_exist_in_repo():
-    # Every real ER stage that declares `artifacts` must use the ratio-key
-    # placeholder consistently and resolve to paths that would sit under
-    # PROJECT_ROOT's experiments/ tree (a typo'd literal here would silently
-    # never match anything on a real run).
+    # Every real stage that declares `artifacts` must resolve to paths under
+    # PROJECT_ROOT's experiments/ tree (a typo'd literal here would silently never
+    # match anything on a real run). Combined-strategy stages write under
+    # experiments/mlp/combined/ (see er_combined's own notes) -- both the original
+    # "er_combined" (still in group er_sequential) and its generated
+    # er_combined_<id> siblings (group combined_strategies). Every other ER stage
+    # writes under experiments/mlp/experience_replay/.
     for stage in STAGES:
         if not stage.artifacts:
             continue
+        is_combined_strategy = stage.id == "er_combined" or stage.id.startswith("er_combined_")
+        expected_prefix = (
+            "experiments/mlp/combined/" if is_combined_strategy
+            else "experiments/mlp/experience_replay/"
+        )
         for rel in stage.artifacts:
-            assert rel.startswith("experiments/mlp/experience_replay/"), stage.id
+            assert rel.startswith(expected_prefix), stage.id
             assert "*" not in rel, f"{stage.id} artifact must be an exact path, not a glob: {rel}"
 
 
@@ -459,9 +575,9 @@ def test_stage_table_is_well_formed():
     for s in STAGES:
         # Recover each stage's completion-file path by calling check() against an
         # empty temp-like root is unnecessary here -- the curried checks close over
-        # the literal path already, which we can recover via the closure cell for
-        # the shared/per-ratio checks. Skip stages using bespoke check functions
-        # (er_combined) since they're covered by their own dedicated test instead.
+        # the literal path already, which we can recover via the closure cell. This
+        # also covers the combined-strategy stages (combined_strategy_check(...) is
+        # a closure too, unlike the old bespoke er_combined_check it replaced).
         closure = getattr(s.check, "__closure__", None)
         if not closure:
             continue

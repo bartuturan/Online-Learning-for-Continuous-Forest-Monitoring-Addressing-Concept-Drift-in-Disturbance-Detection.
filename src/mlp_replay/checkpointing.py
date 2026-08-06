@@ -103,6 +103,60 @@ def per_ratio_path(base_path, ratio_key):
     return base_path.with_name(f'{base_path.stem}_{ratio_key}{base_path.suffix}')
 
 
+def format_float_token(value, decimals=3):
+    token = f'{float(value):.{decimals}f}'
+    token = token.rstrip('0').rstrip('.')
+    return token if token else '0'
+
+
+def sanitize_for_windows_filename(text):
+    # Windows forbidden chars: <>:"/\|?*
+    forbidden = '<>:"/\\|?*'
+    out = ''.join('-' if ch in forbidden else ch for ch in str(text))
+    return out.strip(' .')
+
+
+def format_combined_strategy_suffix(
+    hard_example, confidently_correct, uncertainty_prioritization,
+    positive_rate, misclassification_buffer, replay_weight_scale,
+):
+    """Reproduces MLP_experience_replay_combined.ipynb's build_strategy_suffix() exactly --
+    the notebook imports this rather than keeping its own copy, so the two can never drift
+    (see format_combined_run_key's docstring for why that drift is exactly the bug this exists
+    to prevent)."""
+    pr_buffer_fraction, pr_target_percent = positive_rate
+    token = (
+        f'_combined_HE={format_float_token(hard_example)}'
+        f'_CC={format_float_token(confidently_correct)}'
+        f'_UP={format_float_token(uncertainty_prioritization)}'
+        f'_PR=({format_float_token(pr_buffer_fraction)},{format_float_token(pr_target_percent, decimals=1)})'
+        f'_MC={format_float_token(misclassification_buffer)}'
+        f'_RWS={format_float_token(replay_weight_scale)}'
+    )
+    return sanitize_for_windows_filename(token)
+
+
+def format_combined_run_key(
+    ratio, hard_example, confidently_correct, uncertainty_prioritization,
+    positive_rate, misclassification_buffer, replay_weight_scale,
+):
+    """Reproduces the exact key MLP_experience_replay_combined.ipynb appends to
+    completion_status['completed_ratios'] (its run_key: format_ratio_key(ratio) +
+    build_ratio_suffix(ratio)) -- NOT the bare ratio key every other replay notebook uses.
+    This notebook's run_key is combo+ratio-composite because CHECKPOINT_DIR is shared across
+    every hyperparameter combo (only the filenames inside it are combo-scoped), so a bare
+    "RR_0.5" would be ambiguous between combos sharing that ratio. A completion check must
+    match against this composite key, or it will report TODO forever even after a genuinely
+    successful run."""
+    ratio_key = format_ratio_key(ratio)
+    suffix = format_combined_strategy_suffix(
+        hard_example, confidently_correct, uncertainty_prioritization,
+        positive_rate, misclassification_buffer, replay_weight_scale,
+    )
+    ratio_suffix = sanitize_for_windows_filename(f'{suffix}_RR={format_float_token(ratio)}')
+    return f'{ratio_key}{ratio_suffix}'
+
+
 def get_cached_raw_year(cache, year_idx):
     if year_idx not in cache:
         return np.empty((0, 0), dtype=np.float32), np.empty((0,), dtype=np.int64)

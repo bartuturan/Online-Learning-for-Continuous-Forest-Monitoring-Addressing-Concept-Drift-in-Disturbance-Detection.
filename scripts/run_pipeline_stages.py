@@ -17,10 +17,14 @@ Scope: data prep (3 notebooks), 5 SGD notebooks, the MLP baseline, the 13
 experience-replay notebooks under notebooks/training/mlp/experience_replay/,
 and the unified evaluation (notebooks/evaluation/Evaluations.ipynb).
 
-Not selected by default (still runnable via --only): the 6 *_reservoir_sampling
+Not selected by default (still runnable via --only or --group): the 6 *_reservoir_sampling
 experience-replay stages, excluded by user decision -- src/eval/families.py
 defines 50 evaluation families and none are reservoir, so skipping them costs
-the evaluation nothing; and dataprep_lagged_monthly, whose output nothing reads.
+the evaluation nothing; dataprep_lagged_monthly, whose output nothing reads; and
+the 5 "er_combined_<id>" stages (group="combined_strategies") -- these regenerate
+historical combined-replay-strategy hyperparameter combos explored before this
+pipeline-rerun effort (see COMBINED_STRATEGY_CONFIGS), not part of the primary
+training set "er_combined" already covers. Run them with --group combined_strategies.
 
 Explicitly NOT covered at all: XGBoost (removed from the active pipeline in
 commit 48ec425; only exists at old_notebooks/XGBoost.ipynb, which is gitignored
@@ -101,7 +105,7 @@ import os
 import subprocess
 import sys
 import time
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -114,6 +118,9 @@ from scripts.run_replay_sweep_parallel import (  # noqa: E402
     run_sweep_for_notebook,
 )
 from src.mlp_replay.checkpointing import (  # noqa: E402
+    format_combined_run_key,
+    format_combined_strategy_suffix,
+    format_float_token,
     format_ratio_key,
     load_completion_status,
     per_ratio_path,
@@ -182,7 +189,7 @@ class StageStatus:
 @dataclass(frozen=True)
 class Stage:
     id: str
-    group: str             # dataprep | sgd | mlp_baseline | er_parallel | er_sequential
+    group: str             # dataprep | sgd | mlp_baseline | er_parallel | er_sequential | combined_strategies
     notebook: str          # PROJECT_ROOT-relative
     check: "object"        # Callable[[Path, "Stage"], StageStatus]
     runner: str            # "nbconvert" | "ratio_sweep"
@@ -191,6 +198,12 @@ class Stage:
     inputs: tuple = ()     # PROJECT_ROOT-relative paths that must exist before this can run at all
     default_selected: bool = True
     notes: str = ""
+    env_override: dict = field(default_factory=dict)  # extra env vars for this stage's subprocess,
+                            # beyond SINGLE_THREAD_BLAS_ENV -- e.g. the combined-strategy stages use
+                            # this to pass MLP_COMBINED_CONFIG_OVERRIDE instead of the notebook's
+                            # hardcoded constants. Empty for every "nbconvert"-runner stage that
+                            # doesn't need it; "ratio_sweep" stages set their own override internally
+                            # (see run_sweep_for_notebook) and ignore this field.
     artifacts: tuple = ()  # PROJECT_ROOT-relative paths this stage OWNS (checkpoints/models/history
                             # CSVs). "{ratio_key}" is expanded over stage.ratios. Only used by
                             # --reset-stage; empty for stages that don't support it yet. Always exact
@@ -362,28 +375,58 @@ def per_ratio_check(rel_json_base):
     return lambda root, stage: ratios_complete_per_ratio(root, rel_json_base, stage.ratios)
 
 
-def er_combined_check(root, stage):
-    """Same as shared_check, plus a warning if sibling completion files using a
-    DIFFERENT strategy-hyperparameter suffix exist in the same directory -- this
-    notebook's completion filename is config-coupled (encodes 6 tunable
-    hyperparameters), so it's easy to tune a value and have this stage silently
-    report TODO forever without realizing old runs under other configs exist."""
-    rel_json = ("experiments/mlp/combined/training_checkpoints_mlp_experience_replay_combined/"
-                "mlp_replay_completion_status_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_MC=0_RWS=1.json")
-    status = ratios_complete_shared(root, rel_json, stage.ratios)
+COMBINED_STRATEGY_CHECKPOINT_DIR = (
+    "experiments/mlp/combined/training_checkpoints_mlp_experience_replay_combined"
+)
 
-    combined_dir = root / "experiments/mlp/combined/training_checkpoints_mlp_experience_replay_combined"
-    if combined_dir.exists():
-        current_name = Path(rel_json).name
-        siblings = sorted(
-            p.name for p in combined_dir.glob("mlp_replay_completion_status_combined_*.json")
-            if p.name != current_name
-        )
-        if siblings:
-            extra = (f"{len(siblings)} completion file(s) for OTHER strategy hyperparameters exist "
-                      f"in this dir (not used by the current config): {siblings}")
-            status = replace(status, note=(status.note + " " + extra).strip())
-    return status
+
+def _other_combined_configs_note(root, rel_json, known_files):
+    """Warn if completion files for OTHER strategy-hyperparameter combos exist in the
+    (shared) checkpoint directory that AREN'T one of the combos this orchestrator tracks
+    as its own stage -- this notebook's completion filename is config-coupled (encodes 6
+    tunable hyperparameters), so it's easy to hand-tune a value outside the tracked set and
+    have the result silently invisible to --list forever."""
+    combined_dir = root / COMBINED_STRATEGY_CHECKPOINT_DIR
+    if not combined_dir.exists():
+        return ""
+    current_name = Path(rel_json).name
+    known_names = {Path(f).name for f in known_files}
+    strays = sorted(
+        p.name for p in combined_dir.glob("mlp_replay_completion_status_combined_*.json")
+        if p.name != current_name and p.name not in known_names
+    )
+    if not strays:
+        return ""
+    return (f"{len(strays)} completion file(s) for UNTRACKED strategy hyperparameters exist "
+            f"in this dir (not one of the combos this orchestrator tracks): {strays}")
+
+
+def combined_strategy_check(
+    rel_json, ratio, hard_example, confidently_correct, uncertainty_prioritization,
+    positive_rate, misclassification_buffer, replay_weight_scale, known_files,
+):
+    """Unlike every other replay stage, this notebook writes a COMPOSITE key into
+    completed_ratios (ratio + the 6-hyperparameter suffix + '_RR=<ratio>'), because
+    CHECKPOINT_DIR is shared across every hyperparameter combo -- only the filenames inside
+    it are combo-scoped, so a bare ratio key would be ambiguous between combos sharing that
+    ratio. ratios_complete_shared/shared_check assume the bare key every OTHER notebook
+    writes; reusing them here was the pre-existing bug (a completed run could never be
+    detected as DONE). This computes the exact key the notebook actually writes instead."""
+    expected_key = format_combined_run_key(
+        ratio, hard_example, confidently_correct, uncertainty_prioritization,
+        positive_rate, misclassification_buffer, replay_weight_scale,
+    )
+
+    def _check(root, stage):
+        status, corrupt = _load_completion_status_safe(root / rel_json)
+        if corrupt is not None:
+            return corrupt
+        note = _other_combined_configs_note(root, rel_json, known_files)
+        if expected_key in set(status.get("completed_ratios", [])):
+            return StageStatus("DONE", detail=f"1/1 ratios complete ({rel_json})", note=note)
+        return StageStatus("TODO", detail="0/1 ratios complete", note=note)
+
+    return _check
 
 
 def training_signature(root):
@@ -457,6 +500,132 @@ def eval_unified_check(root, stage):
 ER = "notebooks/training/mlp/experience_replay"
 ERC = "experiments/mlp/experience_replay"
 SGD_RATIOS = ()  # SGD notebooks have no ratio sweep
+
+# --- combined-strategy configs (er_combined + er_combined_<id>) -------------
+#
+# The combined-strategy notebook's 6 tunable constants (HARD_EXAMPLE, CONFIDENTLY_CORRECT,
+# UNCERTAINITY_PRIORITIZATION, POSITIVE_RATE, MISCLASSIFICATION_BUFFER, REPLAY_WEIGHT_SCALE)
+# are currently hardcoded to one config -- that's the "er_combined" stage below. Before this
+# pipeline-rerun effort, 6 different combos of those constants were explored by hand, each
+# leaving its own completion-status file in COMBINED_STRATEGY_CHECKPOINT_DIR. One of those 6
+# (byte-for-byte: HE=0, CC=0.2, UP=0.1, PR=(0.2,10)) is identical to the current hardcoded
+# default -- MC/RWS are absent from its filename only because those two knobs didn't exist yet
+# when it ran, and their absence is exactly their current default value -- so it's already
+# covered by "er_combined" below and isn't repeated here. The other 5 are regenerated as their
+# own stages so the now-fixed training code (streaming replay pool, per-year cadence) produces
+# correct results for every historical combo, not just the current default.
+#
+# Each ratio is the ONLY one that satisfies the notebook's own validation guard
+# (HARD_EXAMPLE + CONFIDENTLY_CORRECT + UNCERTAINITY_PRIORITIZATION + PR_buffer_fraction +
+# MISCLASSIFICATION_BUFFER <= ratio, else ValueError) for that combo -- confirmed by hand for
+# each one below. Not expanded to a 4-ratio sweep: the smallest of these sums (0.25) already
+# exceeds RR=0.2, so no combo could ever validly run at that ratio.
+COMBINED_STRATEGY_CHECKPOINT_DIR = (
+    "experiments/mlp/combined/training_checkpoints_mlp_experience_replay_combined"
+)
+
+DEFAULT_COMBINED_STRATEGY_PARAMS = dict(
+    ratio=0.5, hard_example=0.0, confidently_correct=0.2, uncertainty_prioritization=0.1,
+    positive_rate=(0.2, 10), misclassification_buffer=0.0, replay_weight_scale=1.0,
+)
+
+COMBINED_STRATEGY_CONFIGS = (
+    dict(combo_id="1", hard_example=0.1, confidently_correct=0.1, uncertainty_prioritization=0.1,
+         positive_rate=(0.2, 10), misclassification_buffer=0.0, replay_weight_scale=1.0, ratio=0.5),
+    dict(combo_id="2", hard_example=0.0, confidently_correct=0.15, uncertainty_prioritization=0.0,
+         positive_rate=(0.0, 10), misclassification_buffer=0.1, replay_weight_scale=1.0, ratio=0.4),
+    dict(combo_id="3", hard_example=0.0, confidently_correct=0.1, uncertainty_prioritization=0.1,
+         positive_rate=(0.0, 10), misclassification_buffer=0.1, replay_weight_scale=1.0, ratio=0.5),
+    dict(combo_id="4", hard_example=0.0, confidently_correct=0.1, uncertainty_prioritization=0.2,
+         positive_rate=(0.1, 10), misclassification_buffer=0.0, replay_weight_scale=1.0, ratio=0.5),
+    dict(combo_id="6", hard_example=0.0, confidently_correct=0.2, uncertainty_prioritization=0.2,
+         positive_rate=(0.1, 10), misclassification_buffer=0.0, replay_weight_scale=1.0, ratio=0.5),
+)
+
+
+def _combined_strategy_rel_json(params):
+    suffix = format_combined_strategy_suffix(
+        params["hard_example"], params["confidently_correct"], params["uncertainty_prioritization"],
+        params["positive_rate"], params["misclassification_buffer"], params["replay_weight_scale"],
+    )
+    return f"{COMBINED_STRATEGY_CHECKPOINT_DIR}/mlp_replay_completion_status{suffix}.json", suffix
+
+
+KNOWN_COMBINED_STRATEGY_FILES = tuple(
+    _combined_strategy_rel_json(p)[0]
+    for p in (DEFAULT_COMBINED_STRATEGY_PARAMS, *COMBINED_STRATEGY_CONFIGS)
+)
+
+# Every year this notebook ever trains over -- used only to enumerate misclass-snapshot
+# paths exactly (never a glob), matching the "artifacts must be exact paths" rule.
+COMBINED_STRATEGY_TRAINING_YEARS = (2017, 2018, 2019, 2020, 2021, 2022)
+
+
+def _combined_strategy_artifacts(cfg):
+    """Every file this notebook writes for one (combo, ratio) run -- what a clean
+    re-run needs gone, not just the completion-status json. Missing any of these
+    would leave a stale mlp_replay_all_training_histories{suffix}.pkl behind, which
+    the notebook's own resume logic would then merge with fresh results under the
+    SAME run_key, duplicating year entries in the output history."""
+    rel_json, suffix = _combined_strategy_rel_json(cfg)
+    ratio_suffix = f"{suffix}_RR={format_float_token(cfg['ratio'])}"
+    models_dir = f"experiments/mlp/combined/models_mlp{ratio_suffix}"
+    artifacts = [
+        rel_json,
+        f"{COMBINED_STRATEGY_CHECKPOINT_DIR}/mlp_replay_all_training_histories{suffix}.pkl",
+        f"{COMBINED_STRATEGY_CHECKPOINT_DIR}/mlp_replay_training_log{suffix}.txt",
+        models_dir,
+        # write_combined_history_csv's output -- lives directly under EXPERIMENTS_DIR
+        # (experiments/mlp/combined/), not inside CHECKPOINT_DIR or models_dir.
+        f"experiments/mlp/combined/mlp_classifier_history_prevyears_monthly_features{suffix}_all_ratios.csv",
+    ]
+    if cfg["misclassification_buffer"] > 0:
+        # Only written when MISCLASSIFICATION_BUFFER > 0 -- see the notebook's
+        # `if REPLAY_ENABLED and year_idx >= 1 and MISCLASSIFICATION_BUFFER > 0:` guard.
+        run_key = format_combined_run_key(
+            cfg["ratio"], cfg["hard_example"], cfg["confidently_correct"],
+            cfg["uncertainty_prioritization"], cfg["positive_rate"],
+            cfg["misclassification_buffer"], cfg["replay_weight_scale"],
+        )
+        artifacts += [
+            f"{COMBINED_STRATEGY_CHECKPOINT_DIR}/mlp_replay_misclass_snapshot_{run_key}_year_{year}.pkl"
+            for year in COMBINED_STRATEGY_TRAINING_YEARS
+        ]
+    return tuple(artifacts)
+
+
+def _make_combined_strategy_stage(cfg):
+    rel_json, _suffix = _combined_strategy_rel_json(cfg)
+    env = {"MLP_COMBINED_CONFIG_OVERRIDE": json.dumps({
+        "REPLAY_RATIO": cfg["ratio"],
+        "HARD_EXAMPLE": cfg["hard_example"],
+        "CONFIDENTLY_CORRECT": cfg["confidently_correct"],
+        "UNCERTAINITY_PRIORITIZATION": cfg["uncertainty_prioritization"],
+        "POSITIVE_RATE": list(cfg["positive_rate"]),
+        "MISCLASSIFICATION_BUFFER": cfg["misclassification_buffer"],
+        "REPLAY_WEIGHT_SCALE": cfg["replay_weight_scale"],
+    })}
+    return Stage(
+        id=f"er_combined_{cfg['combo_id']}", group="combined_strategies",
+        notebook=f"{ER}/MLP_experience_replay_combined.ipynb",
+        requires=("dataprep_merge_monthly",), ratios=(cfg["ratio"],),
+        check=combined_strategy_check(
+            rel_json, cfg["ratio"], cfg["hard_example"], cfg["confidently_correct"],
+            cfg["uncertainty_prioritization"], cfg["positive_rate"],
+            cfg["misclassification_buffer"], cfg["replay_weight_scale"], KNOWN_COMBINED_STRATEGY_FILES,
+        ),
+        runner="nbconvert", env_override=env, default_selected=False,
+        artifacts=_combined_strategy_artifacts(cfg),
+        notes=(f"Regenerates historical combined-strategy config #{cfg['combo_id']} "
+               f"(HE={cfg['hard_example']}, CC={cfg['confidently_correct']}, "
+               f"UP={cfg['uncertainty_prioritization']}, PR={cfg['positive_rate']}, "
+               f"MC={cfg['misclassification_buffer']}, RWS={cfg['replay_weight_scale']}) "
+               f"at its historical ratio RR={cfg['ratio']}."),
+    )
+
+
+COMBINED_STRATEGY_STAGES = tuple(_make_combined_strategy_stage(cfg) for cfg in COMBINED_STRATEGY_CONFIGS)
+
 
 STAGES = (
     # --- data prep --------------------------------------------------------
@@ -729,13 +898,25 @@ STAGES = (
         id="er_combined", group="er_sequential",
         notebook=f"{ER}/MLP_experience_replay_combined.ipynb",
         requires=("dataprep_merge_monthly",), ratios=(0.5,),
-        check=er_combined_check,
+        check=combined_strategy_check(
+            _combined_strategy_rel_json(DEFAULT_COMBINED_STRATEGY_PARAMS)[0],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["ratio"],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["hard_example"],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["confidently_correct"],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["uncertainty_prioritization"],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["positive_rate"],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["misclassification_buffer"],
+            DEFAULT_COMBINED_STRATEGY_PARAMS["replay_weight_scale"],
+            KNOWN_COMBINED_STRATEGY_FILES,
+        ),
         runner="nbconvert",
+        artifacts=_combined_strategy_artifacts(DEFAULT_COMBINED_STRATEGY_PARAMS),
         notes="Sweeps 1 ratio while combining multiple replay strategies at fixed fractions; "
               "its completion filename encodes those fractions (HE/CC/UP/PR/MC/RWS), hardcoded "
               "here for the notebook's current default values. Writes to experiments/mlp/combined, "
               "not experiments/mlp/experience_replay.",
     ),
+    *COMBINED_STRATEGY_STAGES,
 
     # --- evaluation: runs last, over everything trained above ---------------
     Stage(
@@ -930,7 +1111,7 @@ def run_nbconvert_stage(stage, root, log_dir):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     log_path = log_dir / f"{stage.id}.log"
 
-    env = {**os.environ, **SINGLE_THREAD_BLAS_ENV}
+    env = {**os.environ, **SINGLE_THREAD_BLAS_ENV, **stage.env_override}
     with open(log_path, "w", encoding="utf-8") as log_file:
         result = subprocess.run(
             nbconvert_command(root / stage.notebook, output_path),
@@ -1098,7 +1279,8 @@ def build_arg_parser():
     parser.add_argument("--dry-run", action="store_true", help="Print status + execution plan, don't run anything.")
     parser.add_argument("--only", nargs="+", metavar="ID")
     parser.add_argument("--group", nargs="+", metavar="GROUP",
-                         help="dataprep | sgd | mlp_baseline | er_parallel | er_sequential")
+                         help="dataprep | sgd | mlp_baseline | er_parallel | er_sequential | "
+                              "combined_strategies | evaluation")
     parser.add_argument("--from", dest="from_id", metavar="ID")
     parser.add_argument("--skip", nargs="+", metavar="ID")
     parser.add_argument("--max-parallel", default="auto", help="Integer, or 'auto' (default; sizes from available RAM)")

@@ -4,11 +4,15 @@ import pytest
 from src.mlp_replay.checkpointing import (
     append_training_log,
     create_empty_training_history,
+    format_combined_run_key,
+    format_combined_strategy_suffix,
+    format_float_token,
     format_ratio_key,
     get_cached_raw_year,
     load_all_training_histories,
     load_completion_status,
     per_ratio_path,
+    sanitize_for_windows_filename,
     save_all_training_histories,
     save_completion_status,
 )
@@ -178,6 +182,83 @@ def test_save_completion_status_failed_write_does_not_touch_existing_good_file(t
     # have been affected by the interrupted write.
     assert path.read_bytes() == good_content
     assert load_completion_status(path)["completed_ratios"] == ["RR_0.2"]
+
+
+def test_format_float_token_strips_trailing_zeros():
+    assert format_float_token(0.5) == '0.5'
+    assert format_float_token(0.10) == '0.1'
+    assert format_float_token(0) == '0'
+    assert format_float_token(1.0) == '1'
+    assert format_float_token(10, decimals=1) == '10'
+
+
+def test_sanitize_for_windows_filename_replaces_forbidden_chars():
+    assert sanitize_for_windows_filename('a<b>c:d"e/f\\g|h?i*j') == 'a-b-c-d-e-f-g-h-i-j'
+    assert sanitize_for_windows_filename('  trailing dots. ') == 'trailing dots'
+
+
+# ---------------------------------------------------------------------------
+# format_combined_strategy_suffix / format_combined_run_key must reproduce
+# MLP_experience_replay_combined.ipynb's build_strategy_suffix()/run_key exactly
+# -- these are real, pre-existing filenames on disk (ground truth), not fixtures.
+# ---------------------------------------------------------------------------
+
+def test_format_combined_strategy_suffix_matches_real_historical_filename_combo_2():
+    # experiments/mlp/combined/.../mlp_replay_completion_status_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1.json
+    suffix = format_combined_strategy_suffix(
+        hard_example=0.0, confidently_correct=0.15, uncertainty_prioritization=0.0,
+        positive_rate=(0.0, 10), misclassification_buffer=0.1, replay_weight_scale=1.0,
+    )
+    assert suffix == '_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1'
+
+
+def test_format_combined_strategy_suffix_matches_real_historical_filename_combo_3():
+    # experiments/mlp/combined/.../mlp_replay_completion_status_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1.json
+    suffix = format_combined_strategy_suffix(
+        hard_example=0.0, confidently_correct=0.1, uncertainty_prioritization=0.1,
+        positive_rate=(0.0, 10), misclassification_buffer=0.1, replay_weight_scale=1.0,
+    )
+    assert suffix == '_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1'
+
+
+def test_format_combined_strategy_suffix_matches_current_default_config():
+    # The config currently hardcoded in the notebook -- also the target filename
+    # er_combined_check has always hardcoded, confirming the two never drifted.
+    suffix = format_combined_strategy_suffix(
+        hard_example=0.0, confidently_correct=0.2, uncertainty_prioritization=0.1,
+        positive_rate=(0.2, 10), misclassification_buffer=0.0, replay_weight_scale=1.0,
+    )
+    assert suffix == '_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_MC=0_RWS=1'
+
+
+def test_format_combined_run_key_matches_real_historical_completed_ratios_entry_combo_2():
+    # completed_ratios == ["RR_0.4_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4"]
+    run_key = format_combined_run_key(
+        0.4, hard_example=0.0, confidently_correct=0.15, uncertainty_prioritization=0.0,
+        positive_rate=(0.0, 10), misclassification_buffer=0.1, replay_weight_scale=1.0,
+    )
+    assert run_key == 'RR_0.4_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4'
+
+
+def test_format_combined_run_key_matches_real_historical_completed_ratios_entry_combo_3():
+    # completed_ratios == ["RR_0.5_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5"]
+    run_key = format_combined_run_key(
+        0.5, hard_example=0.0, confidently_correct=0.1, uncertainty_prioritization=0.1,
+        positive_rate=(0.0, 10), misclassification_buffer=0.1, replay_weight_scale=1.0,
+    )
+    assert run_key == 'RR_0.5_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5'
+
+
+def test_format_combined_run_key_differs_from_bare_ratio_key():
+    """The bug this whole module addition exists to fix: a check testing for the
+    bare ratio key alone (format_ratio_key's output) must never match this
+    notebook's actual composite run_key."""
+    run_key = format_combined_run_key(
+        0.5, hard_example=0.0, confidently_correct=0.2, uncertainty_prioritization=0.1,
+        positive_rate=(0.2, 10), misclassification_buffer=0.0, replay_weight_scale=1.0,
+    )
+    assert run_key != format_ratio_key(0.5)
+    assert run_key.startswith(format_ratio_key(0.5))
 
 
 def test_save_all_training_histories_failed_write_does_not_touch_existing_good_file(tmp_path, monkeypatch):
