@@ -35,3 +35,13 @@
 [2026-07-05 15:33:40] [RR_0.3] skipped (already completed).
 [2026-07-05 15:33:40] [RR_0.4] skipped (already completed).
 [2026-07-05 15:33:40] [RR_0.5] skipped (already completed).
+[2026-08-06 12:59:37] Started training run for ratios: [0.3]
+[2026-08-06 12:59:38] Started training run for ratios: [0.2]
+[2026-08-06 13:14:29] Training run completed.
+[2026-08-06 13:18:54] Training run completed.
+[2026-08-06 13:19:39] Started training run for ratios: [0.5]
+[2026-08-06 13:19:39] Started training run for ratios: [0.4]
+[2026-08-06 13:39:15] Training run completed.
+[2026-08-06 13:42:04] Training run completed.
+[2026-08-06 13:42:43] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-08-06 13:42:43] Training run completed.

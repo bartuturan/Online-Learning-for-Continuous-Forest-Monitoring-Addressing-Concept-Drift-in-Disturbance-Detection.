@@ -1,0 +1,8 @@
+[2026-08-06 13:23:20] [RR_0.5] completed year 2017 with replay_used=0/0.
+[2026-08-06 13:25:33] [RR_0.5] completed year 2018 with replay_used=2793381/5575527.
+[2026-08-06 13:31:37] [RR_0.5] completed year 2019 with replay_used=2793350/11162289.
+[2026-08-06 13:34:11] [RR_0.5] completed year 2020 with replay_used=2793681/16748990.
+[2026-08-06 13:38:47] [RR_0.5] completed year 2021 with replay_used=2793415/22336353.
+[2026-08-06 13:42:04] [RR_0.5] completed year 2022 with replay_used=2796058/27923184.
+[2026-08-06 13:42:04] [RR_0.5] marked as fully completed.
+[2026-08-06 13:42:43] [RR_0.5] skipped (already completed).
