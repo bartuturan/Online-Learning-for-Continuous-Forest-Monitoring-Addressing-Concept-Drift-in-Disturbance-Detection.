@@ -14,3 +14,13 @@
 [2026-07-03 00:54:59] [RR_0.4] completed year 2022 with replay_used=2236832/27923473, uncertain=894732, random=1342100, gaussian_std=0.03.
 [2026-07-03 00:54:59] [RR_0.4] marked as fully completed.
 [2026-07-03 00:55:00] Training run completed.
+[2026-08-06 15:32:08] Started training run for ratios: [0.2]
+[2026-08-06 15:32:08] Started training run for ratios: [0.3]
+[2026-08-06 15:50:54] Training run completed.
+[2026-08-06 15:53:48] Training run completed.
+[2026-08-06 15:54:28] Started training run for ratios: [0.4]
+[2026-08-06 15:54:28] Started training run for ratios: [0.5]
+[2026-08-06 16:13:07] Training run completed.
+[2026-08-06 16:14:50] Training run completed.
+[2026-08-06 16:15:26] Started training run for ratios: [0.2, 0.3, 0.4, 0.5]
+[2026-08-06 16:15:26] Training run completed.
