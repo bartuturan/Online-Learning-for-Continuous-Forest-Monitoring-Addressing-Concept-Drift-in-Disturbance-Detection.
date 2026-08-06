@@ -81,6 +81,17 @@ Usage:
     python -u scripts/run_pipeline_stages.py --group sgd mlp_baseline
     python -u scripts/run_pipeline_stages.py --only er_hard_example_mining --max-parallel 4
     python -u scripts/run_pipeline_stages.py --only eval_unified   # evaluation on its own
+
+    # Invalidate a stage's checkpoints/models/history after a code change that
+    # changes what they mean (e.g. replay sampling moved from per-epoch to
+    # per-year) -- otherwise the stage still looks DONE and never re-runs:
+    python -u scripts/run_pipeline_stages.py --reset-stage er_hard_example_mining   # preview only
+    python -u scripts/run_pipeline_stages.py --reset-stage er_hard_example_mining --yes
+    # Only wired up for the 5 non-reservoir experience-replay stages (er_plain,
+    # er_hard_example_mining, er_uncertainty_prioritization, er_confidently_correct,
+    # er_misclassification_buffer) -- the ones whose `artifacts` are declared. The
+    # *_reservoir_sampling stages still resample every epoch (out of scope for that
+    # change) and are not comparable to these five.
 """
 
 import argparse
@@ -113,7 +124,23 @@ MONTHLY_INDEX_VARS = (
     "ndwi_cv_year", "ndwi_max_m2m_drop_year", "ndwi_max_year", "ndwi_min_year", "ndwi_std_year",
 )
 
-BYTES_PER_REPLAY_PROCESS = int(5.5 * 1024 ** 3)
+# Peak RSS of one replay-sweep worker, measured against the real dataset
+# (5,597,776 train / 1,273,437 val pixels x 32 float32 features = 716MB per
+# training year, 163MB per validation year):
+#
+#   4.3GB  train_feature_cache -- precompute_yearly_raw_cache holds all 6 years
+#   1.0GB  val_feature_cache   -- same, for the validation split
+#   0.2GB  y_replay_pool       -- labels for the whole history (features are NOT
+#                                 materialized; see replay_strategies.py)
+#   0.7GB  one year's scaled features, transient, while the samplers stream it
+#   0.4GB  the selected replay sample itself (<=2.8M rows at RR_0.5)
+#   2.1GB  X_combined_base + the per-epoch shuffled copy of it
+#   ~1GB   headroom: _top_up_shortfall's np.arange/setdiff1d over the global
+#          pool index space, model/scaler state, BLAS scratch
+#
+# The old value (5.5GB) counted roughly the two feature caches and nothing else,
+# so `auto` picked 4 on Kaggle's 30GiB CPU box and the workers were OOM-killed.
+BYTES_PER_REPLAY_PROCESS = int(12 * 1024 ** 3)
 DEFAULT_MAX_PARALLEL_FALLBACK = 2
 
 # Evaluation. src/eval/tables.py's load_or_run_table trusts ANY existing table
@@ -164,6 +191,12 @@ class Stage:
     inputs: tuple = ()     # PROJECT_ROOT-relative paths that must exist before this can run at all
     default_selected: bool = True
     notes: str = ""
+    artifacts: tuple = ()  # PROJECT_ROOT-relative paths this stage OWNS (checkpoints/models/history
+                            # CSVs). "{ratio_key}" is expanded over stage.ratios. Only used by
+                            # --reset-stage; empty for stages that don't support it yet. Always exact
+                            # paths -- never a glob -- so a reset can never catch a sibling directory
+                            # from a different hyperparameter config (e.g. the *_opt_fix, *_PR_0.10
+                            # dirs living alongside the ones this stage owns).
 
 
 # ---------------------------------------------------------------------------
@@ -543,6 +576,11 @@ STAGES = (
         requires=("dataprep_merge_monthly",), ratios=(0.2, 0.3, 0.4, 0.5),
         check=per_ratio_check(f"{ERC}/training_checkpoints_mlp_experience_replay/mlp_replay_completion_status.json"),
         runner="ratio_sweep",
+        artifacts=(
+            f"{ERC}/training_checkpoints_mlp_experience_replay",
+            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_{{ratio_key}}",
+            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_experience_replay_all_ratios.csv",
+        ),
     ),
     Stage(
         id="er_target_positive_rate", group="er_parallel",
@@ -560,6 +598,11 @@ STAGES = (
             "mlp_replay_completion_status_confidently_correct_memory.json"
         ),
         runner="ratio_sweep",
+        artifacts=(
+            f"{ERC}/training_checkpoints_mlp_experience_replay_confidently_correct_memory",
+            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_{{ratio_key}}",
+            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_all_ratios.csv",
+        ),
     ),
     Stage(
         id="er_hard_example_mining", group="er_parallel",
@@ -570,6 +613,11 @@ STAGES = (
             "mlp_replay_completion_status_hard_example_mining.json"
         ),
         runner="ratio_sweep",
+        artifacts=(
+            f"{ERC}/training_checkpoints_mlp_experience_replay_hard_example_mining",
+            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_{{ratio_key}}",
+            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_all_ratios.csv",
+        ),
     ),
     Stage(
         id="er_uncertainty_prioritization", group="er_parallel",
@@ -580,6 +628,11 @@ STAGES = (
             "mlp_replay_completion_status_uncertainity_prioritization.json"
         ),
         runner="ratio_sweep",
+        artifacts=(
+            f"{ERC}/training_checkpoints_mlp_experience_replay_uncertainity_prioritization",
+            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_{{ratio_key}}",
+            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_all_ratios.csv",
+        ),
     ),
 
     # --- experience replay: NOT refactored, shared completion file across
@@ -654,6 +707,11 @@ STAGES = (
         ),
         runner="nbconvert",
         notes="Single fixed ratio (0.3) -- nothing to parallelize even before the shared-file risk.",
+        artifacts=(
+            f"{ERC}/training_checkpoints_mlp_missclassification_buffer",
+            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_{{ratio_key}}",
+            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_missclassification_buffer_all_ratios.csv",
+        ),
     ),
     Stage(
         id="er_misclassification_buffer_reservoir", group="er_sequential",
@@ -758,6 +816,63 @@ def select_stages(stages, only=None, groups=None, from_id=None, skip=None):
     return sorted(selected, key=lambda s: order[s.id])
 
 
+def resolve_stage_artifacts(root, stage):
+    """Expand stage.artifacts (which may contain a literal "{ratio_key}" placeholder,
+    one entry repeated across stage.ratios) into concrete, EXISTING paths under root.
+
+    Pure and read-only -- only checks .exists(), never deletes. Paths that don't
+    exist are silently dropped rather than erroring, since a partially-trained
+    stage may be missing some of its ratio dirs. Exact paths only, by construction
+    of how `artifacts` is declared on each Stage -- no globbing here, so a sibling
+    directory from a different hyperparameter config (e.g. *_opt_fix, *_PR_0.10)
+    can never be swept up by accident."""
+    resolved = []
+    for rel in stage.artifacts:
+        if "{ratio_key}" in rel:
+            for ratio in stage.ratios:
+                candidate = root / rel.format(ratio_key=format_ratio_key(ratio))
+                if candidate.exists():
+                    resolved.append(candidate)
+        else:
+            candidate = root / rel
+            if candidate.exists():
+                resolved.append(candidate)
+    return resolved
+
+
+def reset_stages(root, stages, stage_ids, confirm):
+    """Delete every existing artifact owned by the given stage ids. Returns
+    {stage_id: [Path, ...]} of what was (or, if not confirm, would be) removed.
+
+    Raises ValueError up front -- before deleting anything -- for an unknown
+    stage id or one that declares no `artifacts` (most stages don't support
+    --reset-stage yet; silently no-op'ing on those would look like success)."""
+    by_id = {s.id: s for s in stages}
+    unknown = [sid for sid in stage_ids if sid not in by_id]
+    if unknown:
+        close = difflib.get_close_matches(unknown[0], by_id.keys(), n=3) if unknown else []
+        hint = f" Did you mean: {close}?" if close else ""
+        raise ValueError(f"Unknown stage id(s) for --reset-stage: {unknown}.{hint}")
+
+    no_artifacts = [sid for sid in stage_ids if not by_id[sid].artifacts]
+    if no_artifacts:
+        raise ValueError(
+            f"Stage(s) {no_artifacts} declare no `artifacts` -- --reset-stage isn't wired up for "
+            f"them yet. Delete their checkpoint/model directories by hand if you're sure."
+        )
+
+    plan = {sid: resolve_stage_artifacts(root, by_id[sid]) for sid in stage_ids}
+    if confirm:
+        import shutil
+        for paths in plan.values():
+            for path in paths:
+                if path.is_dir():
+                    shutil.rmtree(path)
+                else:
+                    path.unlink()
+    return plan
+
+
 def resolve_cancelled(stages, seed_ids, done_ids=frozenset()):
     """Every stage whose transitive `requires` closure touches seed_ids, excluding
     the seeds themselves. seed_ids is either "stages currently BLOCKED" (at listing
@@ -788,6 +903,11 @@ def auto_max_parallel(available_bytes):
 
 
 def resolve_max_parallel(arg_value):
+    """Note the optimism baked into "auto": psutil reports memory available RIGHT
+    NOW, at orchestrator startup, before any dataset is opened or any worker is
+    launched -- so it is an upper bound on what the workers will actually find,
+    never a promise. Pass --max-parallel explicitly if a run is being OOM-killed
+    despite the sizing below."""
     if arg_value != "auto":
         return int(arg_value), f"--max-parallel {arg_value} (explicit)"
     try:
@@ -994,12 +1114,44 @@ def build_arg_parser():
                               "the session ends and this is the only way progress survives. Requires "
                               "push credentials already configured on the git remote (a token, etc.) --"
                               " a push failure is logged but never aborts the run.")
+    parser.add_argument("--reset-stage", nargs="+", metavar="ID",
+                         help="Delete a stage's checkpoints/models/history CSV so it retrains from "
+                              "scratch (only wired up for stages that declare `artifacts` -- "
+                              "currently the 5 non-reservoir experience-replay stages). With no "
+                              "--yes, only PRINTS what would be deleted and exits -- nothing else "
+                              "runs. Use after a code change that invalidates existing checkpoints "
+                              "(e.g. changed sampling logic), since a stage whose artifacts still "
+                              "look complete is reported DONE and never re-runs.")
+    parser.add_argument("--yes", action="store_true",
+                         help="Actually perform the deletion requested by --reset-stage. Without it, "
+                              "--reset-stage is a dry-run preview only.")
     return parser
 
 
 def main(argv=None):
     args = build_arg_parser().parse_args(argv)
     root = PROJECT_ROOT
+
+    if args.reset_stage:
+        try:
+            plan = reset_stages(root, STAGES, args.reset_stage, confirm=args.yes)
+        except ValueError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 2
+        verb = "Deleted" if args.yes else "Would delete (pass --yes to actually delete)"
+        total = 0
+        for stage_id, paths in plan.items():
+            print(f"\n{stage_id}:")
+            if not paths:
+                print("  (nothing exists on disk for this stage -- already reset)")
+                continue
+            for path in paths:
+                print(f"  {verb}: {path}")
+                total += 1
+        print(f"\n{total} path(s) {'deleted' if args.yes else 'would be deleted'}.")
+        if not args.yes and total:
+            print("Re-run with --yes to actually delete.")
+        return 0
 
     try:
         selected = select_stages(STAGES, only=args.only, groups=args.group, from_id=args.from_id, skip=args.skip)

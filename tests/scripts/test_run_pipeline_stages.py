@@ -11,13 +11,16 @@ from scripts.run_pipeline_stages import (
     STAGES_BY_ID,
     Stage,
     artifacts_exist,
+    BYTES_PER_REPLAY_PROCESS,
     auto_max_parallel,
     compute_status,
     eval_unified_check,
     git_commit_and_push,
     ratios_complete_per_ratio,
     ratios_complete_shared,
+    reset_stages,
     resolve_cancelled,
+    resolve_stage_artifacts,
     select_stages,
     shared_check,
     training_signature,
@@ -287,15 +290,137 @@ def test_resolve_cancelled_independent_stage_untouched():
 
 
 # ---------------------------------------------------------------------------
+# resolve_stage_artifacts / reset_stages
+# ---------------------------------------------------------------------------
+
+def _stage_with_artifacts(ratios=(0.2, 0.3)):
+    return Stage(
+        id="toy_er", group="er_parallel", notebook="toy.ipynb", runner="ratio_sweep",
+        check=lambda r, s: None, ratios=ratios,
+        artifacts=(
+            "checkpoints/toy_er",
+            "models/toy_er_{ratio_key}",
+            "history/toy_er_all_ratios.csv",
+        ),
+    )
+
+
+def test_resolve_stage_artifacts_expands_ratio_key_and_skips_missing(tmp_path):
+    stage = _stage_with_artifacts()
+    (tmp_path / "checkpoints" / "toy_er").mkdir(parents=True)
+    (tmp_path / "models" / "toy_er_RR_0.2").mkdir(parents=True)
+    # RR_0.3 models dir and the history CSV are deliberately absent.
+
+    resolved = resolve_stage_artifacts(tmp_path, stage)
+
+    assert resolved == [
+        tmp_path / "checkpoints" / "toy_er",
+        tmp_path / "models" / "toy_er_RR_0.2",
+    ]
+
+
+def test_resolve_stage_artifacts_nothing_on_disk_returns_empty(tmp_path):
+    assert resolve_stage_artifacts(tmp_path, _stage_with_artifacts()) == []
+
+
+def test_resolve_stage_artifacts_never_touches_sibling_directory(tmp_path):
+    # A sibling from a different hyperparameter config (mirrors *_opt_fix,
+    # *_PR_0.10 living next to the dirs a real ER stage owns) must never be
+    # swept up -- resolve_stage_artifacts only expands the exact declared names.
+    stage = _stage_with_artifacts(ratios=(0.2,))
+    (tmp_path / "models" / "toy_er_RR_0.2").mkdir(parents=True)
+    sibling = tmp_path / "models" / "toy_er_RR_0.2_opt_fix"
+    sibling.mkdir(parents=True)
+
+    resolved = resolve_stage_artifacts(tmp_path, stage)
+
+    assert sibling not in resolved
+    assert tmp_path / "models" / "toy_er_RR_0.2" in resolved
+
+
+def test_reset_stages_preview_does_not_delete(tmp_path):
+    stage = _stage_with_artifacts(ratios=(0.2,))
+    target = tmp_path / "checkpoints" / "toy_er"
+    target.mkdir(parents=True)
+
+    plan = reset_stages(tmp_path, [stage], ["toy_er"], confirm=False)
+
+    assert plan == {"toy_er": [target]}
+    assert target.exists()  # preview only -- nothing removed
+
+
+def test_reset_stages_confirm_deletes_dirs_and_files(tmp_path):
+    stage = _stage_with_artifacts(ratios=(0.2,))
+    ckpt_dir = tmp_path / "checkpoints" / "toy_er"
+    ckpt_dir.mkdir(parents=True)
+    (ckpt_dir / "status.json").write_text("{}", encoding="utf-8")
+    models_dir = tmp_path / "models" / "toy_er_RR_0.2"
+    models_dir.mkdir(parents=True)
+    history_csv = tmp_path / "history" / "toy_er_all_ratios.csv"
+    history_csv.parent.mkdir(parents=True)
+    history_csv.write_text("year\n2020\n", encoding="utf-8")
+    sibling = tmp_path / "models" / "toy_er_RR_0.2_opt_fix"
+    sibling.mkdir(parents=True)
+
+    plan = reset_stages(tmp_path, [stage], ["toy_er"], confirm=True)
+
+    assert not ckpt_dir.exists()
+    assert not models_dir.exists()
+    assert not history_csv.exists()
+    assert sibling.exists()  # sibling from a different config must survive
+    assert len(plan["toy_er"]) == 3
+
+
+def test_reset_stages_unknown_stage_id_raises_before_deleting(tmp_path):
+    stage = _stage_with_artifacts(ratios=(0.2,))
+    target = tmp_path / "checkpoints" / "toy_er"
+    target.mkdir(parents=True)
+
+    with pytest.raises(ValueError, match="Unknown stage id"):
+        reset_stages(tmp_path, [stage], ["toy_er", "bogus"], confirm=True)
+
+    assert target.exists()  # the valid stage's artifact must survive the raise
+
+
+def test_reset_stages_stage_without_artifacts_raises(tmp_path):
+    no_artifacts_stage = Stage(id="bare", group="g", notebook="a.ipynb",
+                                runner="nbconvert", check=lambda r, s: None)
+
+    with pytest.raises(ValueError, match="declare no `artifacts`"):
+        reset_stages(tmp_path, [no_artifacts_stage], ["bare"], confirm=True)
+
+
+def test_reset_stage_artifacts_declared_on_real_stages_are_exact_and_exist_in_repo():
+    # Every real ER stage that declares `artifacts` must use the ratio-key
+    # placeholder consistently and resolve to paths that would sit under
+    # PROJECT_ROOT's experiments/ tree (a typo'd literal here would silently
+    # never match anything on a real run).
+    for stage in STAGES:
+        if not stage.artifacts:
+            continue
+        for rel in stage.artifacts:
+            assert rel.startswith("experiments/mlp/experience_replay/"), stage.id
+            assert "*" not in rel, f"{stage.id} artifact must be an exact path, not a glob: {rel}"
+
+
+# ---------------------------------------------------------------------------
 # auto_max_parallel
 # ---------------------------------------------------------------------------
 
 def test_auto_max_parallel_clamps_to_range():
     gib = 1024 ** 3
+    per_process = BYTES_PER_REPLAY_PROCESS
     assert auto_max_parallel(0) == 1
-    assert auto_max_parallel(1 * gib) == 1
-    assert auto_max_parallel(11 * gib) == 2
+    assert auto_max_parallel(per_process - 1) == 1  # never below 1, even if nothing fits
+    assert auto_max_parallel(2 * per_process) == 2
     assert auto_max_parallel(1000 * gib) == 4  # clamped at 4 even with huge RAM
+
+
+def test_auto_max_parallel_picks_two_on_a_kaggle_cpu_box():
+    """Pins the number that actually matters. A Kaggle CPU session reports ~30GiB
+    and has no swap, so this is the difference between the sweep finishing and the
+    kernel being OOM-killed -- exactly what happened at --max-parallel 4."""
+    assert auto_max_parallel(30 * 1024 ** 3) == 2
 
 
 # ---------------------------------------------------------------------------

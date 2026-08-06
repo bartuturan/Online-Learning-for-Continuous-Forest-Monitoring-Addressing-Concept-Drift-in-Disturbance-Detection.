@@ -1,3 +1,33 @@
+"""Replay-pool sampling strategies for the MLP experience-replay training loop.
+
+Every sampler here (sample_hard_replay_indices, sample_uncertain_replay_indices,
+sample_confidently_correct_replay_indices, sample_random_replay_indices,
+sample_grouped_indices) is called ONCE PER YEAR by its notebook, before that
+year's epoch loop starts -- never once per epoch. The model-scored strategies
+(hard/uncertain/confident) score the replay pool against the model exactly as
+it stood at the start of the year; the resulting index set is then held fixed
+across all of that year's epochs (only the row ORDER is reshuffled each epoch,
+via a separate `replay_rng.permutation` call the notebooks keep inside the
+epoch loop -- the composition of the batch does not change).
+
+This is a deliberate choice, not an oversight -- see the "Move replay sampling
+from per-epoch to per-year" change for the full rationale. In short: per-epoch
+resampling lets a low replay-ratio run's epochs collectively touch nearly the
+whole pool (defeating what the ratio is supposed to control), confounds early
+stopping (a chunk of the training set changes underneath the val-PR-AUC delta
+patience is judging), and dilutes the model-scored strategies -- by the model's
+better-fit later epochs, most of what counted as "hard"/"uncertain" earlier in
+the year has stopped being so, and the sampler quietly falls back to random
+filler (see weighted_choice_without_replacement and _top_up_shortfall below).
+
+tests/mlp_replay/test_replay_sampling_cadence.py statically guards every
+in-scope notebook against a sampler call regressing back inside its epoch
+loop. The `*_reservoir_sampling` notebook variants are NOT held to this
+convention -- they still resample every epoch (out of scope for that change)
+and are therefore not comparable to the rest of the sweep; see the note in
+scripts/run_pipeline_stages.py's module docstring.
+"""
+
 import numpy as np
 
 from .checkpointing import get_cached_raw_year
@@ -73,6 +103,44 @@ def sample_random_replay_indices(replay_pool_size, random_target_size, excluded_
     return rng.choice(available_indices, size=take, replace=False).astype(np.int64, copy=False)
 
 
+def _year_features_accessor(load_scaled_year, X_replay_pool):
+    """Resolve the two ways a sampler can reach one past year's SCALED features.
+
+    `load_scaled_year(year_idx) -> X` is the streaming path: the caller hands back
+    one year at a time, so the whole history is never resident at once. This is
+    what the per-year notebooks use -- at 5.6M pixels x 32 float32 features a
+    single year is ~716MB, while the concatenated pool at the last training year
+    is ~3.6GB (~7.2GB counting the np.vstack duplicate), which is what was getting
+    the Kaggle kernel OOM-killed.
+
+    `X_replay_pool` is the legacy path: one contiguous array indexed by the span's
+    [start:end]. Kept because the *_reservoir_sampling notebooks pass a reservoir
+    BUFFER here under a synthetic single span [(1, 0, len(pool))] whose "year_idx"
+    is not a real year at all, so they cannot use the streaming path.
+
+    Both paths feed the samplers the exact same rows in the exact same order, so
+    RNG consumption -- and therefore the selection -- is identical either way.
+    """
+    if (load_scaled_year is None) == (X_replay_pool is None):
+        raise ValueError(
+            'Pass exactly one of load_scaled_year= (streaming) or X_replay_pool= (legacy contiguous pool).'
+        )
+
+    if X_replay_pool is not None:
+        return lambda year_idx, start, end: X_replay_pool[start:end]
+
+    def accessor(year_idx, start, end):
+        X_year = load_scaled_year(year_idx)
+        if len(X_year) != end - start:
+            raise ValueError(
+                f'load_scaled_year({year_idx}) returned {len(X_year)} rows but its span covers '
+                f'{end - start} -- the spans and the loader disagree about this year.'
+            )
+        return X_year
+
+    return accessor
+
+
 def _allocate_per_year_quota(replay_year_spans, target_size):
     n_years_with_data = len(replay_year_spans)
     base_quota = target_size // n_years_with_data
@@ -106,10 +174,15 @@ def sample_hard_replay_indices(
     hard_target_size,
     rng,
     threshold_grid=None,
+    *,
+    load_scaled_year=None,
 ):
+    """Pass EITHER X_replay_pool (legacy contiguous pool) or load_scaled_year=
+    (streaming, one year at a time) -- see _year_features_accessor."""
     if hard_target_size <= 0 or len(replay_year_spans) == 0:
         return np.empty((0,), dtype=np.int64), []
 
+    get_year_X = _year_features_accessor(load_scaled_year, X_replay_pool)
     per_year_targets = _allocate_per_year_quota(replay_year_spans, hard_target_size)
 
     selected_indices = []
@@ -121,7 +194,7 @@ def sample_hard_replay_indices(
 
         year_indices = np.arange(start, end, dtype=np.int64)
         y_year = y_replay_pool[start:end]
-        y_proba_year = model.predict_proba(X_replay_pool[start:end])[:, 1]
+        y_proba_year = model.predict_proba(get_year_X(year_idx, start, end))[:, 1]
         threshold = compute_optimal_f1_threshold(
             y_true=y_year,
             y_proba=y_proba_year,
@@ -163,11 +236,16 @@ def sample_uncertain_replay_indices(
     rng,
     gaussian_std,
     threshold_grid=None,
+    *,
+    load_scaled_year=None,
 ):
+    """Pass EITHER X_replay_pool (legacy contiguous pool) or load_scaled_year=
+    (streaming, one year at a time) -- see _year_features_accessor."""
     EPSILON = 1e-12
     if uncertain_target_size <= 0 or len(replay_year_spans) == 0:
         return np.empty((0,), dtype=np.int64), []
 
+    get_year_X = _year_features_accessor(load_scaled_year, X_replay_pool)
     per_year_targets = _allocate_per_year_quota(replay_year_spans, uncertain_target_size)
 
     selected_indices = []
@@ -179,7 +257,7 @@ def sample_uncertain_replay_indices(
 
         year_indices = np.arange(start, end, dtype=np.int64)
         y_year = y_replay_pool[start:end]
-        y_proba_year = model.predict_proba(X_replay_pool[start:end])[:, 1]
+        y_proba_year = model.predict_proba(get_year_X(year_idx, start, end))[:, 1]
         threshold = compute_optimal_f1_threshold(
             y_true=y_year,
             y_proba=y_proba_year,
@@ -223,10 +301,15 @@ def sample_confidently_correct_replay_indices(
     confident_target_size,
     rng,
     threshold_grid=None,
+    *,
+    load_scaled_year=None,
 ):
+    """Pass EITHER X_replay_pool (legacy contiguous pool) or load_scaled_year=
+    (streaming, one year at a time) -- see _year_features_accessor."""
     if confident_target_size <= 0 or len(replay_year_spans) == 0:
         return np.empty((0,), dtype=np.int64), []
 
+    get_year_X = _year_features_accessor(load_scaled_year, X_replay_pool)
     per_year_targets = _allocate_per_year_quota(replay_year_spans, confident_target_size)
 
     selected_indices = []
@@ -238,7 +321,7 @@ def sample_confidently_correct_replay_indices(
 
         year_indices = np.arange(start, end, dtype=np.int64)
         y_year = y_replay_pool[start:end]
-        y_proba_year = model.predict_proba(X_replay_pool[start:end])[:, 1]
+        y_proba_year = model.predict_proba(get_year_X(year_idx, start, end))[:, 1]
         threshold = compute_optimal_f1_threshold(
             y_true=y_year,
             y_proba=y_proba_year,
@@ -269,6 +352,116 @@ def sample_confidently_correct_replay_indices(
 
     confident_indices = _top_up_shortfall(confident_indices, confident_target_size, len(y_replay_pool), rng)
     return confident_indices, threshold_values
+
+
+def build_replay_year_spans(load_year_labels, current_year_idx):
+    """Labels-only twin of the `np.vstack(replay_X_parts)` pool build.
+
+    Returns (replay_year_spans, y_replay_pool, replay_pool_size) where spans are
+    the same (year_idx, start, end) triples the samplers already take, laid out in
+    the same order and with the same offsets the concatenated pool would have had.
+    Features are never touched: the caller hands back only that year's labels, so
+    a 27.9M-row history costs ~223MB of int64 here instead of ~3.6GB of float32
+    features (~7.2GB with the vstack duplicate).
+
+    load_year_labels(year_idx) returns that year's label array, or an empty array
+    for a year with no usable samples -- empty years are skipped, exactly as the
+    `if len(X_past_raw) > 0` guard in the old inline pool build did, so the span
+    layout is unchanged.
+    """
+    spans = []
+    label_parts = []
+    cursor = 0
+
+    for past_year_idx in range(1, current_year_idx):
+        y_past = load_year_labels(past_year_idx)
+        if y_past is None or len(y_past) == 0:
+            continue
+        span_len = len(y_past)
+        spans.append((past_year_idx, cursor, cursor + span_len))
+        label_parts.append(y_past)
+        cursor += span_len
+
+    if label_parts:
+        y_replay_pool = np.concatenate(label_parts)
+    else:
+        y_replay_pool = np.empty((0,), dtype=np.int64)
+
+    return spans, y_replay_pool, cursor
+
+
+def group_global_indices(global_indices, replay_year_spans):
+    """Map global pool offsets back to the year that owns them.
+
+    Returns [(year_idx, local_indices, positions)]: `local_indices` are offsets
+    within that year's own array, and `positions` are where those rows sat in the
+    caller's `global_indices`. Carrying `positions` is what lets
+    materialize_replay_samples_in_order rebuild the caller's exact row order --
+    which matters because the notebooks feed the materialized batch straight into
+    a per-epoch `replay_rng.permutation`, so a different starting order is a
+    different training run.
+
+    Spans are contiguous by construction (build_replay_year_spans lays each year
+    down at the previous year's end), so one searchsorted resolves every index.
+    """
+    global_indices = np.asarray(global_indices, dtype=np.int64)
+    if len(replay_year_spans) == 0 or len(global_indices) == 0:
+        return []
+
+    starts = np.array([start for _, start, _ in replay_year_spans], dtype=np.int64)
+    ends = np.array([end for _, _, end in replay_year_spans], dtype=np.int64)
+    year_ids = [year_idx for year_idx, _, _ in replay_year_spans]
+
+    if global_indices.min() < starts[0] or global_indices.max() >= ends[-1]:
+        raise ValueError(
+            f'global index out of range: got [{global_indices.min()}, {global_indices.max()}], '
+            f'spans cover [{starts[0]}, {ends[-1]})'
+        )
+
+    span_of = np.searchsorted(ends, global_indices, side='right')
+
+    grouped = []
+    for span_pos in np.unique(span_of):
+        span_pos = int(span_pos)
+        positions = np.flatnonzero(span_of == span_pos)
+        local_indices = global_indices[positions] - starts[span_pos]
+        grouped.append((year_ids[span_pos], local_indices, positions))
+    return grouped
+
+
+def materialize_replay_samples_in_order(global_indices, replay_year_spans, load_raw_year, scaler):
+    """Fetch exactly the selected rows, scale only those, in the caller's order.
+
+    The point of the whole streaming design: each needed year is loaded once,
+    immediately reduced to its selected rows, and released -- so peak memory is one
+    year's features plus the (much smaller) output, never the whole history. The
+    output buffer is preallocated at its final size, so there is no vstack
+    duplicate either.
+
+    load_raw_year(year_idx) -> (X_raw, y) matches get_cached_raw_year's contract.
+    """
+    global_indices = np.asarray(global_indices, dtype=np.int64)
+    grouped = group_global_indices(global_indices, replay_year_spans)
+    if not grouped:
+        return np.empty((0, 0), dtype=np.float32), np.empty((0,), dtype=np.int64)
+
+    X_out = None
+    y_out = None
+    for year_idx, local_indices, positions in grouped:
+        X_raw, y_year = load_raw_year(year_idx)
+        if len(X_raw) == 0:
+            continue
+        X_selected = scaler.transform(X_raw[local_indices])
+        y_selected = y_year[local_indices]
+        if X_out is None:
+            X_out = np.empty((len(global_indices), X_selected.shape[1]), dtype=X_selected.dtype)
+            y_out = np.empty((len(global_indices),), dtype=y_selected.dtype)
+        X_out[positions] = X_selected
+        y_out[positions] = y_selected
+
+    if X_out is None:
+        return np.empty((0, 0), dtype=np.float32), np.empty((0,), dtype=np.int64)
+    return X_out, y_out
 
 
 def build_replay_year_metadata(cache, current_year_idx, positive_label=1):
@@ -333,6 +526,15 @@ def sample_grouped_indices(sources, sample_size, rng):
 
 
 def materialize_replay_samples(grouped_indices, cache, scaler):
+    """Rows come back grouped by year, in `grouped_indices` order. Use
+    materialize_replay_samples_in_order instead when the caller's own row order
+    has to be preserved."""
+    return materialize_grouped_replay_samples(
+        grouped_indices, lambda year_idx: get_cached_raw_year(cache, year_idx), scaler
+    )
+
+
+def materialize_grouped_replay_samples(grouped_indices, load_raw_year, scaler):
     if not grouped_indices:
         return np.empty((0, 0), dtype=np.float32), np.empty((0,), dtype=np.int64)
 
@@ -344,7 +546,7 @@ def materialize_replay_samples(grouped_indices, cache, scaler):
         if len(sampled_local_indices) == 0:
             continue
 
-        X_past_raw, y_past = get_cached_raw_year(cache, past_year_idx)
+        X_past_raw, y_past = load_raw_year(past_year_idx)
         if len(X_past_raw) == 0:
             continue
 
