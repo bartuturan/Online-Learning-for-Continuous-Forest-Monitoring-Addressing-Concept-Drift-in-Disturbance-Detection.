@@ -1,0 +1,33 @@
+[2026-08-06 11:42:38] Checkpoint state loaded. Completed ratios: []. Configured ratios: ['RR_0.2', 'RR_0.3', 'RR_0.4', 'RR_0.5'].
+[2026-08-06 11:42:38] Starting RR_0.2 (replay_ratio=0.2)
+[2026-08-06 11:45:07]   Checkpoint: RR_0.2 year 2017 (Val PR-AUC=0.1812, replay=0/0)
+[2026-08-06 11:50:40]   Checkpoint: RR_0.2 year 2018 (Val PR-AUC=0.4306, replay=1,117,352/5,575,527)
+[2026-08-06 11:54:42]   Checkpoint: RR_0.2 year 2019 (Val PR-AUC=0.4319, replay=1,117,340/11,162,289)
+[2026-08-06 11:57:24]   Checkpoint: RR_0.2 year 2020 (Val PR-AUC=0.4592, replay=1,117,472/16,748,990)
+[2026-08-06 11:59:53]   Checkpoint: RR_0.2 year 2021 (Val PR-AUC=0.4368, replay=1,117,366/22,336,353)
+[2026-08-06 12:03:06]   Checkpoint: RR_0.2 year 2022 (Val PR-AUC=0.3440, replay=1,118,423/27,923,184)
+[2026-08-06 12:03:06] ✓ COMPLETE: RR_0.2
+[2026-08-06 12:03:06] Starting RR_0.3 (replay_ratio=0.3)
+[2026-08-06 12:05:51]   Checkpoint: RR_0.3 year 2017 (Val PR-AUC=0.1833, replay=0/0)
+[2026-08-06 12:07:55]   Checkpoint: RR_0.3 year 2018 (Val PR-AUC=0.4247, replay=1,676,028/5,575,527)
+[2026-08-06 12:10:35]   Checkpoint: RR_0.3 year 2019 (Val PR-AUC=0.4211, replay=1,676,010/11,162,289)
+[2026-08-06 12:14:12]   Checkpoint: RR_0.3 year 2020 (Val PR-AUC=0.4587, replay=1,676,208/16,748,990)
+[2026-08-06 12:17:31]   Checkpoint: RR_0.3 year 2021 (Val PR-AUC=0.4342, replay=1,676,049/22,336,353)
+[2026-08-06 12:20:27]   Checkpoint: RR_0.3 year 2022 (Val PR-AUC=0.3534, replay=1,677,634/27,923,184)
+[2026-08-06 12:20:27] ✓ COMPLETE: RR_0.3
+[2026-08-06 12:20:27] Starting RR_0.4 (replay_ratio=0.4)
+[2026-08-06 12:21:54]   Checkpoint: RR_0.4 year 2017 (Val PR-AUC=0.1760, replay=0/0)
+[2026-08-06 12:24:40]   Checkpoint: RR_0.4 year 2018 (Val PR-AUC=0.4381, replay=2,234,704/5,575,527)
+[2026-08-06 12:27:19]   Checkpoint: RR_0.4 year 2019 (Val PR-AUC=0.4235, replay=2,234,680/11,162,289)
+[2026-08-06 12:30:35]   Checkpoint: RR_0.4 year 2020 (Val PR-AUC=0.4554, replay=2,234,945/16,748,990)
+[2026-08-06 12:34:03]   Checkpoint: RR_0.4 year 2021 (Val PR-AUC=0.4330, replay=2,234,732/22,336,353)
+[2026-08-06 12:35:36]   Checkpoint: RR_0.4 year 2022 (Val PR-AUC=0.3504, replay=2,236,846/27,923,184)
+[2026-08-06 12:35:36] ✓ COMPLETE: RR_0.4
+[2026-08-06 12:35:36] Starting RR_0.5 (replay_ratio=0.5)
+[2026-08-06 12:37:35]   Checkpoint: RR_0.5 year 2017 (Val PR-AUC=0.1831, replay=0/0)
+[2026-08-06 12:40:46]   Checkpoint: RR_0.5 year 2018 (Val PR-AUC=0.4311, replay=2,793,381/5,575,527)
+[2026-08-06 12:45:06]   Checkpoint: RR_0.5 year 2019 (Val PR-AUC=0.4267, replay=2,793,350/11,162,289)
+[2026-08-06 12:47:13]   Checkpoint: RR_0.5 year 2020 (Val PR-AUC=0.4622, replay=2,793,681/16,748,990)
+[2026-08-06 12:48:54]   Checkpoint: RR_0.5 year 2021 (Val PR-AUC=0.4289, replay=2,793,415/22,336,353)
+[2026-08-06 12:50:59]   Checkpoint: RR_0.5 year 2022 (Val PR-AUC=0.3372, replay=2,796,058/27,923,184)
+[2026-08-06 12:50:59] ✓ COMPLETE: RR_0.5
