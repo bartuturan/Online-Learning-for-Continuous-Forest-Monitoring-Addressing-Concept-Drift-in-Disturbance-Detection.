@@ -1,6 +1,0 @@
-family_id,table_name,skipped_existing,row_count,csv_path
-baseline,own_year,False,6,eval_outputs\unified_eval\baseline\baseline_own_year.csv
-baseline,prior_years,False,21,eval_outputs\unified_eval\baseline\baseline_prior_years.csv
-baseline,next_year,False,5,eval_outputs\unified_eval\baseline\baseline_next_year.csv
-baseline,cumulative,False,6,eval_outputs\unified_eval\baseline\baseline_cumulative.csv
-baseline,final_model_each_year,False,0,eval_outputs\unified_eval\baseline\baseline_final_model_each_year.csv

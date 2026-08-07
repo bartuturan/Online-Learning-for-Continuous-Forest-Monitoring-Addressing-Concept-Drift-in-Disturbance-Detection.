@@ -1,0 +1,57 @@
+{
+  "signature": {
+    "er_combined": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "er_confidently_correct": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "er_hard_example_mining": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "er_misclassification_buffer": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "er_plain": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "er_target_positive_rate": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "er_uncertainty_prioritization": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "mlp_baseline": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "sgd_baseline": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "sgd_prevyears": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "sgd_prevyears_incr": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "sgd_prevyears_monthly": {
+      "remaining": [],
+      "state": "DONE"
+    },
+    "sgd_prevyears_monthly_incr": {
+      "remaining": [],
+      "state": "DONE"
+    }
+  },
+  "status": "complete"
+}

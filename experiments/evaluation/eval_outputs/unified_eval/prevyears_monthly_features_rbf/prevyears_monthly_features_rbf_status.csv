@@ -1,6 +1,0 @@
-family_id,table_name,skipped_existing,row_count,csv_path
-prevyears_monthly_features_rbf,own_year,True,6,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features_rbf\prevyears_monthly_features_rbf_own_year.csv
-prevyears_monthly_features_rbf,prior_years,True,21,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features_rbf\prevyears_monthly_features_rbf_prior_years.csv
-prevyears_monthly_features_rbf,next_year,True,5,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features_rbf\prevyears_monthly_features_rbf_next_year.csv
-prevyears_monthly_features_rbf,cumulative,True,6,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features_rbf\prevyears_monthly_features_rbf_cumulative.csv
-prevyears_monthly_features_rbf,final_model_each_year,True,6,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features_rbf\prevyears_monthly_features_rbf_final_model_each_year.csv

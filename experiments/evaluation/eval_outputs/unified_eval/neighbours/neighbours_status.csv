@@ -1,6 +1,0 @@
-family_id,table_name,skipped_existing,row_count,csv_path
-neighbours,own_year,True,6,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\neighbours\neighbours_own_year.csv
-neighbours,prior_years,True,21,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\neighbours\neighbours_prior_years.csv
-neighbours,next_year,True,5,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\neighbours\neighbours_next_year.csv
-neighbours,cumulative,True,6,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\neighbours\neighbours_cumulative.csv
-neighbours,final_model_each_year,True,0,c:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\neighbours\neighbours_final_model_each_year.csv
