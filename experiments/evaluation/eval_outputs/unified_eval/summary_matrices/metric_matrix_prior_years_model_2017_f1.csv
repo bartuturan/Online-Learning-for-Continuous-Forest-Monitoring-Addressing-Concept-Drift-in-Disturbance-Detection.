@@ -1,8 +1,10 @@
 row,2017
-"mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",0.2627527723418134
-"mlp_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5",0.2627527723418134
-"mlp_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5",0.2627527723418134
-"mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5",0.2627527723418134
+"mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",0.2699052763723513
+"mlp_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4",0.2699052763723513
+"mlp_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5",0.2699052763723513
+"mlp_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5",0.2699052763723513
+"mlp_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5",0.2699052763723513
+"mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5",0.2699052763723513
 mlp_prevyears_monthly_features_incremental_scaler,0.2632884836503742
 mlp_experience_replay_RR_0.2,0.2676402920876263
 mlp_experience_replay_RR_0.2_PR_0.10,0.2699052763723513

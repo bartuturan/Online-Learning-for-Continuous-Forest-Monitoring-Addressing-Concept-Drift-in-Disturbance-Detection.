@@ -13,37 +13,37 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
-      "csv_path": "/kaggle/working/repo/experiments/evaluation/eval_outputs/unified_eval/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_own_year.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_own_year.csv"
     },
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
-      "csv_path": "/kaggle/working/repo/experiments/evaluation/eval_outputs/unified_eval/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_prior_years.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_prior_years.csv"
     },
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
-      "csv_path": "/kaggle/working/repo/experiments/evaluation/eval_outputs/unified_eval/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_next_year.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_next_year.csv"
     },
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
-      "csv_path": "/kaggle/working/repo/experiments/evaluation/eval_outputs/unified_eval/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_cumulative.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_cumulative.csv"
     },
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
-      "csv_path": "/kaggle/working/repo/experiments/evaluation/eval_outputs/unified_eval/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15/mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_final_model_each_year.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15\\mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15_final_model_each_year.csv"
     }
   ]
 }
