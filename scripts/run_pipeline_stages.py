@@ -59,7 +59,10 @@ the remote URL, set up once per session since kernel restarts don't persist
 belong in your session-setup cell alongside cloning, not in this script.
 
 kaggle/fonda_pipeline_runner.ipynb is the ready-made version of all of this --
-upload it once and Run All each session. The equivalent by hand:
+upload it once and Run All each session. For a multi-seed run (see "Multi-seed
+runs" below), use kaggle/fonda_seed_runner.ipynb instead -- same setup, plus
+split generation, parameterized by one SEED variable at the top. The equivalent
+by hand:
 
 Session 1:
     !git clone --depth 1 --branch pipeline-rerun <repo-url> /kaggle/working/repo
