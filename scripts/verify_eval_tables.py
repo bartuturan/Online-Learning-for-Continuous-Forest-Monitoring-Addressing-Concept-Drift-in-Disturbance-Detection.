@@ -43,6 +43,8 @@ from scripts.run_pipeline_stages import (  # noqa: E402
     git_commit_and_push,
     read_eval_state,
     run_eval_stage,
+    seeded_rel,
+    set_active_seed,
     write_eval_state,
 )
 
@@ -141,10 +143,18 @@ def main():
                          help="Commit and push experiments/ after recreating (see "
                               "git_commit_and_push in run_pipeline_stages.py).")
     parser.add_argument("--root", default=str(PROJECT_ROOT))
+    parser.add_argument("--seed", type=int, default=None, metavar="N",
+                        help="Verify seed N's tables under experiments/seed_N/ instead of the "
+                             "default experiments/ tree. Must match the seed the tables were "
+                             "produced with, or this scans the wrong tree and reports it intact.")
     args = parser.parse_args()
 
+    # Before EVAL_DIR_REL is resolved or run_eval_stage is called: both go through
+    # the orchestrator's seeded path remapping.
+    set_active_seed(args.seed)
+
     root = Path(args.root)
-    eval_dir = root / EVAL_DIR_REL
+    eval_dir = root / seeded_rel(EVAL_DIR_REL)
     if not eval_dir.exists():
         print(f"No evaluation output directory at {eval_dir} -- nothing to verify.")
         return 0

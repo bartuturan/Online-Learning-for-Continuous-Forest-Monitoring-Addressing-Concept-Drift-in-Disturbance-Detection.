@@ -21,7 +21,69 @@ def families():
 
 
 def test_family_count(families):
-    assert len(families) == 50
+    assert len(families) == 47
+
+
+class TestExperimentsRootRedirect:
+    """build_families(project_root, experiments_root=...) is what lets an
+    evaluation score a seed run's models. The invariant that matters: MODEL paths
+    move, DATA paths do not -- the zarr stores are shared across seeds."""
+
+    @pytest.fixture(scope='class')
+    def seeded(self):
+        return build_families(PROJECT_ROOT, experiments_root=PROJECT_ROOT / 'experiments' / 'seed_1')
+
+    def test_defaults_to_the_original_tree(self, families):
+        for cfg in families.values():
+            assert (PROJECT_ROOT / 'experiments') in cfg['models_dir'].parents
+
+    def test_every_models_dir_moves_under_the_new_root(self, seeded):
+        seed_root = PROJECT_ROOT / 'experiments' / 'seed_1'
+        for fid, cfg in seeded.items():
+            assert seed_root in cfg['models_dir'].parents, fid
+
+    #: The one family whose final_model_path points at the repo root instead of
+    #: into experiments/, so it cannot follow an experiments_root redirect. It is
+    #: already dead at seed 42 -- neither its models_dir nor its final_model_path
+    #: exists, and evaluation reports "Model directory missing" for it on every
+    #: run. A leftover from before the ratio sweep existed (no current notebook
+    #: produces an un-suffixed *_experience_replay directory). Exempted here
+    #: rather than deleted, because removing a family is a separate decision.
+    KNOWN_UNREDIRECTABLE = 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay'
+
+    def test_final_model_and_scaler_paths_move_too(self, seeded):
+        seed_root = PROJECT_ROOT / 'experiments' / 'seed_1'
+        for fid, cfg in seeded.items():
+            if fid == self.KNOWN_UNREDIRECTABLE:
+                continue
+            for key in ('final_model_path', 'final_scaler_path'):
+                if cfg.get(key):
+                    assert seed_root in Path(cfg[key]).parents, f'{fid}.{key}'
+
+    def test_the_exempted_family_is_still_the_only_one_and_still_dead(self, families):
+        """If this fails, either the dead family was fixed/removed (drop the
+        exemption) or a NEW root-anchored path crept in (fix it, don't exempt it)."""
+        offenders = {
+            fid for fid, cfg in families.items()
+            if cfg.get('final_model_path')
+            and (PROJECT_ROOT / 'experiments') not in Path(cfg['final_model_path']).parents
+        }
+        assert offenders == {self.KNOWN_UNREDIRECTABLE}
+        assert not families[self.KNOWN_UNREDIRECTABLE]['models_dir'].exists()
+
+    def test_dataset_path_does_NOT_move(self, families, seeded):
+        """Redirecting the data would send a seed run looking for a zarr store that
+        was never copied -- and silently invalidate the disk feature cache."""
+        for fid in families:
+            assert seeded[fid]['dataset_path'] == families[fid]['dataset_path'], fid
+            assert 'seed_1' not in str(seeded[fid]['dataset_path'])
+
+    def test_redirect_changes_nothing_but_the_paths(self, families, seeded):
+        assert set(seeded) == set(families)
+        for fid, cfg in seeded.items():
+            for key in ('short_label', 'label', 'model_template', 'scaler_template',
+                        'prep_kind', 'incremental_scaler'):
+                assert cfg[key] == families[fid][key], f'{fid}.{key}'
 
 
 def test_every_family_has_the_required_keys(families):
@@ -54,15 +116,10 @@ def test_no_reference_notebook_key_survives(families):
         assert 'reference_notebook' not in cfg, fid
 
 
-def test_rbf_family_has_no_scaler_template(families):
-    """The one family with scaler_template=None; load_scaler must handle it."""
-    assert families['prevyears_monthly_features_rbf']['scaler_template'] is None
-
-
 def test_incremental_scaler_is_true_for_most_families(families):
     values = [cfg['incremental_scaler'] for cfg in families.values()]
-    assert sum(values) == 43
-    assert sum(not v for v in values) == 7
+    assert sum(values) == 42
+    assert sum(not v for v in values) == 5
 
 
 class TestShortLabelReproducesOldBehaviour:

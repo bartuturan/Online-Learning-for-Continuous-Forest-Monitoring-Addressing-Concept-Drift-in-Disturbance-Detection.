@@ -1,0 +1,6 @@
+family_id,table_name,skipped_existing,row_count,csv_path
+lagged_features,own_year,False,6,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features\lagged_features_own_year.csv
+lagged_features,prior_years,False,21,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features\lagged_features_prior_years.csv
+lagged_features,next_year,False,5,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features\lagged_features_next_year.csv
+lagged_features,cumulative,False,6,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features\lagged_features_cumulative.csv
+lagged_features,final_model_each_year,False,0,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features\lagged_features_final_model_each_year.csv

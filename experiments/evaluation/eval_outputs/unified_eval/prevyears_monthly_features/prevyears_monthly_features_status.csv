@@ -1,0 +1,6 @@
+family_id,table_name,skipped_existing,row_count,csv_path
+prevyears_monthly_features,own_year,False,6,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features\prevyears_monthly_features_own_year.csv
+prevyears_monthly_features,prior_years,False,21,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features\prevyears_monthly_features_prior_years.csv
+prevyears_monthly_features,next_year,False,5,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features\prevyears_monthly_features_next_year.csv
+prevyears_monthly_features,cumulative,False,6,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features\prevyears_monthly_features_cumulative.csv
+prevyears_monthly_features,final_model_each_year,False,0,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\prevyears_monthly_features\prevyears_monthly_features_final_model_each_year.csv

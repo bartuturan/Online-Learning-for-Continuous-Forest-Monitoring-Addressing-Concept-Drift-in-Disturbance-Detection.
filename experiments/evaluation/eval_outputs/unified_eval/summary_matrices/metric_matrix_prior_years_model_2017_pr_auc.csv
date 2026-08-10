@@ -1,4 +1,7 @@
 row,2017
+baseline,0.1035624878222244
+lagged_features,0.1068235010462907
+lagged_features_incremental_scaler,0.1216130232097427
 "mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",0.2075467656098083
 "mlp_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4",0.2075467656098083
 "mlp_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5",0.2075467656098083
@@ -31,3 +34,9 @@ mlp_experience_replay_uncertainity_prioritization_RR_0.3,0.1994116044296414
 mlp_experience_replay_uncertainity_prioritization_RR_0.4,0.1994116044296414
 mlp_experience_replay_uncertainity_prioritization_RR_0.5,0.1994116044296414
 mlp_misclassification_buffer_RR_0.3,0.2039074337868866
+prevyears_monthly_features,0.0921300116658471
+prevyears_monthly_features_incremental_scaler,0.1146497866101897
+sgd_experience_replay_RR_0.2,0.1077921745819944
+sgd_experience_replay_RR_0.3,0.1079987784863934
+sgd_experience_replay_RR_0.4,0.1082124759044849
+sgd_experience_replay_RR_0.5,0.1070977618266433

@@ -2,15 +2,20 @@ import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.utils.class_weight import compute_class_weight
 
+from src.seed_run import model_seed
 from src.thresholds import compute_best_f1_threshold
 
 
-def build_mlp_model():
+def build_mlp_model(random_state=None):
+    """random_state=None means "whatever seed this run is using" -- model_seed()
+    returns 42 unless FONDA_SEED says otherwise, so an ordinary run is unchanged.
+    Resolved per call rather than at import so a notebook that sets the env var
+    after importing still gets the right seed."""
     return MLPClassifier(
         hidden_layer_sizes=(64,),
         activation='relu',
         alpha=0.0001,
-        random_state=42,
+        random_state=model_seed(random_state),
         solver='adam',
         learning_rate='adaptive',
         max_iter=1,

@@ -79,12 +79,41 @@ and an interrupted evaluation picks up from its cached tables. Only
 feature_cache_disk/ (never committed -- a disk cache, not an artifact) is lost
 between sessions, and it simply rebuilds itself.
 
+=== Multi-seed runs ===
+
+--seed N reads data_split_seed_N.npz, trains with seed N, and writes everything
+under experiments/seed_N/. The original experiments/ tree (seed 42) is never read
+or written by a seeded run, so seeds cannot overwrite each other or the baseline.
+
+Generate the split first -- it is cheap (one variable read, no feature
+computation), so it runs in the Kaggle session rather than being uploaded:
+
+    !python -u scripts/make_seed_split.py --seed 1
+    !python -u scripts/run_pipeline_stages.py --seed 1 --time-budget 8.0 --git-push
+
+Without the split file, dataprep_base reports PARTIAL and every training stage
+BLOCKS -- a deliberate stop, so a missing split can't silently train seed N
+against seed 42's partition.
+
+One seed per session is the intended cadence: the disk feature cache is keyed by
+a hash of the pixel-index array, so each seed's split rebuilds it from scratch,
+and two seeds in one session would hold two full caches against the ~20GB quota.
+
+After the seeds finish, aggregate to mean +/- std:
+
+    python scripts/aggregate_seed_results.py
+
+Note that varying the split makes this Monte-Carlo cross-validation -- each seed
+scores a different test set, so the spread covers data-partition variance as well
+as training stochasticity. Say which protocol you ran when reporting the numbers.
+
 Usage:
     python -u scripts/run_pipeline_stages.py --list
     python -u scripts/run_pipeline_stages.py --dry-run
     python -u scripts/run_pipeline_stages.py --group sgd mlp_baseline
     python -u scripts/run_pipeline_stages.py --only er_hard_example_mining --max-parallel 4
     python -u scripts/run_pipeline_stages.py --only eval_unified   # evaluation on its own
+    python -u scripts/run_pipeline_stages.py --seed 1 --list       # seed 1's tree
 
     # Invalidate a stage's checkpoints/models/history after a code change that
     # changes what they mean (e.g. replay sampling moved from per-epoch to
@@ -125,6 +154,7 @@ from src.mlp_replay.checkpointing import (  # noqa: E402
     load_completion_status,
     per_ratio_path,
 )
+from src.seed_run import SEED_ENV_VAR  # noqa: E402
 
 MONTHLY_INDEX_VARS = (
     "ndvi_cv_year", "ndvi_max_m2m_drop_year", "ndvi_max_year", "ndvi_min_year", "ndvi_std_year",
@@ -159,6 +189,54 @@ DEFAULT_MAX_PARALLEL_FALLBACK = 2
 EVAL_DIR_REL = "experiments/evaluation/eval_outputs/unified_eval"
 EVAL_SUMMARY_REL = f"{EVAL_DIR_REL}/summary_matrices/metric_matrix_overview.csv"
 EVAL_STATE_REL = f"{EVAL_DIR_REL}/orchestrator_eval_state.json"
+
+# --- multi-seed runs -------------------------------------------------------
+#
+# --seed N redirects everything this run OWNS into experiments/seed_N/ and points
+# it at that seed's split file, leaving the original tree untouched. The stage
+# table itself is not rewritten; the literals stay as they are and get remapped at
+# the moment they become absolute paths, which keeps --seed from being able to
+# corrupt the table for an un-seeded run in the same process.
+#
+# The remap is deliberately three-way rather than "prefix everything", because not
+# every path literal here is an output. dataprep_base checks
+# training_data_with_features.zarr, dataprep_lagged_monthly owns
+# feature_cache_lagged_monthly.zarr, and dataprep_merge_monthly checks a zarr store
+# -- all at the project root, all SHARED across seeds. Redirecting those would send
+# a seed run looking for datasets that were never copied.
+_ACTIVE_SEED = None
+
+
+def set_active_seed(seed):
+    """Activate a seed for this process. Also exports FONDA_SEED, which is how the
+    notebooks pick up the same seed, split file and output tree -- every runner here
+    builds its subprocess environment from os.environ, so setting it once covers
+    nbconvert stages, ratio-sweep workers and the evaluation stage alike."""
+    global _ACTIVE_SEED
+    _ACTIVE_SEED = None if seed is None else int(seed)
+    if _ACTIVE_SEED is not None:
+        os.environ[SEED_ENV_VAR] = str(_ACTIVE_SEED)
+
+
+def seeded_rel(rel):
+    """Remap one PROJECT_ROOT-relative path for the active seed.
+
+    experiments/...  -> experiments/seed_<N>/...   (owned outputs)
+    data_split.npz   -> data_split_seed_<N>.npz    (per-seed input)
+    anything else    -> unchanged                  (shared inputs, notebooks, logs)
+    """
+    if _ACTIVE_SEED is None:
+        return rel
+    rel = str(rel)
+    if rel == "data_split.npz":
+        return f"data_split_seed_{_ACTIVE_SEED}.npz"
+    if rel == "experiments" or rel.startswith("experiments/"):
+        return f"experiments/seed_{_ACTIVE_SEED}{rel[len('experiments'):]}"
+    return rel
+
+
+def seeded_path(root, rel):
+    return Path(root) / seeded_rel(rel)
 
 # Training stages whose models the evaluation reads. Deliberately excludes the
 # reservoir-sampling stages: src/eval/families.py defines 50 families and none
@@ -218,13 +296,16 @@ class Stage:
 
 def artifacts_exist(root, rel_paths):
     rel_paths = tuple(rel_paths)
-    present = [p for p in rel_paths if (root / p).exists()]
+    present = [p for p in rel_paths if seeded_path(root, p).exists()]
     missing = [p for p in rel_paths if p not in present]
     if not missing:
         return StageStatus("DONE", detail=f"{len(present)}/{len(rel_paths)} artifact(s) present")
+    # Report where it actually looked, not the un-remapped literal -- under --seed
+    # those differ, and printing the literal would send you hunting in the wrong tree.
+    shown = ", ".join(seeded_rel(p) for p in missing)
     if not present:
-        return StageStatus("TODO", detail=f"missing: {', '.join(missing)}")
-    return StageStatus("PARTIAL", detail=f"missing: {', '.join(missing)}", remaining=tuple(missing))
+        return StageStatus("TODO", detail=f"missing: {shown}")
+    return StageStatus("PARTIAL", detail=f"missing: {shown}", remaining=tuple(missing))
 
 
 def _zarr_variable_names(store):
@@ -247,7 +328,7 @@ def _zarr_variable_names(store):
 
 
 def zarr_has_vars(root, rel_store, required_vars):
-    store = root / rel_store
+    store = seeded_path(root, rel_store)
     if not store.exists():
         return StageStatus("TODO", detail=f"{rel_store} does not exist")
 
@@ -312,7 +393,7 @@ def _load_completion_status_safe(path, **kwargs):
 
 
 def ratios_complete_shared(root, rel_json, ratios):
-    status, corrupt = _load_completion_status_safe(root / rel_json)
+    status, corrupt = _load_completion_status_safe(seeded_path(root, rel_json))
     if corrupt is not None:
         return corrupt
     completed = set(status.get("completed_ratios", []))
@@ -327,7 +408,7 @@ def ratios_complete_shared(root, rel_json, ratios):
 
 
 def ratios_complete_per_ratio(root, rel_json_base, ratios):
-    base = root / rel_json_base
+    base = seeded_path(root, rel_json_base)
     missing, done = [], []
     for r in ratios:
         key = format_ratio_key(r)
@@ -386,7 +467,7 @@ def _other_combined_configs_note(root, rel_json, known_files):
     as its own stage -- this notebook's completion filename is config-coupled (encodes 6
     tunable hyperparameters), so it's easy to hand-tune a value outside the tracked set and
     have the result silently invisible to --list forever."""
-    combined_dir = root / COMBINED_STRATEGY_CHECKPOINT_DIR
+    combined_dir = seeded_path(root, COMBINED_STRATEGY_CHECKPOINT_DIR)
     if not combined_dir.exists():
         return ""
     current_name = Path(rel_json).name
@@ -418,7 +499,7 @@ def combined_strategy_check(
     )
 
     def _check(root, stage):
-        status, corrupt = _load_completion_status_safe(root / rel_json)
+        status, corrupt = _load_completion_status_safe(seeded_path(root, rel_json))
         if corrupt is not None:
             return corrupt
         note = _other_combined_configs_note(root, rel_json, known_files)
@@ -448,7 +529,7 @@ def training_signature(root):
 
 
 def read_eval_state(root):
-    path = root / EVAL_STATE_REL
+    path = seeded_path(root, EVAL_STATE_REL)
     if not path.exists():
         return None
     try:
@@ -458,7 +539,7 @@ def read_eval_state(root):
 
 
 def write_eval_state(root, signature, status):
-    path = root / EVAL_STATE_REL
+    path = seeded_path(root, EVAL_STATE_REL)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.parent / (path.name + ".tmp")
     tmp.write_text(json.dumps({"status": status, "signature": signature}, indent=2, sort_keys=True),
@@ -482,7 +563,7 @@ def eval_unified_check(root, stage):
         )
 
     note = ""
-    if (root / EVAL_SUMMARY_REL).exists():
+    if seeded_path(root, EVAL_SUMMARY_REL).exists():
         why = ("was not produced by this orchestrator (no state file)" if state is None
                else "was computed from a different training state")
         note = (
@@ -725,6 +806,27 @@ STAGES = (
         runner="nbconvert",
         notes="No resume logic.",
     ),
+    Stage(
+        id="sgd_experience_replay", group="sgd",
+        notebook="notebooks/training/sgd/Experience Replay-SGD Classifier_prevyears and monthly "
+                  "features-incremental scaler.ipynb",
+        requires=("dataprep_merge_monthly",), ratios=(0.2, 0.3, 0.4, 0.5),
+        check=shared_check("experiments/sgd/training_checkpoints/training_completion_status.json"),
+        runner="nbconvert",
+        artifacts=(
+            "experiments/sgd/training_checkpoints",
+            "experiments/sgd/models_prevyears_monthly_features_incremental_scaler_experience_replay_{ratio_key}",
+            "experiments/sgd/sgd_classifier_model_prevyears_monthly_features_incremental_scaler_experience_replay_{ratio_key}.pkl",
+        ),
+        notes="Has its own internal replay-ratio sweep with a shared completion file across ratios "
+              "(same pattern as mlp_baseline) -- run as a single sequential process, never parallelized. "
+              "Its 'Save Model and Results' section only runs once per notebook execution (for whichever "
+              "ratio is last in REPLAY_RATIOS), so a from-scratch run only produces one ratio's final-model "
+              "file directly; the other 3 were backfilled by copying each ratio's already-identical "
+              "model_year_2022_....pkl checkpoint (verified byte-identical to the equivalent er_plain "
+              "final-model file) since this notebook was already fully trained by hand before being wired "
+              "in here.",
+    ),
 
     # --- MLP baseline (has its own ratio sweep, but shares one checkpoint file
     #     across ratios like the unrefactored ER notebooks -- never parallelize) --
@@ -950,9 +1052,12 @@ def compute_status(stage, root):
     if status.state == "DONE":
         return status
 
-    missing_inputs = [p for p in stage.inputs if not (root / p).exists()]
+    missing_inputs = [p for p in stage.inputs if not seeded_path(root, p).exists()]
     if missing_inputs:
-        joined = ", ".join(missing_inputs)
+        # seeded_rel, not the raw literal: under --seed N the split this stage needs
+        # is data_split_seed_N.npz, and naming data_split.npz would point at a file
+        # that exists and is the wrong one.
+        joined = ", ".join(seeded_rel(p) for p in missing_inputs)
         return StageStatus(
             "BLOCKED",
             detail=f"missing input(s): {joined}",
@@ -1011,11 +1116,11 @@ def resolve_stage_artifacts(root, stage):
     for rel in stage.artifacts:
         if "{ratio_key}" in rel:
             for ratio in stage.ratios:
-                candidate = root / rel.format(ratio_key=format_ratio_key(ratio))
+                candidate = seeded_path(root, rel.format(ratio_key=format_ratio_key(ratio)))
                 if candidate.exists():
                     resolved.append(candidate)
         else:
-            candidate = root / rel
+            candidate = seeded_path(root, rel)
             if candidate.exists():
                 resolved.append(candidate)
     return resolved
@@ -1137,7 +1242,7 @@ def run_eval_stage(stage, root, log_dir):
     state = read_eval_state(root)
     resuming = bool(state and state.get("signature") == current)
 
-    eval_dir = root / EVAL_DIR_REL
+    eval_dir = seeded_path(root, EVAL_DIR_REL)
     if resuming:
         print("  resuming evaluation -- keeping cached tables from the same training state")
     elif eval_dir.exists():
@@ -1286,6 +1391,11 @@ def build_arg_parser():
     parser.add_argument("--max-parallel", default="auto", help="Integer, or 'auto' (default; sizes from available RAM)")
     parser.add_argument("--time-budget", type=float, default=None, metavar="HOURS")
     parser.add_argument("--log-dir", default=None)
+    parser.add_argument("--seed", type=int, default=None, metavar="N",
+                        help="Run at seed N: read data_split_seed_N.npz, train with seed N, and "
+                             "write everything under experiments/seed_N/. Omit for the original "
+                             "experiments/ tree (seed 42), which a seeded run never touches. "
+                             "Generate the split first: python scripts/make_seed_split.py --seed N")
     parser.add_argument("--force", action="store_true", help="Re-run DONE stages (refused for dataprep_merge_monthly)")
     parser.add_argument("--on-failure", choices=("continue", "stop"), default="continue")
     parser.add_argument("--no-auto-downgrade", action="store_true",
@@ -1313,6 +1423,13 @@ def build_arg_parser():
 def main(argv=None):
     args = build_arg_parser().parse_args(argv)
     root = PROJECT_ROOT
+    # Before anything reads a path or launches a subprocess: every rel->abs
+    # resolution below goes through seeded_path, and every runner inherits
+    # FONDA_SEED from os.environ.
+    set_active_seed(args.seed)
+    if args.seed is not None:
+        print(f"seed {args.seed}: outputs under {seeded_rel('experiments')}/, "
+              f"split {seeded_rel('data_split.npz')}\n")
 
     if args.reset_stage:
         try:

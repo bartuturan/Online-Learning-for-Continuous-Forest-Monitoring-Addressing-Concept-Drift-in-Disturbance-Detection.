@@ -1,31 +1,30 @@
-[2026-05-04 14:46:03] Started new training session
-[2026-05-04 14:47:17] Checkpoint saved: RR_0.2 year 2017
-[2026-05-04 14:49:41] Checkpoint saved: RR_0.2 year 2018
-[2026-05-04 14:53:47] Checkpoint saved: RR_0.2 year 2019
-[2026-05-04 14:59:54] Checkpoint saved: RR_0.2 year 2020
-[2026-05-04 15:06:36] Checkpoint saved: RR_0.2 year 2021
-[2026-05-04 15:18:31] Checkpoint saved: RR_0.2 year 2022
-[2026-05-04 15:18:31] Completed training for RR_0.2
-[2026-05-04 15:19:49] Checkpoint saved: RR_0.3 year 2017
-[2026-05-04 15:22:10] Checkpoint saved: RR_0.3 year 2018
-[2026-05-04 15:25:09] Checkpoint saved: RR_0.3 year 2019
-[2026-05-04 15:31:30] Checkpoint saved: RR_0.3 year 2020
-[2026-05-04 15:48:54] Checkpoint saved: RR_0.3 year 2021
-[2026-05-04 16:17:58] Checkpoint saved: RR_0.3 year 2022
-[2026-05-04 16:17:58] Completed training for RR_0.3
-[2026-05-04 16:19:19] Checkpoint saved: RR_0.4 year 2017
-[2026-05-04 16:21:18] Checkpoint saved: RR_0.4 year 2018
-[2026-05-04 16:27:03] Checkpoint saved: RR_0.4 year 2019
-[2026-05-04 16:34:32] Checkpoint saved: RR_0.4 year 2020
-[2026-05-04 16:47:10] Checkpoint saved: RR_0.4 year 2021
-[2026-05-04 17:04:06] Checkpoint saved: RR_0.4 year 2022
-[2026-05-04 17:04:06] Completed training for RR_0.4
-[2026-05-04 17:05:58] Checkpoint saved: RR_0.5 year 2017
-[2026-05-04 17:08:35] Checkpoint saved: RR_0.5 year 2018
-[2026-05-04 17:14:14] Checkpoint saved: RR_0.5 year 2019
-[2026-05-04 17:39:19] Resumed training from checkpoint
-[2026-05-04 17:45:13] Checkpoint saved: RR_0.5 year 2020
-[2026-05-04 18:00:35] Checkpoint saved: RR_0.5 year 2021
-[2026-05-04 18:13:54] Checkpoint saved: RR_0.5 year 2022
-[2026-05-04 18:13:54] Completed training for RR_0.5
-[2026-05-04 18:13:54] All replay ratios training completed successfully
+[2026-08-08 15:49:05] Started new training session
+[2026-08-08 15:49:57] Checkpoint saved: RR_0.2 year 2017
+[2026-08-08 15:51:06] Checkpoint saved: RR_0.2 year 2018
+[2026-08-08 15:52:05] Checkpoint saved: RR_0.2 year 2019
+[2026-08-08 15:52:49] Checkpoint saved: RR_0.2 year 2020
+[2026-08-08 15:53:51] Checkpoint saved: RR_0.2 year 2021
+[2026-08-08 15:55:26] Checkpoint saved: RR_0.2 year 2022
+[2026-08-08 15:55:26] Completed training for RR_0.2
+[2026-08-08 15:56:10] Checkpoint saved: RR_0.3 year 2017
+[2026-08-08 15:57:10] Checkpoint saved: RR_0.3 year 2018
+[2026-08-08 15:58:05] Checkpoint saved: RR_0.3 year 2019
+[2026-08-08 15:59:03] Checkpoint saved: RR_0.3 year 2020
+[2026-08-08 16:00:14] Checkpoint saved: RR_0.3 year 2021
+[2026-08-08 16:02:51] Checkpoint saved: RR_0.3 year 2022
+[2026-08-08 16:02:51] Completed training for RR_0.3
+[2026-08-08 16:03:19] Checkpoint saved: RR_0.4 year 2017
+[2026-08-08 16:03:57] Checkpoint saved: RR_0.4 year 2018
+[2026-08-08 16:04:44] Checkpoint saved: RR_0.4 year 2019
+[2026-08-08 16:05:42] Checkpoint saved: RR_0.4 year 2020
+[2026-08-08 16:06:54] Checkpoint saved: RR_0.4 year 2021
+[2026-08-08 16:16:19] Checkpoint saved: RR_0.4 year 2022
+[2026-08-08 16:16:19] Completed training for RR_0.4
+[2026-08-08 16:16:51] Checkpoint saved: RR_0.5 year 2017
+[2026-08-08 16:17:35] Checkpoint saved: RR_0.5 year 2018
+[2026-08-08 16:18:22] Checkpoint saved: RR_0.5 year 2019
+[2026-08-08 16:19:16] Checkpoint saved: RR_0.5 year 2020
+[2026-08-08 16:21:39] Checkpoint saved: RR_0.5 year 2021
+[2026-08-08 16:23:52] Checkpoint saved: RR_0.5 year 2022
+[2026-08-08 16:23:53] Completed training for RR_0.5
+[2026-08-08 16:23:53] All replay ratios training completed successfully

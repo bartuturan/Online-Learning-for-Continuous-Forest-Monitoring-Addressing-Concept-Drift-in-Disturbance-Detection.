@@ -1,0 +1,6 @@
+family_id,table_name,skipped_existing,row_count,csv_path
+lagged_features_incremental_scaler,own_year,False,6,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features_incremental_scaler\lagged_features_incremental_scaler_own_year.csv
+lagged_features_incremental_scaler,prior_years,False,21,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features_incremental_scaler\lagged_features_incremental_scaler_prior_years.csv
+lagged_features_incremental_scaler,next_year,False,5,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features_incremental_scaler\lagged_features_incremental_scaler_next_year.csv
+lagged_features_incremental_scaler,cumulative,False,6,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features_incremental_scaler\lagged_features_incremental_scaler_cumulative.csv
+lagged_features_incremental_scaler,final_model_each_year,False,0,C:\Users\bartu\Desktop\Fonda-scikit - Git\experiments\evaluation\eval_outputs\unified_eval\lagged_features_incremental_scaler\lagged_features_incremental_scaler_final_model_each_year.csv

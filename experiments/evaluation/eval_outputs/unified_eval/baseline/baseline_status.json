@@ -15,35 +15,35 @@
       "table_name": "own_year",
       "skipped_existing": false,
       "row_count": 6,
-      "csv_path": "eval_outputs\\unified_eval\\baseline\\baseline_own_year.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_own_year.csv"
     },
     {
       "family_id": "baseline",
       "table_name": "prior_years",
       "skipped_existing": false,
       "row_count": 21,
-      "csv_path": "eval_outputs\\unified_eval\\baseline\\baseline_prior_years.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_prior_years.csv"
     },
     {
       "family_id": "baseline",
       "table_name": "next_year",
       "skipped_existing": false,
       "row_count": 5,
-      "csv_path": "eval_outputs\\unified_eval\\baseline\\baseline_next_year.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_next_year.csv"
     },
     {
       "family_id": "baseline",
       "table_name": "cumulative",
       "skipped_existing": false,
       "row_count": 6,
-      "csv_path": "eval_outputs\\unified_eval\\baseline\\baseline_cumulative.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_cumulative.csv"
     },
     {
       "family_id": "baseline",
       "table_name": "final_model_each_year",
       "skipped_existing": false,
       "row_count": 0,
-      "csv_path": "eval_outputs\\unified_eval\\baseline\\baseline_final_model_each_year.csv"
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_final_model_each_year.csv"
     }
   ]
 }

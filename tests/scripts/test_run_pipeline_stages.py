@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 import pytest
@@ -26,7 +27,10 @@ from scripts.run_pipeline_stages import (
     reset_stages,
     resolve_cancelled,
     resolve_stage_artifacts,
+    seeded_path,
+    seeded_rel,
     select_stages,
+    set_active_seed,
     shared_check,
     training_signature,
     write_eval_state,
@@ -38,6 +42,7 @@ from src.mlp_replay.checkpointing import (
     per_ratio_path,
     save_completion_status,
 )
+from src.seed_run import SEED_ENV_VAR
 
 
 # ---------------------------------------------------------------------------
@@ -504,16 +509,19 @@ def test_reset_stage_artifacts_declared_on_real_stages_are_exact_and_exist_in_re
     # match anything on a real run). Combined-strategy stages write under
     # experiments/mlp/combined/ (see er_combined's own notes) -- both the original
     # "er_combined" (still in group er_sequential) and its generated
-    # er_combined_<id> siblings (group combined_strategies). Every other ER stage
-    # writes under experiments/mlp/experience_replay/.
+    # er_combined_<id> siblings (group combined_strategies). sgd_experience_replay
+    # writes under experiments/sgd/. Every other ER stage writes under
+    # experiments/mlp/experience_replay/.
     for stage in STAGES:
         if not stage.artifacts:
             continue
         is_combined_strategy = stage.id == "er_combined" or stage.id.startswith("er_combined_")
-        expected_prefix = (
-            "experiments/mlp/combined/" if is_combined_strategy
-            else "experiments/mlp/experience_replay/"
-        )
+        if is_combined_strategy:
+            expected_prefix = "experiments/mlp/combined/"
+        elif stage.id == "sgd_experience_replay":
+            expected_prefix = "experiments/sgd/"
+        else:
+            expected_prefix = "experiments/mlp/experience_replay/"
         for rel in stage.artifacts:
             assert rel.startswith(expected_prefix), stage.id
             assert "*" not in rel, f"{stage.id} artifact must be an exact path, not a glob: {rel}"
@@ -768,3 +776,126 @@ def test_training_signature_changes_when_a_prerequisite_completes(tmp_path):
 
     assert before != after, "signature must change when training progress changes"
     assert after["er_misclassification_buffer"]["state"] == "DONE"
+
+
+# ---------------------------------------------------------------------------
+# --seed / seeded_rel
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(autouse=True)
+def _no_seed_leaks_between_tests():
+    """set_active_seed mutates module state and os.environ; every test in this file
+    must start un-seeded or the un-seeded assertions elsewhere become meaningless."""
+    yield
+    set_active_seed(None)
+    os.environ.pop(SEED_ENV_VAR, None)
+
+
+class TestSeededRel:
+    def test_unseeded_is_the_identity(self):
+        """The property that protects the existing experiments/ tree."""
+        for rel in ("experiments/sgd/models", "data_split.npz",
+                    "training_data_with_features.zarr", "notebooks/x.ipynb"):
+            assert seeded_rel(rel) == rel
+
+    def test_experiments_paths_move_into_the_seed_tree(self):
+        set_active_seed(1)
+        assert seeded_rel("experiments/sgd/models") == "experiments/seed_1/sgd/models"
+        assert seeded_rel("experiments") == "experiments/seed_1"
+
+    def test_the_split_file_becomes_the_seeds_split(self):
+        set_active_seed(2)
+        assert seeded_rel("data_split.npz") == "data_split_seed_2.npz"
+
+    def test_shared_inputs_are_never_redirected(self):
+        """Datasets are shared across seeds and live at the project root. Redirecting
+        them would send a seed run looking for a zarr that was never copied."""
+        set_active_seed(1)
+        for rel in ("training_data_with_features.zarr",
+                    "training_data_with_features_plus_monthly_indices.zarr",
+                    "full_dataset_resizedv2.zarr",
+                    "feature_cache_lagged_monthly.zarr",
+                    "notebooks/training/sgd/SGD Classifier.ipynb"):
+            assert seeded_rel(rel) == rel
+
+    def test_no_partial_prefix_match(self):
+        """'experiments_old/...' must not be caught by an 'experiments' startswith."""
+        set_active_seed(1)
+        assert seeded_rel("experiments_old/x") == "experiments_old/x"
+        assert seeded_rel("data_split.npz.bak") == "data_split.npz.bak"
+
+    def test_seeded_path_joins_against_root(self, tmp_path):
+        set_active_seed(3)
+        assert seeded_path(tmp_path, "experiments/sgd") == tmp_path / "experiments/seed_3/sgd"
+
+    def test_set_active_seed_exports_the_env_var_for_subprocesses(self):
+        """Notebooks read FONDA_SEED; every runner builds its env from os.environ."""
+        set_active_seed(7)
+        assert os.environ[SEED_ENV_VAR] == "7"
+
+    def test_distinct_seeds_cannot_collide(self):
+        trees = set()
+        for s in (1, 2, 3, 42):
+            set_active_seed(s)
+            trees.add(seeded_rel("experiments"))
+        assert len(trees) == 4
+
+
+class TestSeedRedirectsRealStages:
+    def test_every_declared_artifact_lands_in_the_seed_tree(self):
+        set_active_seed(1)
+        for stage in STAGES:
+            for rel in stage.artifacts:
+                assert seeded_rel(rel).startswith("experiments/seed_1/"), stage.id
+
+    def test_stage_inputs_split_correctly_between_shared_and_seeded(self):
+        set_active_seed(1)
+        for stage in STAGES:
+            for rel in stage.inputs:
+                if rel == "data_split.npz":
+                    assert seeded_rel(rel) == "data_split_seed_1.npz", stage.id
+                else:
+                    # Every other input is a zarr store shared across all seeds.
+                    assert seeded_rel(rel) == rel, f"{stage.id}: {rel}"
+
+    def test_eval_constants_follow_the_seed(self):
+        set_active_seed(1)
+        assert seeded_rel(EVAL_SUMMARY_REL).startswith("experiments/seed_1/evaluation/")
+
+    def test_reset_stage_resolves_the_seed_tree_and_never_the_original(self, tmp_path):
+        """The safety property for --reset-stage, which DELETES what it resolves.
+
+        Both trees are populated with the same artifact, so a resolver that ignored
+        the seed would happily return the original tree's copy. resolve_stage_artifacts
+        only returns paths that exist, which is why both have to be created for this
+        test to mean anything.
+        """
+        stage = STAGES_BY_ID["er_plain"]
+        for rel in stage.artifacts:
+            for base in ("experiments", "experiments/seed_1"):
+                concrete = rel.replace("experiments", base, 1).format(ratio_key="RR_0.2")
+                path = tmp_path / concrete
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"x")
+
+        set_active_seed(1)
+        paths = resolve_stage_artifacts(tmp_path, stage)
+
+        assert paths, "both trees were populated, so something must resolve"
+        for p in paths:
+            rel_parts = p.relative_to(tmp_path).parts
+            assert rel_parts[:2] == ("experiments", "seed_1"), p
+
+    def test_unseeded_reset_still_resolves_the_original_tree(self, tmp_path):
+        """The mirror image: no seed active means the original tree, untouched."""
+        stage = STAGES_BY_ID["er_plain"]
+        for rel in stage.artifacts:
+            path = tmp_path / rel.format(ratio_key="RR_0.2")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"x")
+
+        paths = resolve_stage_artifacts(tmp_path, stage)
+
+        assert paths
+        for p in paths:
+            assert "seed_" not in str(p.relative_to(tmp_path))
