@@ -404,7 +404,7 @@ def ratios_complete_shared(root, rel_json, ratios):
     missing = [r for r, k in zip(ratios, keys) if k not in completed]
 
     if not missing:
-        return StageStatus("DONE", detail=f"{len(ratios)}/{len(ratios)} ratios complete ({rel_json})")
+        return StageStatus("DONE", detail=f"{len(ratios)}/{len(ratios)} ratios complete ({seeded_rel(rel_json)})")
     n_done = len(ratios) - len(missing)
     state = "TODO" if n_done == 0 else "PARTIAL"
     return StageStatus(state, detail=f"{n_done}/{len(ratios)} ratios complete", remaining=tuple(missing))
@@ -507,7 +507,7 @@ def combined_strategy_check(
             return corrupt
         note = _other_combined_configs_note(root, rel_json, known_files)
         if expected_key in set(status.get("completed_ratios", [])):
-            return StageStatus("DONE", detail=f"1/1 ratios complete ({rel_json})", note=note)
+            return StageStatus("DONE", detail=f"1/1 ratios complete ({seeded_rel(rel_json)})", note=note)
         return StageStatus("TODO", detail="0/1 ratios complete", note=note)
 
     return _check
