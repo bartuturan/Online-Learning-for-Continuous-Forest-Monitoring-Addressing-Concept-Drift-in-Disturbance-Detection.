@@ -335,6 +335,21 @@ def build_families(project_root, experiments_root=None):
             'final_model_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15' / 'mlp_classifier_model_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15.pkl',
             'final_scaler_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15' / 'scaler_final_mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15.pkl',
         },
+        # Misclassification Buffer (RR=0.2, 0.3, 0.4, 0.5). Only RR_0.3 existed
+        # while the notebook was pinned to that single ratio; the other three
+        # arrived when it was swept like every other strategy.
+        'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2': {
+            'short_label': 'mlp_misclassification_buffer_RR_0.2',
+            'label': 'MLP Prevyears + Monthly (Incremental Scaler + Misclassification Buffer RR=0.2)',
+            'models_dir': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2',
+            'model_template': 'model_year_{year}_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2.pkl',
+            'scaler_template': 'scaler_year_{year}_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2.pkl',
+            'dataset_path': ROOT / 'training_data_with_features_plus_monthly_indices.zarr',
+            'prep_kind': 'monthly',
+            'incremental_scaler': True,
+            'final_model_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2' / 'mlp_classifier_model_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2.pkl',
+            'final_scaler_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2' / 'scaler_final_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2.pkl',
+        },
         'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3': {
             'short_label': 'mlp_misclassification_buffer_RR_0.3',
             'label': 'MLP Prevyears + Monthly (Incremental Scaler + Misclassification Buffer RR=0.3)',
@@ -346,6 +361,30 @@ def build_families(project_root, experiments_root=None):
             'incremental_scaler': True,
             'final_model_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3' / 'mlp_classifier_model_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3.pkl',
             'final_scaler_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3' / 'scaler_final_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3.pkl',
+        },
+        'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4': {
+            'short_label': 'mlp_misclassification_buffer_RR_0.4',
+            'label': 'MLP Prevyears + Monthly (Incremental Scaler + Misclassification Buffer RR=0.4)',
+            'models_dir': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4',
+            'model_template': 'model_year_{year}_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4.pkl',
+            'scaler_template': 'scaler_year_{year}_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4.pkl',
+            'dataset_path': ROOT / 'training_data_with_features_plus_monthly_indices.zarr',
+            'prep_kind': 'monthly',
+            'incremental_scaler': True,
+            'final_model_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4' / 'mlp_classifier_model_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4.pkl',
+            'final_scaler_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4' / 'scaler_final_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4.pkl',
+        },
+        'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5': {
+            'short_label': 'mlp_misclassification_buffer_RR_0.5',
+            'label': 'MLP Prevyears + Monthly (Incremental Scaler + Misclassification Buffer RR=0.5)',
+            'models_dir': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5',
+            'model_template': 'model_year_{year}_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5.pkl',
+            'scaler_template': 'scaler_year_{year}_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5.pkl',
+            'dataset_path': ROOT / 'training_data_with_features_plus_monthly_indices.zarr',
+            'prep_kind': 'monthly',
+            'incremental_scaler': True,
+            'final_model_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5' / 'mlp_classifier_model_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5.pkl',
+            'final_scaler_path': MLP_ER / 'models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5' / 'scaler_final_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5.pkl',
         },
         'mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.2': {
             'short_label': 'mlp_combined_HE=0.1_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.2',

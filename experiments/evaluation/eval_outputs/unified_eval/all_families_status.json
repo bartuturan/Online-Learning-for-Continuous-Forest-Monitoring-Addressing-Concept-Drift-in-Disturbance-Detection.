@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "row_count": 211,
+    "row_count": 226,
     "columns": [
       "family_id",
       "table_name",
@@ -14,7 +14,7 @@
     {
       "family_id": "baseline",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_own_year.csv",
       "error": NaN
@@ -22,7 +22,7 @@
     {
       "family_id": "baseline",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_prior_years.csv",
       "error": NaN
@@ -30,7 +30,7 @@
     {
       "family_id": "baseline",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_next_year.csv",
       "error": NaN
@@ -38,7 +38,7 @@
     {
       "family_id": "baseline",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_cumulative.csv",
       "error": NaN
@@ -46,7 +46,7 @@
     {
       "family_id": "baseline",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 0,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\baseline\\baseline_final_model_each_year.csv",
       "error": NaN
@@ -62,7 +62,7 @@
     {
       "family_id": "lagged_features",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features\\lagged_features_own_year.csv",
       "error": NaN
@@ -70,7 +70,7 @@
     {
       "family_id": "lagged_features",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features\\lagged_features_prior_years.csv",
       "error": NaN
@@ -78,7 +78,7 @@
     {
       "family_id": "lagged_features",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features\\lagged_features_next_year.csv",
       "error": NaN
@@ -86,7 +86,7 @@
     {
       "family_id": "lagged_features",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features\\lagged_features_cumulative.csv",
       "error": NaN
@@ -94,7 +94,7 @@
     {
       "family_id": "lagged_features",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 0,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features\\lagged_features_final_model_each_year.csv",
       "error": NaN
@@ -102,7 +102,7 @@
     {
       "family_id": "lagged_features_incremental_scaler",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features_incremental_scaler\\lagged_features_incremental_scaler_own_year.csv",
       "error": NaN
@@ -110,7 +110,7 @@
     {
       "family_id": "lagged_features_incremental_scaler",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features_incremental_scaler\\lagged_features_incremental_scaler_prior_years.csv",
       "error": NaN
@@ -118,7 +118,7 @@
     {
       "family_id": "lagged_features_incremental_scaler",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features_incremental_scaler\\lagged_features_incremental_scaler_next_year.csv",
       "error": NaN
@@ -126,7 +126,7 @@
     {
       "family_id": "lagged_features_incremental_scaler",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features_incremental_scaler\\lagged_features_incremental_scaler_cumulative.csv",
       "error": NaN
@@ -134,7 +134,7 @@
     {
       "family_id": "lagged_features_incremental_scaler",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 0,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\lagged_features_incremental_scaler\\lagged_features_incremental_scaler_final_model_each_year.csv",
       "error": NaN
@@ -150,7 +150,7 @@
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_own_year.csv",
       "error": NaN
@@ -158,7 +158,7 @@
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_prior_years.csv",
       "error": NaN
@@ -166,7 +166,7 @@
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_next_year.csv",
       "error": NaN
@@ -174,7 +174,7 @@
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_cumulative.csv",
       "error": NaN
@@ -182,7 +182,7 @@
     {
       "family_id": "prevyears_monthly_features",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 0,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features\\prevyears_monthly_features_final_model_each_year.csv",
       "error": NaN
@@ -230,7 +230,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_own_year.csv",
       "error": NaN
@@ -238,7 +238,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_prior_years.csv",
       "error": NaN
@@ -246,7 +246,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_next_year.csv",
       "error": NaN
@@ -254,7 +254,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_cumulative.csv",
       "error": NaN
@@ -262,7 +262,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_final_model_each_year.csv",
       "error": NaN
@@ -270,7 +270,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_own_year.csv",
       "error": NaN
@@ -278,7 +278,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_prior_years.csv",
       "error": NaN
@@ -286,7 +286,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_next_year.csv",
       "error": NaN
@@ -294,7 +294,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_cumulative.csv",
       "error": NaN
@@ -302,7 +302,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_final_model_each_year.csv",
       "error": NaN
@@ -310,7 +310,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_own_year.csv",
       "error": NaN
@@ -318,7 +318,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_prior_years.csv",
       "error": NaN
@@ -326,7 +326,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_next_year.csv",
       "error": NaN
@@ -334,7 +334,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_cumulative.csv",
       "error": NaN
@@ -342,7 +342,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_final_model_each_year.csv",
       "error": NaN
@@ -350,7 +350,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
       "table_name": "own_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_own_year.csv",
       "error": NaN
@@ -358,7 +358,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
       "table_name": "prior_years",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_prior_years.csv",
       "error": NaN
@@ -366,7 +366,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
       "table_name": "next_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_next_year.csv",
       "error": NaN
@@ -374,7 +374,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
       "table_name": "cumulative",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_cumulative.csv",
       "error": NaN
@@ -382,7 +382,7 @@
     {
       "family_id": "prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
       "table_name": "final_model_each_year",
-      "skipped_existing": false,
+      "skipped_existing": true,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5\\prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_final_model_each_year.csv",
       "error": NaN
@@ -916,9 +916,49 @@
       "error": NaN
     },
     {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
       "table_name": "own_year",
-      "skipped_existing": true,
+      "skipped_existing": false,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3_own_year.csv",
       "error": NaN
@@ -926,7 +966,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
       "table_name": "prior_years",
-      "skipped_existing": true,
+      "skipped_existing": false,
       "row_count": 21,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3_prior_years.csv",
       "error": NaN
@@ -934,7 +974,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
       "table_name": "next_year",
-      "skipped_existing": true,
+      "skipped_existing": false,
       "row_count": 5,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3_next_year.csv",
       "error": NaN
@@ -942,7 +982,7 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
       "table_name": "cumulative",
-      "skipped_existing": true,
+      "skipped_existing": false,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3_cumulative.csv",
       "error": NaN
@@ -950,9 +990,89 @@
     {
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
       "table_name": "final_model_each_year",
-      "skipped_existing": true,
+      "skipped_existing": false,
       "row_count": 6,
       "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4_final_model_each_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
+      "table_name": "own_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5_own_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
+      "table_name": "prior_years",
+      "skipped_existing": false,
+      "row_count": 21,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5_prior_years.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
+      "table_name": "next_year",
+      "skipped_existing": false,
+      "row_count": 5,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5_next_year.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
+      "table_name": "cumulative",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5_cumulative.csv",
+      "error": NaN
+    },
+    {
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
+      "table_name": "final_model_each_year",
+      "skipped_existing": false,
+      "row_count": 6,
+      "csv_path": "C:\\Users\\bartu\\Desktop\\Fonda-scikit - Git\\experiments\\evaluation\\eval_outputs\\unified_eval\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5\\mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5_final_model_each_year.csv",
       "error": NaN
     },
     {

@@ -1,0 +1,8 @@
+[2026-08-15 16:15:23] [RR_0.4] completed year 2017 with replay_used=0/0, misclass_used=0, random_used=0.
+[2026-08-15 16:19:44] [RR_0.4] completed year 2018 with replay_used=2234704/5575527, misclass_used=670411, random_used=1564293.
+[2026-08-15 16:25:19] [RR_0.4] completed year 2019 with replay_used=2234680/11162289, misclass_used=670404, random_used=1564276.
+[2026-08-15 16:28:10] [RR_0.4] completed year 2020 with replay_used=2234945/16748990, misclass_used=670483, random_used=1564462.
+[2026-08-15 16:31:13] [RR_0.4] completed year 2021 with replay_used=2234732/22336353, misclass_used=670419, random_used=1564313.
+[2026-08-15 16:35:52] [RR_0.4] completed year 2022 with replay_used=2236846/27923184, misclass_used=671053, random_used=1565793.
+[2026-08-15 16:35:53] [RR_0.4] marked as fully completed.
+[2026-08-15 17:00:30] [RR_0.4] skipped (already completed).

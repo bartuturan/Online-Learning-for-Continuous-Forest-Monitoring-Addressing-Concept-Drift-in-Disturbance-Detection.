@@ -166,6 +166,24 @@ def test_ratios_complete_per_ratio_ignores_legacy_shared_file(tmp_path):
     assert "RR_0.2" in status.note
 
 
+def test_ratios_complete_per_ratio_note_skips_adopted_legacy_ratios(tmp_path):
+    """A legacy run can be adopted instead of retrained by copying its completion
+    file to the per-ratio name (done for er_misclassification_buffer's RR_0.3).
+    That ratio is then genuinely complete, so the note must not claim it will be
+    retrained -- only the ratios no per-ratio file backs belong in the warning."""
+    base = tmp_path / "mlp_replay_completion_status.json"
+    save_completion_status(base, {"completed_ratios": ["RR_0.2", "RR_0.3"], "completed_years": {}})
+    save_completion_status(per_ratio_path(base, format_ratio_key(0.3)),
+                            {"completed_ratios": ["RR_0.3"], "completed_years": {}})
+
+    status = ratios_complete_per_ratio(tmp_path, "mlp_replay_completion_status.json", (0.2, 0.3))
+
+    assert status.state == "PARTIAL"
+    assert status.remaining == (0.2,)
+    assert "RR_0.2" in status.note
+    assert "RR_0.3" not in status.note
+
+
 # ---------------------------------------------------------------------------
 # Corrupted checkpoint files -- a single unreadable file must report a clear,
 # actionable status rather than crashing the whole status check (previously
@@ -764,14 +782,18 @@ def test_eval_check_warns_when_tables_predate_the_orchestrator(tmp_path):
 def test_training_signature_changes_when_a_prerequisite_completes(tmp_path):
     before = training_signature(tmp_path)
 
-    # Make one prerequisite stage look DONE by creating its completion artifact.
-    completion_path = (
+    # Make one prerequisite stage look DONE by creating its completion artifacts
+    # -- one per-ratio file per swept ratio, which is what per_ratio_check reads.
+    completion_base = (
         tmp_path / "experiments/mlp/experience_replay"
                    "/training_checkpoints_mlp_missclassification_buffer"
                    "/mlp_missclassification_buffer_completion_status.json"
     )
-    completion_path.parent.mkdir(parents=True, exist_ok=True)
-    save_completion_status(completion_path, {"completed_ratios": ["RR_0.3"], "completed_years": {}})
+    completion_base.parent.mkdir(parents=True, exist_ok=True)
+    for ratio in STAGES_BY_ID["er_misclassification_buffer"].ratios:
+        ratio_key = format_ratio_key(ratio)
+        save_completion_status(per_ratio_path(completion_base, ratio_key),
+                               {"completed_ratios": [ratio_key], "completed_years": {}})
     after = training_signature(tmp_path)
 
     assert before != after, "signature must change when training progress changes"

@@ -21,7 +21,7 @@ def families():
 
 
 def test_family_count(families):
-    assert len(families) == 47
+    assert len(families) == 50
 
 
 class TestExperimentsRootRedirect:
@@ -118,7 +118,7 @@ def test_no_reference_notebook_key_survives(families):
 
 def test_incremental_scaler_is_true_for_most_families(families):
     values = [cfg['incremental_scaler'] for cfg in families.values()]
-    assert sum(values) == 42
+    assert sum(values) == 45
     assert sum(not v for v in values) == 5
 
 

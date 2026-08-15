@@ -430,9 +430,14 @@ def ratios_complete_per_ratio(root, rel_json_base, ratios):
         # than blocking the stage over a file nothing actually depends on.
         legacy_status, legacy_corrupt = _load_completion_status_safe(base)
         legacy_completed = set(legacy_status.get("completed_ratios", [])) if legacy_corrupt is None else set()
-        if legacy_completed:
+        # Only ratios the legacy file claims and no per-ratio file backs are at risk
+        # of being retrained. A legacy run that was adopted into the per-ratio layout
+        # (its completion file copied to the per-ratio name, as er_misclassification_buffer's
+        # RR_0.3 was) is already counted in `done`, and warning about it would be false.
+        unclaimed = legacy_completed - {format_ratio_key(r) for r in done}
+        if unclaimed:
             note = (
-                f"legacy shared completion file lists {sorted(legacy_completed)} as done, but the "
+                f"legacy shared completion file lists {sorted(unclaimed)} as done, but the "
                 f"refactored notebook only reads its own per-ratio files -- ignored, will retrain."
             )
 
@@ -908,6 +913,30 @@ STAGES = (
             f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_all_ratios.csv",
         ),
     ),
+    Stage(
+        id="er_misclassification_buffer", group="er_parallel",
+        notebook=f"{ER}/MLP-experience replay_misclassification_buffer.ipynb",
+        requires=("dataprep_merge_monthly",), ratios=(0.2, 0.3, 0.4, 0.5),
+        check=per_ratio_check(
+            f"{ERC}/training_checkpoints_mlp_missclassification_buffer/"
+            "mlp_missclassification_buffer_completion_status.json"
+        ),
+        runner="ratio_sweep",
+        notes="Was run at the single ratio 0.3, back when its checkpoint files were still "
+              "shared across ratios. It now sweeps the same 4 ratios as every other strategy, "
+              "so RR is comparable across strategies. The existing RR_0.3 run was ADOPTED rather "
+              "than retrained: its shared completion/history files were copied to their per-ratio "
+              "names, which is byte-for-byte what the notebook would have written (that run's only "
+              "ratio WAS RR_0.3). It is also the same RNG stream a sweep worker produces -- "
+              "replay_rng is seeded REPLAY_RANDOM_STATE + ratio_idx, and MLP_REPLAY_RATIO_OVERRIDE "
+              "makes ratio_idx 0 in every worker, exactly as it was in that single-ratio run. "
+              "So only 0.2/0.4/0.5 remain to train.",
+        artifacts=(
+            f"{ERC}/training_checkpoints_mlp_missclassification_buffer",
+            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_{{ratio_key}}",
+            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_missclassification_buffer_all_ratios.csv",
+        ),
+    ),
 
     # --- experience replay: NOT refactored, shared completion file across
     #     ratios -- must run as a single sequential process each, never through
@@ -972,32 +1001,15 @@ STAGES = (
         default_selected=False,
     ),
     Stage(
-        id="er_misclassification_buffer", group="er_sequential",
-        notebook=f"{ER}/MLP-experience replay_misclassification_buffer.ipynb",
-        requires=("dataprep_merge_monthly",), ratios=(0.3,),
-        check=shared_check(
-            f"{ERC}/training_checkpoints_mlp_missclassification_buffer/"
-            "mlp_missclassification_buffer_completion_status.json"
-        ),
-        runner="nbconvert",
-        notes="Single fixed ratio (0.3) -- nothing to parallelize even before the shared-file risk.",
-        artifacts=(
-            f"{ERC}/training_checkpoints_mlp_missclassification_buffer",
-            f"{ERC}/models_mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_{{ratio_key}}",
-            f"{ERC}/mlp_classifier_history_prevyears_monthly_features_incremental_scaler_missclassification_buffer_all_ratios.csv",
-        ),
-    ),
-    Stage(
         id="er_misclassification_buffer_reservoir", group="er_sequential",
         notebook=f"{ER}/MLP-experience replay_misclassification_buffer_reservoir_sampling.ipynb",
-        requires=("dataprep_merge_monthly",), ratios=(0.3,),
+        requires=("dataprep_merge_monthly",), ratios=(0.2, 0.3, 0.4, 0.5),
         check=shared_check(
             f"{ERC}/training_checkpoints_mlp_missclassification_buffer_reservoir_sampling/"
             "mlp_missclassification_buffer_completion_status.json"
         ),
         runner="nbconvert",
         default_selected=False,
-        notes="Single fixed ratio (0.3).",
     ),
     Stage(
         id="er_combined", group="er_sequential",

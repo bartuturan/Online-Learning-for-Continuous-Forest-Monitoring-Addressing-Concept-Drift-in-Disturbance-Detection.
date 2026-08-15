@@ -30,7 +30,7 @@ full N-way speedup.
 Usage:
     python scripts/run_replay_sweep_parallel.py [notebook ...] [--ratios 0.2 0.3 0.4 0.5] [--max-parallel 2]
 
-With no notebook arguments, runs all 5 in-scope notebooks.
+With no notebook arguments, runs all 6 in-scope notebooks.
 """
 
 import argparse
@@ -48,6 +48,7 @@ DEFAULT_NOTEBOOKS = [
     "MLP-experience_replay_confidently_correct_memory.ipynb",
     "MLP-experience_replay_hard_example_mining.ipynb",
     "MLP-experience_replay_uncertainity_prioritization.ipynb",
+    "MLP-experience replay_misclassification_buffer.ipynb",
 ]
 DEFAULT_RATIOS = [0.2, 0.3, 0.4, 0.5]
 DEFAULT_MAX_PARALLEL = 2
