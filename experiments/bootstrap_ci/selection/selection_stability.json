@@ -1,0 +1,574 @@
+{
+  "metadata": {
+    "row_count": 62,
+    "columns": [
+      "objective",
+      "strategy",
+      "family_id",
+      "is_reported_config",
+      "sweep_size",
+      "point_pr_auc",
+      "win_fraction"
+    ]
+  },
+  "rows": [
+    {
+      "objective": "forecast",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",
+      "is_reported_config": true,
+      "sweep_size": 6,
+      "point_pr_auc": 0.34460348058070167,
+      "win_fraction": 0.757
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3383311796877721,
+      "win_fraction": 0.1335
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.32880971773476875,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.32911873674173225,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3351789880463431,
+      "win_fraction": 0.007
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3334916479249133,
+      "win_fraction": 0.1025
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3410920711787656,
+      "win_fraction": 0.026
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.32787094686296747,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.4",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3511415690626449,
+      "win_fraction": 0.974
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.5",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.33197570003525084,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.30865445179841056,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3086691109807275,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.4",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3272344493402772,
+      "win_fraction": 0.62
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.5",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3250500190074022,
+      "win_fraction": 0.38
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "is_reported_config": true,
+      "sweep_size": 1,
+      "point_pr_auc": 0.3210895520099134,
+      "win_fraction": 1.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.10",
+      "is_reported_config": true,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3500338850670027,
+      "win_fraction": 0.655
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.33024842596166615,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3448956603809682,
+      "win_fraction": 0.0915
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.32891327353640526,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.34104729220730406,
+      "win_fraction": 0.0015
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3450402859959376,
+      "win_fraction": 0.078
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3404452066543003,
+      "win_fraction": 0.0005
+    },
+    {
+      "objective": "forecast",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.34686134432058274,
+      "win_fraction": 0.1735
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.33448913683066595,
+      "win_fraction": 0.0385
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3414238075043551,
+      "win_fraction": 0.2525
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.32354986229099214,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.5",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3455265277346256,
+      "win_fraction": 0.709
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3406256623731109,
+      "win_fraction": 0.067
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.33063426510205174,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3465892564839591,
+      "win_fraction": 0.531
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.34529893642454035,
+      "win_fraction": 0.402
+    },
+    {
+      "objective": "retention",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3693153235295405,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3859410281730264,
+      "win_fraction": 0.0605
+    },
+    {
+      "objective": "retention",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3816762640347047,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.38691088440570615,
+      "win_fraction": 0.0505
+    },
+    {
+      "objective": "retention",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5",
+      "is_reported_config": false,
+      "sweep_size": 6,
+      "point_pr_auc": 0.3900664957152699,
+      "win_fraction": 0.323
+    },
+    {
+      "objective": "retention",
+      "strategy": "Combined",
+      "family_id": "mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5",
+      "is_reported_config": true,
+      "sweep_size": 6,
+      "point_pr_auc": 0.39199674740210416,
+      "win_fraction": 0.566
+    },
+    {
+      "objective": "retention",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.2",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.4004460475487382,
+      "win_fraction": 0.6815
+    },
+    {
+      "objective": "retention",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.39553622272402317,
+      "win_fraction": 0.0995
+    },
+    {
+      "objective": "retention",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.4",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.39758315504345876,
+      "win_fraction": 0.1875
+    },
+    {
+      "objective": "retention",
+      "strategy": "Confidently Correct",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.5",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.39507612782511087,
+      "win_fraction": 0.0315
+    },
+    {
+      "objective": "retention",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3276115975231601,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.30989146743522833,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.4",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3380178166136381,
+      "win_fraction": 0.0035
+    },
+    {
+      "objective": "retention",
+      "strategy": "Hard Example Mining",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.5",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.35266915801717186,
+      "win_fraction": 0.9965
+    },
+    {
+      "objective": "retention",
+      "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "is_reported_config": true,
+      "sweep_size": 1,
+      "point_pr_auc": 0.35507917840654885,
+      "win_fraction": 1.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3960166400723368,
+      "win_fraction": 0.001
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3939047203382142,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.39608816582171985,
+      "win_fraction": 0.012
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.39217421003447356,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.4008982535292871,
+      "win_fraction": 0.1355
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.15",
+      "is_reported_config": true,
+      "sweep_size": 8,
+      "point_pr_auc": 0.40275666161418283,
+      "win_fraction": 0.3795
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.10",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.4023784841840603,
+      "win_fraction": 0.469
+    },
+    {
+      "objective": "retention",
+      "strategy": "PR Stratification",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15",
+      "is_reported_config": false,
+      "sweep_size": 8,
+      "point_pr_auc": 0.3964777767478138,
+      "win_fraction": 0.003
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3970742647336749,
+      "win_fraction": 0.001
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.4026622811201433,
+      "win_fraction": 0.1215
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.40708385530127583,
+      "win_fraction": 0.7915
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uncertainty Prioritization",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.5",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.40308329119457037,
+      "win_fraction": 0.086
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3920230399921942,
+      "win_fraction": 0.0095
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.390596379636801,
+      "win_fraction": 0.0055
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3954063751478243,
+      "win_fraction": 0.4195
+    },
+    {
+      "objective": "retention",
+      "strategy": "Uniform Random",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5",
+      "is_reported_config": true,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3956088160716454,
+      "win_fraction": 0.5655
+    }
+  ]
+}

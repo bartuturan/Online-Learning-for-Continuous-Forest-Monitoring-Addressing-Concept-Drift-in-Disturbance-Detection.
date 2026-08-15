@@ -82,7 +82,7 @@ pip install numpy pandas xarray scikit-learn scipy xgboost torch torchvision mat
 
 ### Running Tests
 
-`src/mlp_replay/` (the shared MLP experience-replay modules) has a pytest suite under `tests/mlp_replay/`, run against a small synthetic dataset (no real data files required):
+The shared modules under `src/` have a pytest suite mirroring their layout (`tests/mlp_replay/`, `tests/drift/`, `tests/eval/`, `tests/cube/`, `tests/scripts/`), run against small synthetic datasets (no real data files required):
 
 ```powershell
 pip install pytest
@@ -219,7 +219,7 @@ If some model families are not trained, skip corresponding blocks or run those t
 
 ## 4) Concept Drift Detection
 
-The repository includes three drift analysis styles.
+The repository includes four drift analysis styles.
 
 ### A) Discriminator-Based Drift
 
@@ -239,7 +239,43 @@ Interpretation:
 - Higher separability usually indicates stronger shift between compared periods
 - Compare drift scores with model performance trends to identify operational risk
 
-### B) Distribution-Distance Drift
+Important: this style tests the marginal `P(X)`, so it measures *covariate* shift. It cannot see a
+change in `P(Y|X)` unless that change also moves X's marginal. Use style D for that.
+
+### B) Real Concept Drift (a `P(Y|X)` shift)
+
+Notebooks:
+
+- `notebooks/drift_detection/concept_drift_detection-real-joint-discriminator.ipynb` (direct, joint vs marginal)
+- `notebooks/drift_detection/concept_drift_detection-class-conditional-hgb.ipynb` (indirect, class-conditional asymmetry)
+
+Method (joint route):
+
+1. Draw both years to one matched design, so `P(y=1)` is identical on both sides and prior shift
+   cannot masquerade as concept drift
+2. Fit two discriminators on identical rows: one on `X`, one on `[X, y]`
+3. Read `gap_auc = auc(joint) - auc(marginal)` against a same-year null
+
+Interpretation:
+
+| `gap_auc` | marginal AUC | reading |
+| --- | --- | --- |
+| null | null | no drift beyond prior shift |
+| null | elevated | covariate shift only |
+| elevated | null | **real concept drift** |
+| elevated | elevated | both |
+
+The notebook validates itself with a two-way injection control on real S2 bands: symmetric label
+flips inside a feature-space region must lift the gap without moving the marginal, and importance
+resampling on X must lift the marginal without moving the gap. If either fails, its pair-level
+findings are not to be trusted. Shared machinery lives in `src/drift/joint.py`; the same two
+controls run on synthetic data in `tests/drift/test_joint.py`.
+
+Outputs:
+
+- `experiments/concept_drift/concept_drift_real_joint_all_prev/gap_table.csv`
+
+### C) Distribution-Distance Drift
 
 Notebook:
 
@@ -256,7 +292,7 @@ Interpretation:
 - Significant distance suggests measurable covariate shift
 - Use alongside classifier-based drift and performance curves for stronger conclusions
 
-### C) Synthetic Drift Validation
+### D) Synthetic Drift Validation
 
 Notebook:
 

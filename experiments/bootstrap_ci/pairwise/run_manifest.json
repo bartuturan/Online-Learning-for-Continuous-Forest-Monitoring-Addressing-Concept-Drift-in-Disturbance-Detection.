@@ -1,0 +1,133 @@
+{
+  "created_at": "2026-08-10T21:01:25Z",
+  "git_commit": "55f22c4572af454875f361e19b429444e0d5095a",
+  "n_bootstrap": 2000,
+  "seed": 42,
+  "ci_alpha": 0.05,
+  "resampling_unit": "cube",
+  "n_cubes": 297,
+  "mean_estimator": "unweighted mean of per-year scores, averaged within each resample",
+  "slices": {
+    "forecast_mean": {
+      "cells": [
+        [
+          2017,
+          2018
+        ],
+        [
+          2018,
+          2019
+        ],
+        [
+          2019,
+          2020
+        ],
+        [
+          2020,
+          2021
+        ],
+        [
+          2021,
+          2022
+        ]
+      ],
+      "table_type": "next_year"
+    },
+    "retention_mean": {
+      "cells": [
+        [
+          2022,
+          2017
+        ],
+        [
+          2022,
+          2018
+        ],
+        [
+          2022,
+          2019
+        ],
+        [
+          2022,
+          2020
+        ],
+        [
+          2022,
+          2021
+        ],
+        [
+          2022,
+          2022
+        ]
+      ],
+      "table_type": "prior_years"
+    },
+    "retention_2017": {
+      "cells": [
+        [
+          2022,
+          2017
+        ]
+      ],
+      "table_type": "prior_years"
+    },
+    "forecast_at_retention_config": {
+      "cells": [
+        [
+          2017,
+          2018
+        ],
+        [
+          2018,
+          2019
+        ],
+        [
+          2019,
+          2020
+        ],
+        [
+          2020,
+          2021
+        ],
+        [
+          2021,
+          2022
+        ]
+      ],
+      "table_type": "next_year"
+    },
+    "retention_at_forecast_config": {
+      "cells": [
+        [
+          2022,
+          2017
+        ],
+        [
+          2022,
+          2018
+        ],
+        [
+          2022,
+          2019
+        ],
+        [
+          2022,
+          2020
+        ],
+        [
+          2022,
+          2021
+        ],
+        [
+          2022,
+          2022
+        ]
+      ],
+      "table_type": "prior_years"
+    }
+  },
+  "pr_auc_bins": 65536,
+  "n_strategies": 7,
+  "bh_scope": "baseline margins, within each (slice, metric); 10 families of 7",
+  "strategy_pairs": "not produced here; see pairwise/simultaneous_pairs.csv (scripts/run_group_ci.py)"
+}

@@ -305,3 +305,53 @@ def test_baseline_family_flag_combination(synthetic_dataset, synthetic_pixel_ind
     assert not any(n.endswith("_last_year") or n.startswith("s2_last_year_") for n in names)
     assert not any(n.endswith("_year") for n in names)
     assert X.shape[1] == len(names)
+
+
+def test_row_mask_selects_exactly_the_returned_rows(synthetic_dataset, synthetic_pixel_indices):
+    """The mask is the only way to join a per-row result back to its source pixel.
+
+    Rows are dropped for invalid labels and for NaN features, so the returned arrays
+    are a subset of pixel_indices with no record of which one. Anything scoring these
+    rows and then attributing the scores to metadata (which cube a pixel belongs to)
+    needs this mask, or it silently lines predictions up against the wrong pixels.
+    """
+    train_idx, _ = synthetic_pixel_indices
+    ds = synthetic_dataset.copy(deep=True)
+    # Force both filters to fire: one unusable label, one NaN feature.
+    ds["disturbances"][train_idx[0], 1] = -1
+    ds["dem"][train_idx[1], 1] = np.nan
+
+    X, y, row_mask = prepare_raw_features_for_year(
+        ds, train_idx, year_idx=1, return_row_mask=True)
+
+    assert row_mask.shape == (len(train_idx),)
+    assert row_mask.sum() == len(X) == len(y)
+    assert not row_mask[0] and not row_mask[1]
+    # The surviving labels must be exactly the masked source labels, in order.
+    expected = ds["disturbances"].isel(pixel=train_idx, year=1).values[row_mask]
+    assert np.array_equal(y, expected)
+
+
+def test_row_mask_combines_with_feature_names(synthetic_dataset, synthetic_pixel_indices):
+    train_idx, _ = synthetic_pixel_indices
+    X, y, names, row_mask = prepare_raw_features_for_year(
+        synthetic_dataset, train_idx, year_idx=1,
+        return_feature_names=True, return_row_mask=True)
+    assert X.shape[1] == len(names)
+    assert row_mask.sum() == len(X)
+
+
+def test_row_mask_on_skipped_year_zero(synthetic_dataset, synthetic_pixel_indices):
+    """Year 0 returns nothing, but the mask must still span pixel_indices."""
+    train_idx, _ = synthetic_pixel_indices
+    X, y, row_mask = prepare_raw_features_for_year(
+        synthetic_dataset, train_idx, year_idx=0, return_row_mask=True)
+    assert len(X) == 0
+    assert row_mask.shape == (len(train_idx),)
+    assert not row_mask.any()
+
+
+def test_row_mask_defaults_off_preserving_two_value_return(synthetic_dataset, synthetic_pixel_indices):
+    train_idx, _ = synthetic_pixel_indices
+    result = prepare_raw_features_for_year(synthetic_dataset, train_idx, year_idx=1)
+    assert len(result) == 2

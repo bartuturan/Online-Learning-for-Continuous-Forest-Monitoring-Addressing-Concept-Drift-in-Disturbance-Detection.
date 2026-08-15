@@ -1,0 +1,65 @@
+{
+  "created_at": "2026-08-10T21:01:39Z",
+  "git_commit": "55f22c4572af454875f361e19b429444e0d5095a",
+  "alpha": 0.05,
+  "method": "single-step max-T (Westfall-Young), studentised, one shared critical value per (slice, metric) family",
+  "source": "experiments\\bootstrap_ci\\pairwise\\arm_samples.npz",
+  "groups": {
+    "G0_no_replay": [
+      "Baseline"
+    ],
+    "G1_uncurated": [
+      "Uniform Random"
+    ],
+    "G2_curated_non_error": [
+      "PR Stratification",
+      "Confidently Correct",
+      "Uncertainty Prioritization"
+    ],
+    "G3_error_driven": [
+      "Hard Example Mining",
+      "Misclassification Buffer"
+    ],
+    "G4_multi_criterion": [
+      "Combined"
+    ]
+  },
+  "contrasts": [
+    {
+      "name": "C1_replay_vs_none",
+      "a": "G1_uncurated",
+      "b": "G0_no_replay",
+      "claim": "Replaying history helps before any curation is applied"
+    },
+    {
+      "name": "C2_curation_vs_random",
+      "a": "G2_curated_non_error",
+      "b": "G1_uncurated",
+      "claim": "Curating the buffer adds over drawing from it at random"
+    },
+    {
+      "name": "C3_non_error_vs_error",
+      "a": "G2_curated_non_error",
+      "b": "G3_error_driven",
+      "claim": "Error-driven selection underperforms other curation (noise amplification)"
+    },
+    {
+      "name": "C4_blend_vs_single",
+      "a": "G4_multi_criterion",
+      "b": "G2_curated_non_error",
+      "claim": "Blending criteria beats committing to one"
+    },
+    {
+      "name": "C5_error_driven_vs_none",
+      "a": "G3_error_driven",
+      "b": "G0_no_replay",
+      "claim": "Error-driven replay is better than not replaying at all"
+    }
+  ],
+  "band_groups": [
+    "G1_uncurated",
+    "G2_curated_non_error",
+    "G4_multi_criterion"
+  ],
+  "group_score": "unweighted mean of member arms within each resample"
+}

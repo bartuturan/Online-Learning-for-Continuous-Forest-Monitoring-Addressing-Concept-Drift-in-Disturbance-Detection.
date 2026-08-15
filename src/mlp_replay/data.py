@@ -44,6 +44,7 @@ def prepare_raw_features_for_year(
     include_neighbourhood=False,
     impute_window='expanding',
     return_feature_names=False,
+    return_row_mask=False,
 ):
     """Extract and clean raw (unscaled) features for one year. Year 0 is skipped by design.
 
@@ -61,6 +62,13 @@ def prepare_raw_features_for_year(
         those notebooks can migrate without their numbers moving.
     return_feature_names: also return the column names, so callers can select or reorder by
         name instead of by position.
+    return_row_mask: also return a boolean mask over `pixel_indices` marking which rows
+        survived the invalid-label and NaN-feature filters below. Returned rows are a
+        strict subset of `pixel_indices`, in order, but the function otherwise gives no
+        way to tell which pixels were dropped -- so any caller that needs to join a
+        per-row result (a prediction) back to per-pixel metadata (which cube it came
+        from) must have this mask, or it will silently align predictions to the wrong
+        pixels. Appended after feature_names when both flags are set.
     dtype: cast the feature matrix to this type (and labels to int64). Pass None to leave both
         exactly as the dataset produced them, which is what the evaluation notebook expects.
     """
@@ -69,7 +77,14 @@ def prepare_raw_features_for_year(
 
     if year_idx == 0:
         empty = (np.empty((0, 0), dtype=dtype), np.empty((0,), dtype=np.int64))
-        return (*empty, []) if return_feature_names else empty
+        extras = []
+        if return_feature_names:
+            extras.append([])
+        if return_row_mask:
+            # No row survives a skipped year, but the mask still spans pixel_indices so
+            # callers can index with it unconditionally.
+            extras.append(np.zeros(len(np.asarray(pixel_indices)), dtype=bool))
+        return (*empty, *extras) if extras else empty
 
     if s2_mean_per_pixel is None:
         if impute_window == 'expanding':
@@ -175,6 +190,12 @@ def prepare_raw_features_for_year(
     X_clean = X[nan_mask]
     y_clean = y[nan_mask]
 
+    # Which of the original `pixel_indices` rows survived both filters. Built by
+    # scattering nan_mask back through valid_label_mask rather than recomputing,
+    # so it cannot drift from the filtering above.
+    row_mask = valid_label_mask.copy()
+    row_mask[valid_label_mask] = nan_mask
+
     if len(X_clean) == 0:
         feature_dim = X.shape[1] if X.ndim == 2 and X.shape[0] > 0 else 0
         X_clean = np.empty((0, feature_dim), dtype=dtype or X.dtype)
@@ -183,8 +204,13 @@ def prepare_raw_features_for_year(
         X_clean = X_clean.astype(dtype, copy=False)
         y_clean = y_clean.astype(np.int64, copy=False)
 
+    extras = []
     if return_feature_names:
-        return X_clean, y_clean, feature_names
+        extras.append(feature_names)
+    if return_row_mask:
+        extras.append(row_mask)
+    if extras:
+        return (X_clean, y_clean, *extras)
     return X_clean, y_clean
 
 

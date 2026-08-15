@@ -1,0 +1,8 @@
+{
+  "created_at": "2026-08-10T21:01:36Z",
+  "git_commit": "55f22c4572af454875f361e19b429444e0d5095a",
+  "alpha": 0.05,
+  "method": "single-step max-T (Westfall-Young), studentised, one shared critical value per (slice, metric)",
+  "source": "experiments\\bootstrap_ci\\pairwise\\arm_samples.npz",
+  "pairs_per_slice_metric": 21
+}

@@ -1,0 +1,69 @@
+{
+  "created_at": "2026-08-10T17:36:50Z",
+  "git_commit": "55f22c4572af454875f361e19b429444e0d5095a",
+  "n_bootstrap": 2000,
+  "seed": 42,
+  "ci_alpha": 0.05,
+  "pr_auc_bins": 65536,
+  "resampling_unit": "cube",
+  "selection_metric": "pr_auc",
+  "selection_rule": "argmax of mean PR-AUC within each strategy sweep, re-run inside every resample",
+  "bias_correction": "selection_bias = mean(resampled maxima) - mean(fixed winner resamples), isolating the winner's curse from the ordinary resampling bias; partial, does not substitute for a held-out selection split",
+  "quote_column": "corrected_ci_lower/upper (the raw selection interval is stochastically above the naive one on the selection metric and is not a significance test)",
+  "objectives": {
+    "forecast": {
+      "cells": [
+        [
+          2017,
+          2018
+        ],
+        [
+          2018,
+          2019
+        ],
+        [
+          2019,
+          2020
+        ],
+        [
+          2020,
+          2021
+        ],
+        [
+          2021,
+          2022
+        ]
+      ],
+      "table_type": "next_year"
+    },
+    "retention": {
+      "cells": [
+        [
+          2022,
+          2017
+        ],
+        [
+          2022,
+          2018
+        ],
+        [
+          2022,
+          2019
+        ],
+        [
+          2022,
+          2020
+        ],
+        [
+          2022,
+          2021
+        ],
+        [
+          2022,
+          2022
+        ]
+      ],
+      "table_type": "prior_years"
+    }
+  }
+}

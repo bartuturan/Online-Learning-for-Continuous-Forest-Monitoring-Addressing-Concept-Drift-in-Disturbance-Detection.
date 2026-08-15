@@ -1,0 +1,63 @@
+objective,strategy,family_id,is_reported_config,sweep_size,point_pr_auc,win_fraction
+forecast,Combined,"mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",True,6,0.34460348058070167,0.757
+forecast,Combined,"mlp_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4",False,6,0.3383311796877721,0.1335
+forecast,Combined,"mlp_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5",False,6,0.32880971773476875,0.0
+forecast,Combined,"mlp_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5",False,6,0.32911873674173225,0.0
+forecast,Combined,"mlp_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5",False,6,0.3351789880463431,0.007
+forecast,Combined,"mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5",False,6,0.3334916479249133,0.1025
+forecast,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.2,False,4,0.3410920711787656,0.026
+forecast,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.3,False,4,0.32787094686296747,0.0
+forecast,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.4,True,4,0.3511415690626449,0.974
+forecast,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.5,False,4,0.33197570003525084,0.0
+forecast,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.2,False,4,0.30865445179841056,0.0
+forecast,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.3,False,4,0.3086691109807275,0.0
+forecast,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.4,True,4,0.3272344493402772,0.62
+forecast,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.5,False,4,0.3250500190074022,0.38
+forecast,Misclassification Buffer,mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3,True,1,0.3210895520099134,1.0
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.10,True,8,0.3500338850670027,0.655
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.15,False,8,0.33024842596166615,0.0
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.10,False,8,0.3448956603809682,0.0915
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15,False,8,0.32891327353640526,0.0
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.10,False,8,0.34104729220730406,0.0015
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.15,False,8,0.3450402859959376,0.078
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.10,False,8,0.3404452066543003,0.0005
+forecast,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15,False,8,0.34686134432058274,0.1735
+forecast,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.2,False,4,0.33448913683066595,0.0385
+forecast,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3,False,4,0.3414238075043551,0.2525
+forecast,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4,False,4,0.32354986229099214,0.0
+forecast,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.5,True,4,0.3455265277346256,0.709
+forecast,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2,False,4,0.3406256623731109,0.067
+forecast,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3,False,4,0.33063426510205174,0.0
+forecast,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4,True,4,0.3465892564839591,0.531
+forecast,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5,False,4,0.34529893642454035,0.402
+retention,Combined,"mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5",False,6,0.3693153235295405,0.0
+retention,Combined,"mlp_combined_HE=0_CC=0.15_UP=0_PR=(0,10)_MC=0.1_RWS=1_RR=0.4",False,6,0.3859410281730264,0.0605
+retention,Combined,"mlp_combined_HE=0_CC=0.1_UP=0.1_PR=(0,10)_MC=0.1_RWS=1_RR=0.5",False,6,0.3816762640347047,0.0
+retention,Combined,"mlp_combined_HE=0_CC=0.1_UP=0.2_PR=(0.1,10)_RR=0.5",False,6,0.38691088440570615,0.0505
+retention,Combined,"mlp_combined_HE=0_CC=0.2_UP=0.1_PR=(0.2,10)_RR=0.5",False,6,0.3900664957152699,0.323
+retention,Combined,"mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5",True,6,0.39199674740210416,0.566
+retention,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.2,True,4,0.4004460475487382,0.6815
+retention,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.3,False,4,0.39553622272402317,0.0995
+retention,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.4,False,4,0.39758315504345876,0.1875
+retention,Confidently Correct,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.5,False,4,0.39507612782511087,0.0315
+retention,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.2,False,4,0.3276115975231601,0.0
+retention,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.3,False,4,0.30989146743522833,0.0
+retention,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.4,False,4,0.3380178166136381,0.0035
+retention,Hard Example Mining,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.5,True,4,0.35266915801717186,0.9965
+retention,Misclassification Buffer,mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3,True,1,0.35507917840654885,1.0
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.10,False,8,0.3960166400723368,0.001
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2_PR_0.15,False,8,0.3939047203382142,0.0
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.10,False,8,0.39608816582171985,0.012
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3_PR_0.15,False,8,0.39217421003447356,0.0
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.10,False,8,0.4008982535292871,0.1355
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4_PR_0.15,True,8,0.40275666161418283,0.3795
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.10,False,8,0.4023784841840603,0.469
+retention,PR Stratification,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5_PR_0.15,False,8,0.3964777767478138,0.003
+retention,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.2,False,4,0.3970742647336749,0.001
+retention,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3,False,4,0.4026622811201433,0.1215
+retention,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4,True,4,0.40708385530127583,0.7915
+retention,Uncertainty Prioritization,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.5,False,4,0.40308329119457037,0.086
+retention,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.2,False,4,0.3920230399921942,0.0095
+retention,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.3,False,4,0.390596379636801,0.0055
+retention,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4,False,4,0.3954063751478243,0.4195
+retention,Uniform Random,mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5,True,4,0.3956088160716454,0.5655
