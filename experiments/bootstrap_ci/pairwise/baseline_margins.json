@@ -18,9 +18,11 @@
       "ci_method",
       "ci_alpha",
       "p_value_one_sided",
-      "q_value_bh",
-      "bh_family",
-      "bh_family_size"
+      "p_value_two_sided",
+      "p_value_holm",
+      "holm_family",
+      "holm_family_size",
+      "holm_p_side"
     ]
   },
   "rows": [
@@ -41,9 +43,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.22438780609695153,
-      "q_value_bh": 0.42766116941529236,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.44877561219390305,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -62,9 +66,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.00399800099950025,
-      "q_value_bh": 0.02798600699650175,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0079960019990005,
+      "p_value_holm": 0.0559720139930035,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -83,9 +89,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.11544227886056972,
-      "q_value_bh": 0.40404797601199405,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.23088455772113944,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -104,9 +112,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.24437781109445278,
-      "q_value_bh": 0.42766116941529236,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.48875562218890556,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -125,30 +135,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.9425287356321839,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.11594202898550725,
+      "p_value_holm": 0.6956521739130435,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
       "metric": "f1_score",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.4)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.35800824941924947,
+      "strategy_point_estimate": 0.3821250909251393,
       "baseline_point_estimate": 0.3775675917253164,
-      "point_estimate": -0.01955934230606693,
-      "ci_lower": -0.031244909176811452,
-      "ci_upper": -0.0070323928151165725,
-      "bootstrap_mean": -0.01932048378361376,
-      "bootstrap_std": 0.00621017953182996,
+      "point_estimate": 0.004557499199822901,
+      "ci_lower": -0.0073860918670240125,
+      "ci_upper": 0.017006533883078996,
+      "bootstrap_mean": 0.004159386752353122,
+      "bootstrap_std": 0.006278898039701331,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.9980009995002499,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.26786606696651677,
+      "p_value_two_sided": 0.5357321339330335,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -167,9 +181,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.33483258370814595,
-      "q_value_bh": 0.46876561719140436,
-      "bh_family": "forecast_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.6696651674162919,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -188,9 +204,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.08995502248875563,
-      "q_value_bh": 0.20989505247376314,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.17991004497751126,
+      "p_value_holm": 0.719640179910045,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -209,9 +227,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0024987506246876563,
-      "q_value_bh": 0.017491254372813594,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.004997501249375313,
+      "p_value_holm": 0.03498250874562719,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -230,9 +250,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.026986506746626688,
-      "q_value_bh": 0.0944527736131934,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.053973013493253376,
+      "p_value_holm": 0.32383808095952027,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -251,9 +273,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.13343328335832083,
-      "q_value_bh": 0.23350824587706145,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.26686656671664166,
+      "p_value_holm": 0.7706146926536731,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -272,30 +296,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.872063968015992,
-      "q_value_bh": 0.9475262368815592,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.25687156421789104,
+      "p_value_holm": 0.7706146926536731,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
       "metric": "pr_auc",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.4)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.3210895520099134,
+      "strategy_point_estimate": 0.3455620945667454,
       "baseline_point_estimate": 0.33482624837870606,
-      "point_estimate": -0.013736696368792656,
-      "ci_lower": -0.026823263323487296,
-      "ci_upper": 0.0038971737075106636,
-      "bootstrap_mean": -0.01334099842831392,
-      "bootstrap_std": 0.007968284055227422,
+      "point_estimate": 0.010735846188039355,
+      "ci_lower": -0.001717752798354455,
+      "ci_upper": 0.024563963958274627,
+      "bootstrap_mean": 0.010422813139084535,
+      "bootstrap_std": 0.006819859121604433,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.9475262368815592,
-      "q_value_bh": 0.9475262368815592,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.05747126436781609,
+      "p_value_two_sided": 0.11494252873563218,
+      "p_value_holm": 0.5747126436781609,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_mean",
@@ -314,9 +342,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.19440279860069964,
-      "q_value_bh": 0.2721639180409795,
-      "bh_family": "forecast_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.3888055972013993,
+      "p_value_holm": 0.7706146926536731,
+      "holm_family": "forecast_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -335,9 +365,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -356,9 +388,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -377,9 +411,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -398,9 +434,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -419,30 +457,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0074962518740629685,
-      "q_value_bh": 0.008745627186406797,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.014992503748125937,
+      "p_value_holm": 0.014992503748125937,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
       "metric": "f1_score",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.5)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.39033645292474106,
+      "strategy_point_estimate": 0.4215625493572712,
       "baseline_point_estimate": 0.3650769403967786,
-      "point_estimate": 0.025259512527962436,
-      "ci_lower": 0.0009503743248894123,
-      "ci_upper": 0.045909397653133295,
-      "bootstrap_mean": 0.025714592369393118,
-      "bootstrap_std": 0.011831580005645772,
+      "point_estimate": 0.056485608960492595,
+      "ci_lower": 0.03292328680441418,
+      "ci_upper": 0.07667351707818006,
+      "bootstrap_mean": 0.05681830316912733,
+      "bootstrap_std": 0.0112932488926249,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.021989005497251374,
-      "q_value_bh": 0.021989005497251374,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.0004997501249375312,
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -461,9 +503,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_mean:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -482,9 +526,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -503,9 +549,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -524,9 +572,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -545,9 +595,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -566,30 +618,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
       "metric": "pr_auc",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.5)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.35507917840654885,
+      "strategy_point_estimate": 0.3903508655651202,
       "baseline_point_estimate": 0.3160892970870635,
-      "point_estimate": 0.03898988131948533,
-      "ci_lower": 0.01718510112221925,
-      "ci_upper": 0.05714409077699104,
-      "bootstrap_mean": 0.038859980579239,
-      "bootstrap_std": 0.010164901252780079,
+      "point_estimate": 0.0742615684780567,
+      "ci_lower": 0.05530857053348535,
+      "ci_upper": 0.09075853524740142,
+      "bootstrap_mean": 0.07427250199669097,
+      "bootstrap_std": 0.009205298491031997,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_mean",
@@ -608,9 +664,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0004997501249375312,
-      "bh_family": "retention_mean:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_mean:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -629,9 +687,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -650,9 +710,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -671,9 +733,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -692,9 +756,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -713,30 +779,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0014992503748125937,
-      "q_value_bh": 0.0017491254372813594,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0029985007496251873,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
       "metric": "f1_score",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.5)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.08591640939736686,
+      "strategy_point_estimate": 0.20362518056008574,
       "baseline_point_estimate": 0.15056119653981884,
-      "point_estimate": -0.06464478714245198,
-      "ci_lower": -0.09267187621490093,
-      "ci_upper": -0.03587315904488771,
-      "bootstrap_mean": -0.06401789850855132,
-      "bootstrap_std": 0.014623353000602204,
+      "point_estimate": 0.05306398402026691,
+      "ci_lower": 0.03356812059813219,
+      "ci_upper": 0.07501751028657326,
+      "bootstrap_mean": 0.05314226028514327,
+      "bootstrap_std": 0.010582918166922516,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 1.0,
-      "q_value_bh": 1.0,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.0004997501249375312,
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -755,9 +825,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_2017:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -776,9 +848,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -797,9 +871,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -818,9 +894,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -839,9 +917,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -860,30 +940,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
       "metric": "pr_auc",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.5)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.04450844557993628,
+      "strategy_point_estimate": 0.1524707655075711,
       "baseline_point_estimate": 0.07896067025629736,
-      "point_estimate": -0.034452224676361075,
-      "ci_lower": -0.05208011335986735,
-      "ci_upper": -0.017500508010628874,
-      "bootstrap_mean": -0.034303544100809234,
-      "bootstrap_std": 0.008686445126060378,
+      "point_estimate": 0.07351009525127375,
+      "ci_lower": 0.05137906593715924,
+      "ci_upper": 0.0972007868405977,
+      "bootstrap_mean": 0.07389400485640558,
+      "bootstrap_std": 0.011542297241670142,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 1.0,
-      "q_value_bh": 1.0,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.0004997501249375312,
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_2017",
@@ -902,9 +986,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_2017:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_2017:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -923,9 +1009,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.2368815592203898,
-      "q_value_bh": 0.8290854572713643,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.4737631184407796,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -944,9 +1032,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.13893053473263367,
-      "q_value_bh": 0.8290854572713643,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.27786106946526734,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -965,9 +1055,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.7161419290354822,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.5687156421789106,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -986,9 +1078,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.9955022488755623,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.009995002498750625,
+      "p_value_holm": 0.06996501749125437,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1007,30 +1101,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.9645177411294353,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.07196401799100449,
+      "p_value_holm": 0.43178410794602695,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
       "metric": "f1_score",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.5)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.35800824941924947,
+      "strategy_point_estimate": 0.3688460172049468,
       "baseline_point_estimate": 0.3775675917253164,
-      "point_estimate": -0.01955934230606693,
-      "ci_lower": -0.031244909176811452,
-      "ci_upper": -0.0070323928151165725,
-      "bootstrap_mean": -0.01932048378361376,
-      "bootstrap_std": 0.00621017953182996,
+      "point_estimate": -0.00872157452036959,
+      "ci_lower": -0.019973778482194445,
+      "ci_upper": 0.004439331289637422,
+      "bootstrap_mean": -0.008837129981408039,
+      "bootstrap_std": 0.006407512124180169,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.9980009995002499,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.912543728135932,
+      "p_value_two_sided": 0.175912043978011,
+      "p_value_holm": 0.879560219890055,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1049,9 +1147,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.8180909545227386,
-      "q_value_bh": 0.9980009995002499,
-      "bh_family": "forecast_at_retention_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.36481759120439783,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_at_retention_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1070,9 +1170,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.03298350824587706,
-      "q_value_bh": 0.23088455772113944,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.06596701649175413,
+      "p_value_holm": 0.39580209895052476,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1091,9 +1193,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0879560219890055,
-      "q_value_bh": 0.2390471430951191,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.175912043978011,
+      "p_value_holm": 0.8695652173913043,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1112,9 +1216,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.1024487756121939,
-      "q_value_bh": 0.2390471430951191,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.2048975512243878,
+      "p_value_holm": 0.8695652173913043,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1133,9 +1239,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.9895052473763118,
-      "q_value_bh": 0.9895052473763118,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.021989005497251374,
+      "p_value_holm": 0.1539230384807596,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1154,30 +1262,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.9135432283858071,
-      "q_value_bh": 0.9895052473763118,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.17391304347826086,
+      "p_value_holm": 0.8695652173913043,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
       "metric": "pr_auc",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.5)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.3210895520099134,
+      "strategy_point_estimate": 0.334583447886624,
       "baseline_point_estimate": 0.33482624837870606,
-      "point_estimate": -0.013736696368792656,
-      "ci_lower": -0.026823263323487296,
-      "ci_upper": 0.0038971737075106636,
-      "bootstrap_mean": -0.01334099842831392,
-      "bootstrap_std": 0.007968284055227422,
+      "point_estimate": -0.00024280049208208476,
+      "ci_lower": -0.013426183900030293,
+      "ci_upper": 0.015313176393020562,
+      "bootstrap_mean": -0.0003985807849670843,
+      "bootstrap_std": 0.007716892104706229,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.9475262368815592,
-      "q_value_bh": 0.9895052473763118,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.5492253873063468,
+      "p_value_two_sided": 0.9025487256371814,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "forecast_at_retention_config",
@@ -1196,9 +1308,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.5937031484257871,
-      "q_value_bh": 0.9895052473763118,
-      "bh_family": "forecast_at_retention_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.8135932033983009,
+      "p_value_holm": 1.0,
+      "holm_family": "forecast_at_retention_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1217,9 +1331,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1238,9 +1354,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1259,9 +1377,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1280,9 +1400,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1301,30 +1423,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.11244377811094453,
-      "q_value_bh": 0.11244377811094453,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.22488755622188905,
+      "p_value_holm": 0.4497751124437781,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
       "metric": "f1_score",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.4)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.39033645292474106,
+      "strategy_point_estimate": 0.3721697044538854,
       "baseline_point_estimate": 0.3650769403967786,
-      "point_estimate": 0.025259512527962436,
-      "ci_lower": 0.0009503743248894123,
-      "ci_upper": 0.045909397653133295,
-      "bootstrap_mean": 0.025714592369393118,
-      "bootstrap_std": 0.011831580005645772,
+      "point_estimate": 0.007092764057106793,
+      "ci_lower": -0.01402670452695213,
+      "ci_upper": 0.027055664501097018,
+      "bootstrap_mean": 0.007620403115604205,
+      "bootstrap_std": 0.01072720065824416,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.021989005497251374,
-      "q_value_bh": 0.025653839746793267,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.2448775612193903,
+      "p_value_two_sided": 0.4897551224387806,
+      "p_value_holm": 0.4897551224387806,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1343,9 +1469,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0006996501749125438,
-      "bh_family": "retention_at_forecast_config:f1_score",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:f1_score",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1364,9 +1492,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1385,9 +1515,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1406,9 +1538,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1427,9 +1561,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1448,30 +1584,34 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.013993003498250875,
-      "q_value_bh": 0.013993003498250875,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.02798600699650175,
+      "p_value_holm": 0.02798600699650175,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
       "metric": "pr_auc",
-      "row_label": "Misclassification Buffer (RR=0.3)",
-      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "row_label": "Misclassification Buffer (RR=0.4)",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
       "baseline_family_id": "mlp_prevyears_monthly_features_incremental_scaler",
-      "strategy_point_estimate": 0.35507917840654885,
+      "strategy_point_estimate": 0.34380349102415964,
       "baseline_point_estimate": 0.3160892970870635,
-      "point_estimate": 0.03898988131948533,
-      "ci_lower": 0.01718510112221925,
-      "ci_upper": 0.05714409077699104,
-      "bootstrap_mean": 0.038859980579239,
-      "bootstrap_std": 0.010164901252780079,
+      "point_estimate": 0.02771419393709612,
+      "ci_lower": 0.01046909202996364,
+      "ci_upper": 0.04457650940154906,
+      "bootstrap_mean": 0.027601413789092838,
+      "bootstrap_std": 0.008819567725565351,
       "n_bootstrap": 2000,
       "ci_method": "percentile",
       "ci_alpha": 0.05,
-      "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_one_sided": 0.0014992503748125937,
+      "p_value_two_sided": 0.0029985007496251873,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     },
     {
       "slice": "retention_at_forecast_config",
@@ -1490,9 +1630,11 @@
       "ci_method": "percentile",
       "ci_alpha": 0.05,
       "p_value_one_sided": 0.0004997501249375312,
-      "q_value_bh": 0.0005830418124271198,
-      "bh_family": "retention_at_forecast_config:pr_auc",
-      "bh_family_size": 7
+      "p_value_two_sided": 0.0009995002498750624,
+      "p_value_holm": 0.0069965017491254375,
+      "holm_family": "retention_at_forecast_config:pr_auc",
+      "holm_family_size": 7,
+      "holm_p_side": "two_sided"
     }
   ]
 }

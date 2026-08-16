@@ -1,6 +1,6 @@
 {
-  "created_at": "2026-08-09T23:56:32Z",
-  "git_commit": "0ad25651d75c323e77d0da935536ec18a8d8afd2",
+  "created_at": "2026-08-16T08:23:06Z",
+  "git_commit": "d955a53cc513467ee8a7c410366e4c40113d9ffb",
   "n_bootstrap": 2000,
   "seed": 42,
   "ci_method": "percentile",
@@ -44,12 +44,22 @@
     "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.3",
     "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4",
     "mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.5",
-    "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3"
+    "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+    "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+    "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+    "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5"
   ],
   "table_types": [
     "own_year",
     "prior_years",
     "next_year"
   ],
-  "threshold_source": "experiments\\evaluation\\eval_outputs\\unified_eval\\all_families_combined.csv"
+  "pr_auc_bins": 65536,
+  "threshold_source": "experiments\\evaluation\\eval_outputs\\unified_eval\\all_families_combined.csv",
+  "table_produced_at": {
+    "own_year": "2026-08-15T19:02:21Z",
+    "prior_years": "2026-08-16T00:09:33Z",
+    "next_year": "2026-08-16T08:23:06Z"
+  },
+  "notes": "The three table types were produced by two invocations of --stage bootstrap, not one. own_year and prior_years came from a full-scope run that was killed by a session ending before it reached next_year; next_year was then completed on its own with --table-types next_year. Every parameter above was identical across both invocations, so the tables are directly comparable -- in particular pr_auc_bins stayed at the default 65536. created_at is the second invocation; see table_produced_at for each table. Verified after the fact: for the 31 families whose models did not change, every numeric column reproduced the previous run bit-for-bit. The changes are the retrained missclassification_buffer_RR_0.3 (now MISCLASS_FRACTION=0.3, hence a different optimal-F1 threshold) and the three new RR_0.2/0.4/0.5 arms of that sweep, taking 32 families to 35."
 }

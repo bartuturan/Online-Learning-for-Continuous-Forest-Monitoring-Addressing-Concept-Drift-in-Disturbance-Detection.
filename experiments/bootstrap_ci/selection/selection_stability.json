@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "row_count": 62,
+    "row_count": 68,
     "columns": [
       "objective",
       "strategy",
@@ -141,11 +141,38 @@
     {
       "objective": "forecast",
       "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3402596025484892,
+      "win_fraction": 0.0355
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Misclassification Buffer",
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.33990902437415743,
+      "win_fraction": 0.155
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
       "is_reported_config": true,
-      "sweep_size": 1,
-      "point_pr_auc": 0.3210895520099134,
-      "win_fraction": 1.0
+      "sweep_size": 4,
+      "point_pr_auc": 0.3455620945667454,
+      "win_fraction": 0.8095
+    },
+    {
+      "objective": "forecast",
+      "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.334583447886624,
+      "win_fraction": 0.0
     },
     {
       "objective": "forecast",
@@ -420,11 +447,38 @@
     {
       "objective": "retention",
       "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.2",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.37946324022316985,
+      "win_fraction": 0.0015
+    },
+    {
+      "objective": "retention",
+      "strategy": "Misclassification Buffer",
       "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.3697833951373199,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4",
+      "is_reported_config": false,
+      "sweep_size": 4,
+      "point_pr_auc": 0.34380349102415964,
+      "win_fraction": 0.0
+    },
+    {
+      "objective": "retention",
+      "strategy": "Misclassification Buffer",
+      "family_id": "mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5",
       "is_reported_config": true,
-      "sweep_size": 1,
-      "point_pr_auc": 0.35507917840654885,
-      "win_fraction": 1.0
+      "sweep_size": 4,
+      "point_pr_auc": 0.3903508655651202,
+      "win_fraction": 0.9985
     },
     {
       "objective": "retention",

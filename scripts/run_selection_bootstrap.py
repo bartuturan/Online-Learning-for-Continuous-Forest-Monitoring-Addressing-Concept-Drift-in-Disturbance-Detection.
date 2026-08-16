@@ -43,8 +43,10 @@ Three things come out of it:
                          mean of the fixed winner's resamples). Only the second is
                          the winner's curse, and only the second is corrected in
                          `bias_corrected_point`. Reporting their sum instead would
-                         charge a single-configuration strategy like Misclassification
-                         Buffer for a selection it never made. The correction is
+                         charge a strategy swept at a single configuration for a
+                         selection it never made -- every strategy here now sweeps
+                         4-8 of them, but the decomposition keeps that guarantee
+                         rather than assuming it away. The correction is
                          partial -- it does not manufacture a held-out selection set --
                          but it moves the estimate in the right direction and makes
                          the size of the problem visible instead of implicit.

@@ -1,6 +1,6 @@
 {
-  "created_at": "2026-08-10T21:01:39Z",
-  "git_commit": "55f22c4572af454875f361e19b429444e0d5095a",
+  "created_at": "2026-08-16T09:06:58Z",
+  "git_commit": "d955a53cc513467ee8a7c410366e4c40113d9ffb",
   "alpha": 0.05,
   "method": "single-step max-T (Westfall-Young), studentised, one shared critical value per (slice, metric) family",
   "source": "experiments\\bootstrap_ci\\pairwise\\arm_samples.npz",
@@ -29,7 +29,7 @@
       "name": "C1_replay_vs_none",
       "a": "G1_uncurated",
       "b": "G0_no_replay",
-      "claim": "Replaying history helps before any curation is applied"
+      "claim": "Replaying history helps without any curation applied"
     },
     {
       "name": "C2_curation_vs_random",
@@ -54,6 +54,12 @@
       "a": "G3_error_driven",
       "b": "G0_no_replay",
       "claim": "Error-driven replay is better than not replaying at all"
+    },
+    {
+      "name": "C6_error_driven_vs_random",
+      "a": "G3_error_driven",
+      "b": "G1_uncurated",
+      "claim": "Error-driven replay is better than drawing from the buffer at random"
     }
   ],
   "band_groups": [

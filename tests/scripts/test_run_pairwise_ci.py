@@ -33,16 +33,17 @@ class TestConfigRegistry:
         assert len(strategies) == 7
         assert len(list(itertools.combinations(strategies, 2))) == 21
 
-    def test_six_of_seven_retention_configs_differ_from_forecast(self):
+    def test_all_seven_retention_configs_differ_from_forecast(self):
         """The two panels are different trained models, not the same models re-scored.
 
-        Only Misclassification Buffer is shared, because it was run at a single ratio
-        and so was never selected for either objective.
+        Misclassification Buffer used to be the one exception, shared between the
+        panels because it ran at a single ratio and so was never selected for either
+        objective. It now sweeps RR 0.2-0.5 and selects RR=0.4 forecasting, RR=0.5
+        retaining, so every strategy differs between the panels.
         """
         forecast = {f for _, f in pw.FORECAST_ROWS[1:]}
         retention = {f for _, f in pw.RETENTION_ROWS[1:]}
-        assert len(forecast & retention) == 1
-        assert 'missclassification_buffer' in (forecast & retention).pop()
+        assert not (forecast & retention)
 
     def test_slice_cells_match_the_printed_year_columns(self):
         assert [c[1] for c in pw.FORECAST_CELLS] == [2018, 2019, 2020, 2021, 2022]
@@ -227,11 +228,13 @@ class TestBaselineMargins:
         assert (baseline_df.p_value_one_sided >= 1 / (n_boot + 1) - 1e-12).all()
         assert (baseline_df.p_value_one_sided <= 1.0).all()
 
-    def test_bh_is_scoped_within_slice_and_metric(self, pairwise_result):
+    def test_holm_is_scoped_within_slice_and_metric(self, pairwise_result):
         _, baseline_df = pairwise_result
-        assert set(baseline_df.bh_family_size) == {7}
-        assert baseline_df.bh_family.nunique() == len(pw.SLICES) * len(pw.METRICS)
-        assert (baseline_df.q_value_bh >= baseline_df.p_value_one_sided - 1e-12).all()
+        assert set(baseline_df.holm_family_size) == {7}
+        assert baseline_df.holm_family.nunique() == len(pw.SLICES) * len(pw.METRICS)
+        # Holm corrects the two-sided tail, and an adjustment can only inflate a p.
+        assert set(baseline_df.holm_p_side) == {'two_sided'}
+        assert (baseline_df.p_value_holm >= baseline_df.p_value_two_sided - 1e-12).all()
 
     def test_written_to_disk_with_json_twin(self, pairwise_result):
         assert (pw.PAIRWISE_DIR / 'baseline_margins.csv').exists()
@@ -259,16 +262,18 @@ class TestCrossObjectiveSlices:
         assert pw.SLICES['retention_at_forecast_config']['table_type'] == 'prior_years'
 
     def test_cross_slice_is_not_a_relabelled_copy_of_the_diagonal(self):
-        """Six of seven strategies change configuration between objectives.
+        """All seven strategies change configuration between objectives.
 
-        Only the baseline and Misclassification Buffer are the same trained model in
-        both panels -- the latter only because it was swept at one configuration. If
-        this ever collapsed to 0, the cross slices would be scoring the same models
-        twice and their intervals would say nothing about the trade-off.
+        Only the baseline is the same trained model in both panels, since it is a
+        single configuration and so is never selected. Misclassification Buffer was
+        the second shared row until it was swept over four ratios. If this ever grew
+        to cover a strategy, the cross slices would be scoring the same models twice
+        and their intervals would say nothing about the trade-off.
         """
         forecast_families = set(dict(pw.FORECAST_ROWS).values())
         retention_families = set(dict(pw.RETENTION_ROWS).values())
         shared = forecast_families & retention_families
-        assert len(shared) == 2
+        assert shared == {pw.FORECAST_ROWS[0][1]}
         assert pw.SLICES['forecast_at_retention_config']['rows'] == pw.RETENTION_ROWS
-        assert len(forecast_families ^ retention_families) == 12
+        # 7 strategies on each side, disjoint; only the baseline is common.
+        assert len(forecast_families ^ retention_families) == 14

@@ -30,7 +30,7 @@ LABELS = [
     'Confidently Correct (RR=0.4)',
     'Uncertainty Prioritization (RR=0.5)',
     'Hard Example Mining (RR=0.4)',
-    'Misclassification Buffer (RR=0.3)',
+    'Misclassification Buffer (RR=0.4)',
     'Combined (RR=0.5, HE/CC/UP/PR=.1/.1/.1/.2)',
 ]
 
@@ -53,7 +53,7 @@ def synthetic(tmp_path, monkeypatch):
         'Confidently Correct (RR=0.4)': 0.39,
         'Uncertainty Prioritization (RR=0.5)': 0.40,
         'Hard Example Mining (RR=0.4)': 0.32,
-        'Misclassification Buffer (RR=0.3)': 0.31,
+        'Misclassification Buffer (RR=0.4)': 0.31,
         'Combined (RR=0.5, HE/CC/UP/PR=.1/.1/.1/.2)': 0.385,
     }
     samples = {label: level[label] + shared + rng.normal(0, 0.004, n_boot)

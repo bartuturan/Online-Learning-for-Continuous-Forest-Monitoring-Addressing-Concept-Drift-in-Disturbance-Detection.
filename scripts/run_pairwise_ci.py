@@ -112,6 +112,15 @@ BASELINE_LABEL = 'Baseline (No Replay)'
 #: all_families_combined.csv -- not by parsing the configuration string -- so a
 #: renamed family or a mis-transcribed configuration cannot silently point this at a
 #: different model. Verified by test_config_rows_match_published_tables.
+#:
+#: The two Misclassification Buffer rows are the exception: they postdate those tables,
+#: which were printed while that strategy was pinned to RR=0.3 and MISCLASS_FRACTION=0.5.
+#: It now sweeps RR 0.2-0.5 at MISCLASS_FRACTION=0.3 like every other strategy, so its
+#: row was resolved the way the selection procedure resolves one -- the PR-AUC argmax
+#: over the sweep on each objective's own slice (Section 3.8), giving RR=0.4 forecasting
+#: and RR=0.5 retaining. That rule reproduces all ten of the other panel rows exactly,
+#: which is what justifies applying it here; run_selection_bootstrap.run() re-derives the
+#: same argmax from the prediction cache and raises if it disagrees with these rows.
 FORECAST_ROWS = [
     (BASELINE_LABEL, 'mlp_prevyears_monthly_features_incremental_scaler'),
     ('Uniform Random (RR=0.4)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.4'),
@@ -119,12 +128,12 @@ FORECAST_ROWS = [
     ('Confidently Correct (RR=0.4)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.4'),
     ('Uncertainty Prioritization (RR=0.5)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.5'),
     ('Hard Example Mining (RR=0.4)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.4'),
-    ('Misclassification Buffer (RR=0.3)', 'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3'),
+    ('Misclassification Buffer (RR=0.4)', 'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.4'),
     ('Combined (RR=0.5, HE/CC/UP/PR=.1/.1/.1/.2)', 'mlp_combined_HE=0.1_CC=0.1_UP=0.1_PR=(0.2,10)_RR=0.5'),
 ]
 
-#: The rows Tables 4.6/4.7 print. Six of the seven differ from FORECAST_ROWS -- these
-#: are different trained models, not the same models re-scored.
+#: The rows Tables 4.6/4.7 print. All seven differ from FORECAST_ROWS -- these are
+#: different trained models, not the same models re-scored.
 RETENTION_ROWS = [
     (BASELINE_LABEL, 'mlp_prevyears_monthly_features_incremental_scaler'),
     ('Uniform Random (RR=0.5)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_RR_0.5'),
@@ -132,7 +141,7 @@ RETENTION_ROWS = [
     ('Confidently Correct (RR=0.2)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_confidently_correct_memory_RR_0.2'),
     ('Uncertainty Prioritization (RR=0.4)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_uncertainity_prioritization_RR_0.4'),
     ('Hard Example Mining (RR=0.5)', 'mlp_prevyears_monthly_features_incremental_scaler_experience_replay_hard_example_mining_RR_0.5'),
-    ('Misclassification Buffer (RR=0.3)', 'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.3'),
+    ('Misclassification Buffer (RR=0.5)', 'mlp_prevyears_monthly_features_incremental_scaler_missclassification_buffer_RR_0.5'),
     ('Combined (RR=0.5, CC/UP/PR=.2/.2/.1)', 'mlp_combined_HE=0_CC=0.2_UP=0.2_PR=(0.1,10)_RR=0.5'),
 ]
 

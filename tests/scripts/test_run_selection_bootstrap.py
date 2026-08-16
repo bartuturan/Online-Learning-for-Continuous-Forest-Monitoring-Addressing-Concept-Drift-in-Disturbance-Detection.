@@ -173,6 +173,36 @@ class TestAgainstRealCache:
         yield sb.run(n_bootstrap=64, seed=42, alpha=0.05, f1_tolerance=1e-4, n_bins=1024)
         mp.undo()
 
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def single_arm_result(tmp_path_factory):
+        """The same run with Misclassification Buffer trimmed to a single arm.
+
+        No real strategy is a sweep of one any more -- Misclassification Buffer was
+        the last, and it now sweeps RR 0.2-0.5 -- so the k=1 guarantees below would
+        otherwise have nothing to assert against. Trimming a real sweep keeps them
+        exercising the real decomposition path rather than a synthetic stand-in.
+
+        It must be trimmed to the arm FORECAST_ROWS reports (RR=0.4), not an arbitrary
+        one: run() raises when the observed argmax is not the reported configuration,
+        and with k=1 the argmax is whichever arm is left.
+        """
+        tmp_dir = tmp_path_factory.mktemp('selection_bootstrap_single_arm_test')
+        mp = pytest.MonkeyPatch()
+        mp.setattr(sb, 'OUTPUT_DIR', tmp_dir)
+        mp.setattr(sb, 'OBJECTIVES', {'forecast': sb.OBJECTIVES['forecast']})
+        real_build = sb.build_sweeps
+
+        def one_arm(pub, tt, cells):
+            sweeps = real_build(pub, tt, cells)
+            trimmed = [f for f in sweeps['Misclassification Buffer'] if f.endswith('RR_0.4')]
+            assert len(trimmed) == 1, 'RR_0.4 arm missing from the real sweep'
+            return {'Misclassification Buffer': trimmed}
+
+        mp.setattr(sb, 'build_sweeps', one_arm)
+        yield sb.run(n_bootstrap=64, seed=42, alpha=0.05, f1_tolerance=1e-4, n_bins=1024)
+        mp.undo()
+
     def test_observed_argmax_reproduces_the_reported_configuration(self, result):
         """run() raises if it does not, so reaching here is the assertion; this pins
         which configuration that was."""
@@ -180,26 +210,27 @@ class TestAgainstRealCache:
         selected = arm_df[arm_df.strategy == 'Hard Example Mining'].selected_label.unique()
         assert list(selected) == ['Hard Example Mining (RR=0.4)']
 
-    def test_single_config_sweep_reports_exactly_zero_selection_bias(self, result):
-        """The bug this decomposition exists to prevent: Misclassification Buffer was
-        swept at one configuration and must not be charged a winner's curse."""
-        arm_df, _, margin_df = result
+    def test_single_config_sweep_reports_exactly_zero_selection_bias(self, single_arm_result):
+        """The bug this decomposition exists to prevent: a strategy swept at one
+        configuration must not be charged a winner's curse."""
+        arm_df, _, margin_df = single_arm_result
         single = arm_df[arm_df.strategy == 'Misclassification Buffer']
         assert (single.selection_bias == 0.0).all()
         assert (single.bias_corrected_point == single.point_estimate).all()
         assert (margin_df[margin_df.strategy == 'Misclassification Buffer']
                 .selection_bias == 0.0).all()
 
-    def test_single_config_sweep_has_identical_naive_and_selection_intervals(self, result):
-        arm_df, _, _ = result
+    def test_single_config_sweep_has_identical_naive_and_selection_intervals(self, single_arm_result):
+        arm_df, _, _ = single_arm_result
         single = arm_df[arm_df.strategy == 'Misclassification Buffer']
         assert (single.naive_ci_lower == single.selection_ci_lower).all()
         assert (single.naive_ci_upper == single.selection_ci_upper).all()
 
     def test_multi_config_sweep_has_nonzero_selection_bias(self, result):
         arm_df, _, _ = result
-        multi = arm_df[arm_df.strategy == 'Hard Example Mining']
-        assert (multi.selection_bias != 0.0).all()
+        for strategy in ('Hard Example Mining', 'Misclassification Buffer'):
+            multi = arm_df[arm_df.strategy == strategy]
+            assert (multi.selection_bias != 0.0).all(), strategy
 
     def test_resampling_bias_is_reported_separately_and_is_nonzero(self, result):
         """Present for every arm including the k=1 sweep -- that is the whole point of

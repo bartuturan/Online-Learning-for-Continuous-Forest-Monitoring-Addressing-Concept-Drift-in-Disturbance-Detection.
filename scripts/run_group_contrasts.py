@@ -69,12 +69,13 @@ Two families of test, both single-step max-T (Westfall & Young, 1993) over the s
 
 Three caveats travel with every number here and belong beside them in the text:
 
-* **Selection bias is uncorrected and asymmetric.** Every arm except the baseline and
-  Misclassification Buffer is an argmax over 4-8 swept configurations; those two are
-  single configurations. C1 and C5 therefore compare selected arms against an
-  unselected baseline, and C3 compares an all-selected G2 against a G3 containing the
-  one arm with no selection advantage at all -- biasing C3 toward the result the
-  thesis argues for. Resampling test cubes cannot correct this; only nested or
+* **Selection bias is uncorrected.** Every arm except the baseline is an argmax over
+  4-8 swept configurations; the baseline is a single configuration. C1 and C5
+  therefore compare selected arms against an unselected baseline. C3's asymmetry is
+  gone: it compared an all-selected G2 against a G3 containing Misclassification
+  Buffer, which had no selection advantage at all while it was pinned to one ratio,
+  and that biased C3 toward the result the thesis argues for. That strategy now
+  sweeps RR 0.2-0.5, so both sides of C3 are equally selected. Resampling test cubes cannot correct this; only nested or
   held-out selection could, and Section 3.8 records why no held-out data remained.
 * **The six (slice, metric) families are not independent looks.** F1 and PR-AUC
   correlate at ~0.98 on the same arm, forecast_mean and retention_mean at ~0.87, so

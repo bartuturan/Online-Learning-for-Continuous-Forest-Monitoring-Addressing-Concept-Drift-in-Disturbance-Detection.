@@ -435,16 +435,23 @@ def paired_bootstrap_margin(strategy, baseline, cube_idx, metric,
     Forcing one shared threshold would compare a tuned model against a detuned one and
     attribute the handicap to the strategy.
 
-    Also reports `p_value_one_sided`: the share of resamples where the strategy did
-    not beat the baseline. It is a bootstrap tail proportion, not a test statistic --
-    read it as "in this fraction of resampled forests the strategy lost". It is
-    computed as (1 + losses) / (n_bootstrap + 1) rather than losses / n_bootstrap so
-    that a strategy winning every single resample reports 1/(B+1) instead of a bare
-    0. B resamples cannot resolve a tail finer than that, and a printed p = 0 claims
-    they can -- which is not a number a thesis can defend. The same floor is applied
-    to `p_value_maxt` in scripts/run_group_ci.py and to the baseline margins in
-    scripts/run_pairwise_ci.py, so every tail probability this pipeline reports
-    bottoms out at 1/(B+1) rather than at zero.
+    Also reports two bootstrap tail proportions. Neither is the output of a parametric
+    test; read them as "in this fraction of resampled forests the margin reversed".
+
+    `p_value_one_sided` is the share of resamples where the strategy did not beat the
+    baseline. It is computed as (1 + losses) / (n_bootstrap + 1) rather than
+    losses / n_bootstrap so that a strategy winning every single resample reports
+    1/(B+1) instead of a bare 0. B resamples cannot resolve a tail finer than that, and
+    a printed p = 0 claims they can -- which is not a number a thesis can defend. This
+    matches `two_sided_p` in scripts/run_pairwise_ci.py, which already used the floored
+    form.
+
+    `p_value_two_sided` doubles the smaller of the two floored tails, capped at 1. It
+    is the one the published tables correct with BH, because a one-sided p in the
+    "strategy beats baseline" direction cannot flag a margin that is large and
+    *negative*: such a row reports p close to 1 by construction, which then contradicts
+    its own interval. Both tails carry the same floor, so the doubled value bottoms out
+    at 2/(B+1) rather than at twice an unfloored zero.
     """
     rng = np.random.default_rng() if rng is None else rng
 
@@ -538,10 +545,28 @@ def paired_bootstrap_margin(strategy, baseline, cube_idx, metric,
     summary.update({
         'strategy_point_estimate': strategy_result['point_estimate'],
         'baseline_point_estimate': baseline_result['point_estimate'],
-        'p_value_one_sided': float((1 + np.sum(margin_samples <= 0)) / (len(margin_samples) + 1)),
+        **margin_tail_p_values(margin_samples),
         'metric': metric,
     })
     return summary
+
+
+def margin_tail_p_values(margin_samples):
+    """Floored bootstrap tail proportions for one margin's resamples.
+
+    Returns {'p_value_one_sided', 'p_value_two_sided'}. Both tails are floored at
+    1/(B+1) -- see paired_bootstrap_margin for why -- and the two-sided value doubles
+    the smaller of them, capped at 1. Ties (a resample where the margin is exactly 0)
+    count against both directions, which is the conservative reading.
+    """
+    margin_samples = np.asarray(margin_samples)
+    n_boot = len(margin_samples)
+    p_lo = (1 + np.sum(margin_samples <= 0)) / (n_boot + 1)   # strategy did not win
+    p_hi = (1 + np.sum(margin_samples >= 0)) / (n_boot + 1)   # strategy did not lose
+    return {
+        'p_value_one_sided': float(p_lo),
+        'p_value_two_sided': float(min(1.0, 2 * min(p_lo, p_hi))),
+    }
 
 
 def benjamini_hochberg(p_values):
@@ -563,6 +588,36 @@ def benjamini_hochberg(p_values):
     adjusted = p_values[order] * n / ranks
     # Enforce monotonicity from the largest p downward.
     adjusted = np.minimum.accumulate(adjusted[::-1])[::-1]
+    adjusted = np.clip(adjusted, 0.0, 1.0)
+
+    result = np.empty(n, dtype=np.float64)
+    result[order] = adjusted
+    return result
+
+
+def holm_bonferroni(p_values):
+    """Holm-adjusted p-values, in the input order.
+
+    Step-down Bonferroni: sort ascending, multiply the i-th smallest by (n-i+1), then
+    enforce monotonicity with a forward running max. Controls family-wise error --
+    "with probability >= 1-alpha, every rejection in the family is a real effect" --
+    which is the guarantee that matches a claim made about a *named* comparison, as
+    opposed to BH's average-false-discovery-rate guarantee over the whole family.
+    Requires no independence or PRDS assumption on the p-values, unlike BH, and is
+    uniformly at least as powerful as a flat Bonferroni bar (alpha/n for every test):
+    only the smallest p pays the full n-fold penalty, and each subsequent one is
+    checked against a bar that has relaxed because fewer hypotheses remain live.
+    """
+    p_values = np.asarray(p_values, dtype=np.float64)
+    n = len(p_values)
+    if n == 0:
+        return np.empty(0, dtype=np.float64)
+
+    order = np.argsort(p_values)
+    ranks = np.arange(1, n + 1)
+    adjusted = p_values[order] * (n - ranks + 1)
+    # Enforce monotonicity from the smallest p upward.
+    adjusted = np.maximum.accumulate(adjusted)
     adjusted = np.clip(adjusted, 0.0, 1.0)
 
     result = np.empty(n, dtype=np.float64)
